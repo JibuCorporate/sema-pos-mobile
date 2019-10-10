@@ -209,7 +209,7 @@ class PosStorage {
 							remoteReceiptsKey,
 							reminderDataItemKey
 						];
-						
+
 						let results = this.multiGet(keyArray).then(
 							function(results) {
 								console.log(
@@ -571,6 +571,61 @@ class PosStorage {
 		console.log('This dat REMINDER_DATA ==>' + this.reminderData);
 		return this.reminderData;
 	}
+
+	// Reminders
+	addReminder(reminder){
+	    let reminderKey = reminderDataKey +'_' + reminder.id;
+	    console.log("This is the reminderKey=>"+reminderKey);
+	    this.reminderDataKeys.push(reminderKey);
+	    this.reminders.push(reminder);
+	    console.log(this.reminders);
+	    console.table(this.reminders);
+	    let keyArray = [
+		[reminderKey, this.stringify(reminder)],
+		[reminderDataKey, this.stringify(this.reminderDataKeys)]
+	    ];
+	    console.log("ADDING A REMINDER TO POSSTORAGE"+ reminder);
+	    AsyncStorage.multiSet(keyArray).then(error =>{
+		console.log("BIGANYE,ADDING REMINDER"+ console.log(error));
+	    });
+
+  	//   this.setKey(reminderDataKey,this.stringify(this.reminders));
+    	  }
+
+    	getRemindersPos(){
+//	    let filtered_receipts = this.getRemindersByDate()
+	    //console.log("Communications getReminders->"+reminderArray);
+	    let rem = [];
+	    this.reminders = this.loadReminders();//.then(reminda =>{ return reminda;});
+	    //console.log("BLOODY HELL"+this.reminders);
+	    //.then(reminders =>{return rem = reminders;});
+	    rem.push(this.reminders);
+	    //console.log("CURRENT REMINDERS=>"+ this.reminders);
+	    //let rem = this.reminders.filter(reminder => reminder.reminder_date == moment(date).add('days',1).format("YYYY-MM-DD"));
+	    //console.log("ZI REMINDER ==>"+ this.reminders);
+	    return this.reminders;
+    	}
+
+    	loadReminders(){
+	    console.log("loadRemindersFromKeys. No of reminders: " + this.reminders.length);
+	    return new Promise((resolve, reject)=>{
+		try{
+		let that = this;
+		this.multiGet(this.reminderDataKeys)
+		    .then(results =>{
+			that.reminders = results.map(resarray =>{
+			    return that.parseJson(resarray[1]);
+			});
+			resolve(that.reminders);
+
+		    });
+		}catch(error){
+		    reject(error);
+		}
+	    });
+
+    	}
+
 
 	setReminderDate(customer, customerFrequency) {
 		let reminder_date = moment()

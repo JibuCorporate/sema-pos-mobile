@@ -57,25 +57,28 @@ class RemindersReport extends Component {
 						},
 						styles.headerBackground
 					]}>
-					<View style={[{ flex: 2 }]}>
-						<Text style={[styles.headerItem, styles.leftMargin]}>
-							account-name
-						</Text>
-					</View>
 					<View style={[{ flex: 2.5 }]}>
-						<Text style={[styles.headerItem]}>
-							telephone-number
+						<Text style={[styles.headerItem, styles.leftMargin]}>
+							Customer Name
 						</Text>
 					</View>
 					<View style={[{ flex: 2 }]}>
-						<Text style={[styles.headerItem]}>address</Text>
+						<Text style={[styles.headerItem]}>
+							Telephone #
+						</Text>
 					</View>
-					<View style={[{ flex: 1.5 }]}>
+					<View style={[{ flex: 2 }]}>
+						<Text style={[styles.headerItem]}>Telephone #2</Text>
+					</View>
+					<View style={[{ flex: 2 }]}>
+						<Text style={[styles.headerItem]}>Address</Text>
+					</View>
+					{/* <View style={[{ flex: 1.5 }]}>
 						<Text style={[styles.headerItem]}>total</Text>
 					</View>
 					<View style={[{ flex: 2.5 }]}>
 						<Text style={[styles.headerItem]}>product</Text>
-					</View>
+					</View> */}
 					<View style={[{ flex: 1.5 }]}>
 						<Text style={[styles.headerItem]}>Frequency</Text>
 					</View>
@@ -113,20 +116,25 @@ class RemindersReport extends Component {
 							alignItems: 'center'
 						}
 					]}>
-					<View style={{ flex: 2 }}>
+					<View style={{ flex: 2.5 }}>
 						<Text style={[styles.baseItem, styles.leftMargin]}>
 							{item.name}
 						</Text>
 					</View>
-					<View style={{ flex: 2.5 }}>
+					<View style={{ flex: 2 }}>
 						<Text style={[styles.baseItem]}>
 							{item.phoneNumber}
 						</Text>
 					</View>
 					<View style={{ flex: 2 }}>
+						<Text style={[styles.baseItem]}>
+
+						</Text>
+					</View>
+					<View style={{ flex: 2.5 }}>
 						<Text style={[styles.baseItem]}>{item.address}</Text>
 					</View>
-					<View style={{ flex: 1.5 }}>
+					{/* <View style={{ flex: 1.5 }}>
 						<Text style={[styles.baseItem]}>
 							{item.amount_cash}
 						</Text>
@@ -135,7 +143,7 @@ class RemindersReport extends Component {
 						<Text style={[styles.baseItem]}>
 							{item.product_name}
 						</Text>
-					</View>
+					</View> */}
 					<View style={{ flex: 1.5 }}>
 						<Text style={[styles.baseItem]}>{item.frequency}</Text>
 					</View>

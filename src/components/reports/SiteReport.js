@@ -5,7 +5,7 @@ import SalesReport from './SalesReport';
 import InventoryReport from './InventoryReport';
 import SalesLog from './SalesLog';
 import Sidebar from './Sidebar';
-import RemindersReport from './ReminderReport';
+import RemindersReport from './ReminderReportWorking';
 
 export default class SiteReport extends Component {
 	render() {
