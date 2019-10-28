@@ -47,14 +47,15 @@
   "backdating": "Change Receipt Date",
   "over-due-amount-title": "Over Due Amount",
   "over-due-amount-text": "The payoff amount is greater than the due amount. The due amount is : ",
- 
-  "product": "Product", 
+
+  "product": "Product",
 
   "address": "Address",
   "balance": "Balance",
   "channel": "Channel",
   "edit": "Edit",
   "delete": "Delete",
+  "details": "Details",
 
   "edit-customer": "Edit Customer",
   "new-customer": "New Customer",

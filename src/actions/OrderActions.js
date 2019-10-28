@@ -42,18 +42,21 @@ export function SetOrderChannel(channel) {
 		});
 	};
 }
+
 export function SetOrderFlow(page) {
 	// console.log("SetOrderFlow - action");
 	return dispatch => {
 		dispatch({ type: SET_ORDER_FLOW, data: { flow: { page: page } } });
 	};
 }
+
 export function SetPayment(payment) {
 	// console.log("SetPayment - action");
 	return dispatch => {
 		dispatch({ type: SET_PAYMENT, data: { payment: payment } });
 	};
 }
+
 export function ClearOrder(payment) {
 	// console.log("ClearOrder - action");
 	return dispatch => {

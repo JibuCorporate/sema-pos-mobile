@@ -48,7 +48,7 @@
   "over-due-amount-title": "Paiement excessif",
   "over-due-amount-text": "Le montant du paiement est supérieur au montant dû. Le montant dû est : ",
 
-  "product": "Product", 
+  "product": "Product",
 
 
   "address": "Adresse",
@@ -56,6 +56,7 @@
   "channel": "Canal de Vente",
   "edit": "Mofidier",
   "delete": "Effacer",
+  "details": "Details",
 
   "edit-customer": "Modifier Client",
   "new-customer": "Nouveau Client",

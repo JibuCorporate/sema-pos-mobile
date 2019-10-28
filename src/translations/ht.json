@@ -44,13 +44,14 @@
   "account-name": "Non Kliyan",
   "telephone-number": "# Telefòn",
 
-  "product": "Product", 
+  "product": "Product",
 
   "address": "Adrès",
   "balance": "Balans",
   "channel": "Kanal Vant",
   "edit": "Modifye",
   "delete": "Efase",
+  "details": "Details",
 
   "edit-customer": "Modifye Kliyan",
   "new-customer": "Nouvo Kliyan",

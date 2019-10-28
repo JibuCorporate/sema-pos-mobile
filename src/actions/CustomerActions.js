@@ -14,13 +14,10 @@ export function CustomerSelected( customer){
 
 export function setCustomers( customers ) {
 	// console.log("setCustomers - action. No of customers " + customers.length);
-
 	return (dispatch) => {dispatch({type: CUSTOMERS_SET, data:customers})};
-
 }
 
 export function SearchCustomers( searchString ) {
 	// console.log("SearchCustomers - action. Search is " + searchString);
-
 	return (dispatch) => {dispatch({type: CUSTOMERS_SEARCH, data: searchString})};
 }

@@ -246,7 +246,7 @@ class CustomerList extends Component {
 
 	onLongPressItem = (item, event) => {
 		this.setState({ refresh: !this.state.refresh });
-		let actions = [i18n.t('edit'), i18n.t('delete')];
+		let actions = [i18n.t('details'), i18n.t('edit'), i18n.t('delete')];
 		this.props.customerActions.CustomerSelected(item);
 		// if (!this._isAnonymousCustomer(item)) {
 			if (event && event.target) {
@@ -262,8 +262,10 @@ class CustomerList extends Component {
 	onPopupEvent(eventName, index) {
 		if (eventName !== 'itemSelected') return;
 		if (index === 0) {
-			this.props.toolbarActions.ShowScreen('editCustomer');
+			this.props.toolbarActions.ShowScreen("customerDetails");
 		} else if (index === 1) {
+			this.props.toolbarActions.ShowScreen('editCustomer');
+		} else if (index === 2) {
 			this.deleteCustomer();
 		}
 	}
@@ -322,7 +324,7 @@ class CustomerList extends Component {
 	onPressItem = item => {
 		console.log('_onPressItem');
 		this.props.customerActions.CustomerSelected(item);
-		this.props.toolbarActions.ShowScreen("customerDetails");
+		// this.props.toolbarActions.ShowScreen("customerDetails");
 		// this.setState({ selectedCustomer:item });
 		this.setState({ refresh: !this.state.refresh });
 		Events.trigger('onOrder', { customer: item });

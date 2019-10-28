@@ -1,9 +1,7 @@
 import React from 'react';
 import {
-	createStackNavigator,
-	createBottomTabNavigator,
-	createAppContainer
-} from 'react-navigation';
+	createBottomTabNavigator
+} from 'react-navigation-tabs';
 import CustomerList from './CustomerList';
 import PosStorage from '../../database/PosStorage';
 import { capitalizeWord } from '../../services/Utilities';
