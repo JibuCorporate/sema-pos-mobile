@@ -30,10 +30,12 @@
   "does-not-exist": "n'existe pas",
   "is-not-active": "n'est pas actif",
   "network-connection": "Connexion Réseau",
+  "info": "Info",
   "sync-results": "Résultats de la Synchronisation",
   "sync-error": "Erreur de synchronisation: {{error}}",
   "data-is-up-to-date": "Les données sont à jour",
   "customers-updated": "clients mis à jour",
+  "topups-updated": "Top Ups Updated",
   "products-updated": "produits mis à jour",
   "sales-receipts-updated": "reçus de vente mis à jour",
   "product-sales-channel-prices-updated": "prix de produits/canaux de vente mis à jour",
@@ -41,6 +43,7 @@
   "delete-all-data": "effacer toutes les données (Ceci ne peut pas être défait)",
 
   "search-placeholder": "Rechercher Par Nom Ou Téléphone",
+  "salefilter-placeholder": "Search by Name",
   "account-name": "Nom Client",
   "telephone-number": "# Téléphone",
   "second-phone-number": "#2 Téléphone",
@@ -72,12 +75,16 @@
   "order-summary": "Commande",
   "cart": "Chariot",
   "pay": "Payer",
+  "save-order": "Save Order",
 
   "order-total": "Total de la Commande",
   "item": "Article",
   "quantity": "Quantité",
   "unitPrice": "Unit Price",
   "charge": "Facture",
+
+  "details": "Details",
+
 
   "cash": "Liquide",
   "loan": "Prêt",
@@ -86,8 +93,10 @@
   "previous-amount-due": "Montant dû Antérieurement",
   "total-amount-due": "Montant Total dû",
   "complete-sale": "Conclure la Vente",
+  "make-payment": "Make Payment",
+  "topup": "Top Up",
   "processing-order": "Traitement de la Commande...",
-
+  "topup-placeholder": "Top Up",
   "sales": "Ventes",
   "inventory": "Inventaire",
   "meter-reading": "Meter Reading",

@@ -1,31 +1,32 @@
-import React, { Component } from 'react';
-import { Text, View, Image, TouchableHighlight, StyleSheet } from 'react-native';
+import React from 'react';
+if (process.env.NODE_ENV === 'development') {
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React);
+  }
+import { Text, View, TouchableHighlight, StyleSheet } from 'react-native';
 import { bindActionCreators } from "redux";
 import * as reportActions from "../../actions/ReportActions";
 import { connect } from "react-redux";
-
-import i18n from '../../app/i18n';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const dayInMilliseconds =  24*60*60*1000;
 
-class DateFilter extends Component {
+class DateFilter extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		let currentDate = new Date();
 		this.state = {currentDate :new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() )};
 		this.maxDate = new Date( this.state.currentDate.getTime() + dayInMilliseconds );
-		//this.minDate = new Date( this.maxDate.getTime() - 30 * dayInMilliseconds );
-		this.minDate = new Date( this.maxDate.getTime() - 7 * dayInMilliseconds );
+		this.minDate = new Date( this.maxDate.getTime() - 30 * dayInMilliseconds );
+		// this.minDate = new Date( this.maxDate.getTime() - 7 * dayInMilliseconds );
 		console.log( "DateFilter - maxDate = " + this.maxDate.toString());
 		console.log( "DateFilter - minDate = " + this.minDate.toString());
 		this.props.reportActions.setReportFilter( this.state.currentDate, new Date( this.state.currentDate.getTime() + dayInMilliseconds));
 	}
+
 	render() {
 		return (
 			<View style={styles.filterContainer}>
-				<View style={styles.filterItemContainer}>
-					<Text style={{fontSize:20}}>{i18n.t('daily-data')}</Text>
-				</View>
 				<View style={styles.filterItemContainer}>
 					{this.getPreviousButton()}
 				</View>
@@ -38,31 +39,54 @@ class DateFilter extends Component {
 			</View>
 		)
 	}
+
 	getPreviousButton(){
 		const prevDate = new Date( this.state.currentDate.getTime() - dayInMilliseconds );
 		if( prevDate > this.minDate){
 			return (
 				<TouchableHighlight onPress={() => this.onPreviousDay()}>
-					<Image source={require('../../images/left-arrow.png')} style={styles.filterImage}/>
+					               {
+										<Icon
+											name='md-arrow-round-back'
+											size={40}
+											color='black'
+										/>
+									}
 				</TouchableHighlight>
 			)
 		}else{
 			return (
-				<Image source={require('../../images/left-arrow.png')} style={[styles.filterImage, {opacity:.4 }]}/>
+				<Icon
+				name='md-arrow-round-back'
+				size={40}
+				color='black'
+				style={{opacity:.4 }}
+				/>
+
 			);
 		}
 	}
+
 	getNextButton(){
 		const nextDate = new Date( this.state.currentDate.getTime() + dayInMilliseconds );
 		if( nextDate < this.maxDate){
 			return (
 				<TouchableHighlight onPress={() => this.onNextDay()}>
-					<Image source={require('../../images/right-arrow.png')} style={styles.filterImage}/>
+					<Icon
+						name='md-arrow-round-forward'
+						size={40}
+						color='black'
+					/>
 				</TouchableHighlight>
 			)
 		}else{
 			return (
-				<Image source={require('../../images/right-arrow.png')} style={[styles.filterImage, {opacity:.4 }]}/>
+				<Icon
+						name='md-arrow-round-forward'
+						size={40}
+						color='black'
+						style={{opacity:.4 }}
+					/>
 			);
 		}
 	}
@@ -79,7 +103,6 @@ class DateFilter extends Component {
 		const beginDate = this.state.currentDate;
 		const endDate = new Date( beginDate.getTime() + dayInMilliseconds );
 		this.props.reportActions.setReportFilter( beginDate, endDate );
-		console.log( "Filter-From " + beginDate.toDateString() + " to " + endDate.toDateString());
 	}
 }
 
@@ -98,16 +121,16 @@ export default connect(mapStateToProps, mapDispatchToProps)(DateFilter);
 const styles = StyleSheet.create({
 
 	filterContainer:{
-		flex: .15,
+		flex: .3,
 		backgroundColor: 'white',
-		marginLeft: 30,
+		marginLeft: 10,
 		marginTop: 20,
 		flexDirection:'row',
 		width:500
 	},
 	filterItemContainer:{
 		justifyContent:"center",
-		paddingLeft:20
+		paddingLeft:10
 	},
 	filterImage:{
 		width: 30,

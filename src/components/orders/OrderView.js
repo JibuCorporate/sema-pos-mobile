@@ -1,52 +1,39 @@
-import React, { Component } from "react";
+import React from "react";
+if (process.env.NODE_ENV === 'development') {
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React);
+  }
 import { View, StyleSheet } from 'react-native';
-import OrderProductScreen from "./OrderProductScreen";
-import OrderPaymentScreen from "./OrderPaymentScreen";
+import ProductListScreen from './ProductListScreen';
 import OrderSummaryScreen from "./OrderSummaryScreen";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as OrderActions from "../../actions/OrderActions";
-import Events from "react-native-simple-events";
+import * as CustomerActions from '../../actions/CustomerActions';
+import slowlog from 'react-native-slowlog';
 
-class OrderView extends Component {
+class OrderView extends React.PureComponent {
 	constructor(props) {
 		super(props);
+		slowlog(this, /.*/);
 	}
 
 	render() {
-		return this.displayView();
-	}
-
-	componentDidMount() {
-		Events.on('ProductsUpdated', 'productsUpdate2', this.onProductsUpdated.bind(this));
-		Events.on('ProductMrpsUpdated', 'productMrpsUpdate1', this.onProductsUpdated.bind(this));
-	}
-
-	componentWillUnmount() {
-		Events.rm('ProductsUpdated', 'productsUpdate2');
-		Events.rm('ProductMrpsUpdated', 'productMrpsUpdate1');
-	}
-
-	onProductsUpdated() {
-		this.forceUpdate();
-	}
-
-	displayView() {
 		return (
-			<View style = { styles.orderView}>
-				{this.getProductScreen()}
-				{this.getPaymentScreen()}
-				<OrderSummaryScreen/>
+			<View style={styles.orderView}>
+				<ProductListScreen />
+				<OrderSummaryScreen
+					navigation={this.props.navigation} />
 			</View>
 		);
 	}
 
-	getProductScreen() {
-		return this.props.flow.page === 'products' ? <OrderProductScreen/> : null;
-	}
+	// componentDidMount(){
+	// 	this.props.navigation.setParams({ 'title': selectedCustomer.name });
+	// }
 
-	getPaymentScreen() {
-		return this.props.flow.page === 'payment' ? <OrderPaymentScreen/> : null;
+	componentWillUnmount() {
+		this.props.orderActions.ClearOrder();
 	}
 
 }
@@ -58,15 +45,18 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-	return {orderActions: bindActionCreators(OrderActions,dispatch)};
+	return {
+		orderActions: bindActionCreators(OrderActions, dispatch),
+		customerActions: bindActionCreators(CustomerActions, dispatch)
+	};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderView);
 
 const styles = StyleSheet.create({
 	orderView: {
-		flex:1,
-		backgroundColor:"#ABC1DE",
-		flexDirection:'row'
+		flex: 1,
+		backgroundColor: "#ABC1DE",
+		flexDirection: 'row'
 	}
 });

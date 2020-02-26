@@ -1,4 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
+if (process.env.NODE_ENV === 'development') {
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React);
+  }
 import {
 	View,
 	Text,
@@ -11,17 +15,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as ProductActions from '../../actions/ProductActions';
 import * as OrderActions from '../../actions/OrderActions';
-import PosStorage from '../../database/PosStorage';
-import Communications from '../../services/Communications';
-
+import ProductMRPRealm from '../../database/productmrp/productmrp.operations';
+import SalesChannelRealm from '../../database/sales-channels/sales-channels.operations';
 import randomMC from 'random-material-color';
+import slowlog from 'react-native-slowlog';
 
-class ProductList extends Component {
+class ProductList extends React.PureComponent {
 	constructor(props) {
 		super(props);
-	}
-	componentDidMount() {
-		console.log('ProductList = Mounted');
+		slowlog(this, /.*/);
+		// this.onPressItem = this.onPressItem.bind(this);
 	}
 
 	render() {
@@ -46,6 +49,7 @@ class ProductList extends Component {
 	}
 
 	getItem = (item, index) => {
+		// console.log(JSON.stringify(item));
 		return (
 			<View
 				style={[
@@ -75,41 +79,10 @@ class ProductList extends Component {
 	};
 
 	prepareData = () => {
-		let productMrp = PosStorage.getProductMrps();
-		// let keys=Object.keys(productMrp);
-		// let result=[];
-		//let ids=[];
-		//let ids=productMrp.map(prod=>prod.productId);
-		let ids=Object.keys(productMrp).map(key=>productMrp[key].productId);
-
-		// for(let i=0;i<keys.length;i++){
-		// 	let prod=productMrp[keys[i]];
-		// 	ids.push(prod.productId);
-		// }
-
-		return result=this.props.products.filter(prod=>ids.includes(prod.productId));
-
-		// for(let i=0;i<this.props.products.length;i++){
-		// 	let prod=this.props.products[i];
-		// 	if(ids.indexOf(prod.productId)>=0){
-		// 		//Admitting products with zero as price too
-		// 		// if(this.getItemPrice(prod)>=0){
-		// 		// 	result.push(prod);
-		// 		// }
-		// 		result.push(prod);
-		// 	}
-		// }
-		// return result;
-		// //return this.props.products;
+		let productMrp = ProductMRPRealm.getFilteredProductMRP();
+		let ids = Object.keys(productMrp).map(key => productMrp[key].productId);
+		return result = this.props.products.filter(prod => ids.includes(prod.productId));
 	};
-
-	hasMappingTable(product, productMrp) {
-		// Search through the keys of productMrp
-		return Object.keys(productMrp).reduce((hasMrp, key) => {
-			if (key.startsWith(`${product.productId}-`)) return true;
-			return hasMrp;
-		}, false);
-	}
 
 	getImage = item => {
 		if (item.base64encodedImage.startsWith('data:image')) {
@@ -120,8 +93,7 @@ class ProductList extends Component {
 	};
 
 	onPressItem = item => {
-		console.log('onPressItem');
-		const unitPrice=this.getItemPrice(item)
+		const unitPrice = this.getItemPrice(item)
 		this.props.orderActions.AddProductToOrder(item, 1, unitPrice);
 	};
 
@@ -130,8 +102,6 @@ class ProductList extends Component {
 	};
 
 	getLabelBackground = categoryId => {
-		// random-material-color will get a different color for each category of the sales channel
-		// It will remember the color based on the text property we pass
 		return {
 			backgroundColor: `${randomMC.getColor({
 				text: `${categoryId}-${this.props.filter}`
@@ -140,19 +110,17 @@ class ProductList extends Component {
 	};
 
 	getItemPrice = item => {
-		let salesChannel = PosStorage.getSalesChannelFromName(
+		let salesChannel = SalesChannelRealm.getSalesChannelFromName(
 			this.props.filter
 		);
 
 		if (salesChannel) {
-			let productMrp = PosStorage.getProductMrps()[
-				PosStorage.getProductMrpKeyFromIds(
+			let productMrp = ProductMRPRealm.getFilteredProductMRP()[
+				ProductMRPRealm.getProductMrpKeyFromIds(
 					item.productId,
 					salesChannel.id
 				)
 			];
-
-			//console.log(productMrp)
 			if (productMrp) {
 				return productMrp.priceAmount;
 			}
@@ -160,47 +128,6 @@ class ProductList extends Component {
 		return item.priceAmount; // Just use product price
 	};
 
-	// prepareData = () => {
-	// 	let productMrp = PosStorage.getProductMrps();
-
-	// 	console.log(this.props.filter);
-
-	// 	if (
-	// 		Object.keys(productMrp).length === 0 &&
-	// 		productMrp.constructor === Object
-	// 	)
-	// 	{
-	// 		return this.props.products; // No mapping tables
-	// 	}
-	// 	else {
-	// 		let salesChannel = PosStorage.getSalesChannelFromName(
-	// 			this.props.filter
-	// 		);
-	// 		if (salesChannel) {
-	// 			return this.props.products.filter(product => {
-	// 				// If product has no mapping tables at all for the selected kiosk, display it
-	// 				if (!this.hasMappingTable(product, productMrp)) return true;
-	// 				// If product has a mapping with the customer's sales channel and is of the same kiosk
-	// 				// as the selected customer, display it
-	// 				const mapping =
-	// 					productMrp[
-	// 						PosStorage.getProductMrpKeyFromIds(
-	// 							product.productId,
-	// 							salesChannel.id
-	// 						)
-	// 					];
-	// 				if (mapping)
-	// 					return (
-	// 						mapping.siteId ===
-	// 						this.props.selectedCustomer.siteId
-	// 					);
-	// 				return false;
-	// 			});
-	// 		} else {
-	// 			return this.props.products;
-	// 		}
-	// 	}
-	// };
 }
 
 function mapStateToProps(state, props) {

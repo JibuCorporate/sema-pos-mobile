@@ -1,45 +1,57 @@
-import React, { Component } from "react"
-import { View, Text, FlatList, TouchableHighlight, StyleSheet } from "react-native";
+import React from "react";
+if (process.env.NODE_ENV === 'development') {
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React);
+  }
+import { View, Text,  StyleSheet } from "react-native";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as OrderActions from "../../actions/OrderActions";
-import PosStorage from "../../database/PosStorage";
 import * as Utilities from "../../services/Utilities";
-import * as ToolbarActions from '../../actions/ToolBarActions';
 import i18n from "../../app/i18n";
+import slowlog from 'react-native-slowlog';
 
-class OrderTotal extends Component {
+class OrderTotal extends React.PureComponent {
+
+	constructor(props) {
+		super(props);
+		slowlog(this, /.*/);
+	}
+
 	render() {
 		return (
 			<View style={styles.container}>
 				<Text style={[{ flex: 2 }, styles.totalText]}>{i18n.t('order-total')}</Text>
-				<Text style={[{ flex: 3 }, styles.totalText]}>{Utilities.formatCurrency(this.getAmount())}</Text>
-				<TouchableHighlight onPress={() => this.showPaymentType()}>
-					<Text >Payment Type: </Text>
-				</TouchableHighlight>
+				<Text style={[{ flex: 3 }, styles.totalText]}>{this.getCurrency().toUpperCase()} {Utilities.formatCurrency(this.getAmount())}</Text>
 			</View>
 		);
 	}
 
-	showPaymentType() {
-		this.props.toolbarActions.ShowScreen('paymentTypes');
-	}
-
 	getAmount = () => {
-		return this.props.products.reduce((total, item) => { return (total + item.quantity * this.getItemPrice(item.product)) }, 0);
-	};
-
-	getItemPrice = (product) => {
-		let salesChannel = PosStorage.getSalesChannelFromName(this.props.channel.salesChannel);
-		if (salesChannel) {
-			let productMrp = PosStorage.getProductMrps()[PosStorage.getProductMrpKeyFromIds(product.productId, salesChannel.id)];
-			if (productMrp) {
-				return productMrp.priceAmount;
+		if (this.props.products.length > 0) {
+			let totalAmount = 0;
+			for (let i of this.props.products) {
+				if (i.product.description === 'discount') {
+					totalAmount = totalAmount - i.finalAmount;
+				}
+				 else if (i.product.description === 'delivery') {
+					totalAmount = totalAmount + i.finalAmount;
+				} else {
+					totalAmount = totalAmount + i.finalAmount;
+				}
 			}
+			return totalAmount;
+
 		}
-		return product.priceAmount;	// Just use product price
+		return 0;
 	};
 
+	getCurrency = () => {
+		if (this.props.products.length > 0) {
+			return this.props.products[0].product.priceCurrency;
+		}
+		return '';
+	};
 }
 
 function mapStateToProps(state, props) {
@@ -50,8 +62,7 @@ function mapStateToProps(state, props) {
 }
 function mapDispatchToProps(dispatch) {
 	return {
-		orderActions: bindActionCreators(OrderActions, dispatch),
-		toolbarActions: bindActionCreators(ToolbarActions, dispatch)
+		orderActions: bindActionCreators(OrderActions, dispatch)
 	};
 }
 
@@ -72,6 +83,9 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		color: 'black',
 		alignSelf: 'center'
+	},
+	leftMargin: {
+		left: 10
 	}
 
 });
