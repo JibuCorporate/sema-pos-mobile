@@ -14,6 +14,13 @@ export default orderItemStyles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row'
 	},
+	orderSideBar:{ flex: .6, backgroundColor: "blue", borderColor: '#2858a7', borderLeftWidth: 5 },
+	flexOne: { flex: 1 },
+	flexTwo: { flex: 2 },
+	flexThree: { flex: 3 },
+	third: { flex: .3 },
+	sixth: { flex: .6 },
+	alignment: { paddingLeft: 20, margin: 0 },
 	leftMargin: {
 		left: 10
 	},
@@ -139,7 +146,21 @@ export default orderItemStyles = StyleSheet.create({
 	modal: {
 		justifyContent: 'center'
 	},
-
+	center: { textAlign: 'center' },
+	flexAlign: { flex: 1, paddingRight: 20, paddingLeft: 20 },
+	rowDirection: { flex: 1, flexDirection: 'row' },
+	upperCase: { textTransform: 'uppercase' },
+	flexHeigth: { flex: 1, height: 50 },
+	textLeft: { textAlign: 'left' },
+	justifyCenter:{ justifyContent: 'center' },
+	bottleTextInput: {
+		textAlign: 'center',
+		height: 45,
+		fontSize: 20
+	},
+	oldSale: { fontSize: 16, paddingTop: 10, textAlign: 'left' },
+	completeSale:{ paddingTop: 10, paddingBottom: 10 },
+	btnStyle: { padding: 10, margin: 10, borderRadius: 5, color: 'white', backgroundColor: '#036', textAlign: 'center', alignSelf: 'flex-end' },
 	modal2: {
 		height: 230,
 		backgroundColor: "#3B5998"
@@ -153,7 +174,12 @@ export default orderItemStyles = StyleSheet.create({
 	modal4: {
 		height: 300
 	},
-
+	discountView: { flex: 1, flexDirection: 'row', alignContent: 'center' },
+	emptiesView: { flex: 1, flexDirection: 'row', backgroundColor: 'white', padding: 5 },
+	discountRow: { flex: 1, flexDirection: 'row', backgroundColor: 'white' },
+	bottleTracker: { flex: 1, flexDirection: 'row', height: 50 },
+	paymentMethod: { flex: 1, flexDirection: 'row', padding: 0 },
+	deliveryMode: { flex: 1, flexDirection: 'row', alignContent: 'center', paddingBottom: 10 },
 	btn: {
 		margin: 10,
 		backgroundColor: "#3B5998",
