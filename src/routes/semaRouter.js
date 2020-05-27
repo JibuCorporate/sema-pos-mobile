@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Dimensions, Picker } from 'react-native';
+import { View, Dimensions, Picker, StyleSheet } from 'react-native';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -54,7 +54,7 @@ const TabNavigator = createBottomTabNavigator({
     Transaction: CustomerTransactionStack,
     CustomerWallet: {
         screen: CreditHistoryStack,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             title: `Customer Wallet`,
         }),
     },
@@ -83,15 +83,13 @@ const TabNavigator = createBottomTabNavigator({
 const ListCustomerStack = createStackNavigator({
     CustomerList: {
         screen: CustomerList,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             headerTitle: () => <CustomerTitle title={`Customers`} />,
-            // headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
             headerLeft: () => <NavigationDrawerStructure />,
             headerStyle: {
                 backgroundColor: '#00549C'
             },
             headerTintColor: '#fff',
-            // headerRight: () => <CustomerListHeader navigation={navigation}/>
             headerRight: () => <CustomerListHeader />
         }),
     },
@@ -107,7 +105,7 @@ const ListCustomerStack = createStackNavigator({
     },
     CustomerDetails: {
         screen: TabNavigator,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             title: 'Customer Details',
             headerStyle: {
                 backgroundColor: '#00549C'
@@ -117,7 +115,7 @@ const ListCustomerStack = createStackNavigator({
     },
     OrderView: {
         screen: OrderView,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             headerTitle: () => <CustomerTitle />,
             headerStyle: {
                 backgroundColor: '#00549C',
@@ -136,27 +134,22 @@ const ListCustomerStack = createStackNavigator({
 const TransactionStack = createStackNavigator({
     Transactions: {
         screen: Transactions,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             title: 'Transactions',
-            headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+            headerLeft: () => <NavigationDrawerStructure />,
             headerStyle: {
                 backgroundColor: '#00549C',
             },
             headerTintColor: '#fff',
             headerRight: () => (
                 <View
-                    style={{
-                        flexDirection: 'row',
-                    }}>
+                    style={styles.rowdir}>
                     <View
-                        style={{
-                            marginTop: 12,
-                            flex: 1
-                        }}>
+                        style={styles.custpicker}>
                         <Picker
                             mode="dropdown"
                             selectedValue={navigation.getParam('paymentTypeValue')}
-                            style={{ height: 50, width: 190, color: 'white', alignContent: 'flex-end' }}
+                            style={styles.smropicker}
                             onValueChange={navigation.getParam('checkPaymentTypefilter')}>
                             <Picker.Item label="All Payment Types" value="all" />
                             <Picker.Item label="Cash" value="cash" />
@@ -176,9 +169,8 @@ const TransactionStack = createStackNavigator({
 const SalesReportStack = createStackNavigator({
     SalesReport: {
         screen: SalesReport,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             title: 'Sales Report',
-            // headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
             headerLeft: () => <NavigationDrawerStructure />,
             headerStyle: {
                 backgroundColor: '#00549C',
@@ -191,9 +183,8 @@ const SalesReportStack = createStackNavigator({
 const InventoryStack = createStackNavigator({
     Inventory: {
         screen: InventoryReport,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             title: 'Wastage Report',
-            // headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
             headerLeft: () => <NavigationDrawerStructure />,
             headerStyle: {
                 backgroundColor: '#00549C',
@@ -206,9 +197,8 @@ const InventoryStack = createStackNavigator({
 const ReminderStack = createStackNavigator({
     Reminders: {
         screen: RemindersReport,
-        navigationOptions: ({ navigation }) => ({
+        navigationOptions: () => ({
             title: 'Reminders',
-            // headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
             headerLeft: () => <NavigationDrawerStructure />,
             headerStyle: {
                 backgroundColor: '#00549C',
@@ -289,4 +279,20 @@ const JibuRouter = createSwitchNavigator(
 );
 
 export default createAppContainer(JibuRouter);
-// export default JibuRouter;
+
+const styles = StyleSheet.create({
+	rowdir: {
+		flexDirection: 'row',
+	},
+	custpicker: {
+		marginTop: 12,
+		flex: 1
+	},
+	smropicker: {
+		height: 50,
+		width: 190,
+		color: 'white',
+		alignContent: 'flex-end'
+	}
+
+});

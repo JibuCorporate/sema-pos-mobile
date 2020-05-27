@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import * as CustomerActions from '../actions/CustomerActions';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 class CustomerTitle extends React.PureComponent {
 
@@ -23,26 +21,15 @@ class CustomerTitle extends React.PureComponent {
     }
 }
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
     return {
-        selectedCustomer: state.customerReducer.selectedCustomer,
-        customers: state.customerReducer.customers,
-        searchString: state.customerReducer.searchString,
         customerProps: state.customerReducer.customerProps,
-        customerTypeFilter: state.customerReducer.customerTypeFilter,
-        paymentTypes: state.paymentTypesReducer.paymentTypes,
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        customerActions: bindActionCreators(CustomerActions, dispatch),
-    };
-}
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
 )(CustomerTitle);
 
 const styles = StyleSheet.create({

@@ -6,8 +6,7 @@ import {
 	StyleSheet,
 	Modal,
 	ScrollView,
-	Alert,
-	ActivityIndicator
+	Alert
 } from 'react-native';
 import { Card, Button, Input } from 'react-native-elements';
 
@@ -242,7 +241,7 @@ class CustomerEdit extends React.PureComponent {
 								}}
 								value={this.state.customerType}
 								useNativeAndroidPickerStyle={false}
-								style={[...pickerSelectStyles, styles.inputContainer]}
+
 								Icon={() => {
 									return <Ionicons name="md-ribbon" size={24} />;
 								}}
@@ -536,7 +535,10 @@ const pickerSelectStyles = StyleSheet.create({
 		borderRadius: 8,
 		borderColor: '#f1f1f1',
 		backgroundColor: '#f1f1f1',
-		color: 'black',
+		top: 20,
+		left: 30,
+		color: "black",
+		marginRight: 10,
 		alignItems: 'center',
 		marginTop: 5,
 		marginBottom: 10,
