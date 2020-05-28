@@ -636,7 +636,11 @@ const styles = StyleSheet.create({
 
 	flexpt5: { flex: .5 },
 
-	contCard: { width: '60%', marginTop: 30, padding: 0, borderRadius: 8 },
+	contCard: {
+		 width: '56%',
+		 marginTop: 30,
+		 padding: 0,
+		 borderRadius: 8 },
 
 	inputText: {
 		alignSelf: 'center',
