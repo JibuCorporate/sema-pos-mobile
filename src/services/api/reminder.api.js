@@ -49,8 +49,6 @@ class ReminderApi {
 	}
 
 	createCustomerReminder(CustomerReminder) {
-		// TODO - Resolve CustomerReminder.... Is it needed, currently hardcoded...
-
 		let options = {
 			method: 'POST',
 			headers: {

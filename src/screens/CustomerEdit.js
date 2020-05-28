@@ -150,8 +150,7 @@ class CustomerEdit extends React.PureComponent {
 	render() {
 		return (
 			<View style={styles.custeditcont}>
-				<ScrollView
-					style={styles.flex1}>
+				<ScrollView style={styles.flex1}>
 					<View style={styles.flexCenter}>
 
 						<Card containerStyle={styles.contCard}>
@@ -232,7 +231,7 @@ class CustomerEdit extends React.PureComponent {
 								placeholder={{
 									label: 'Select a customer type',
 									value: null,
-									key: 0,
+									key: 0
 								}}
 								items={this.customerTypesOptions}
 								onValueChange={(value, itemKey) => {
@@ -241,6 +240,21 @@ class CustomerEdit extends React.PureComponent {
 								}}
 								value={this.state.customerType}
 								useNativeAndroidPickerStyle={false}
+								style={{
+									...pickerSelectStyles,
+									iconContainer: {
+										top: 20,
+										left: 30,
+										color: "black",
+										marginRight: 10
+									},
+
+									placeholder: {
+									  color: '#333',
+									  fontSize: 18,
+									  fontWeight: 'bold',
+									},
+								  }}
 
 								Icon={() => {
 									return <Ionicons name="md-ribbon" size={24} />;
@@ -528,6 +542,7 @@ export default connect(
 	mapDispatchToProps
 )(CustomerEdit);
 
+
 const pickerSelectStyles = StyleSheet.create({
 	inputAndroid: {
 		fontSize: 18,
@@ -535,10 +550,7 @@ const pickerSelectStyles = StyleSheet.create({
 		borderRadius: 8,
 		borderColor: '#f1f1f1',
 		backgroundColor: '#f1f1f1',
-		top: 20,
-		left: 30,
-		color: "black",
-		marginRight: 10,
+		color: 'black',
 		alignItems: 'center',
 		marginTop: 5,
 		marginBottom: 10,
@@ -571,7 +583,10 @@ const styles = StyleSheet.create({
 		marginTop: 10
 	},
 
-	loadertext: { fontSize: 24, fontWeight: 'bold' },
+	loadertext: {
+		fontSize: 24,
+		fontWeight: 'bold'
+	 },
 
 	createLoader: {
 		flex: 1,
@@ -580,11 +595,20 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 
-	subbtn: {padding: 20},
+	subbtn: {
+		padding: 20
+	},
 
-	flexanddirection: { flex: 1, flexDirection: 'row' },
-	flexCenter: { flex: 1, alignItems: 'center' },
-	custeditcont: { flex: 1, backgroundColor: '#f1f1f1', justifyContent: 'center' },
+	flexanddirection: {
+		flex: 1,
+		flexDirection: 'row' },
+	flexCenter: {
+		flex: 1,
+		 alignItems: 'center' },
+	custeditcont: {
+		flex: 1,
+		backgroundColor: '#f1f1f1',
+		justifyContent: 'center' },
 	headerText: {
 		fontSize: 24,
 		color: 'black',
@@ -612,7 +636,7 @@ const styles = StyleSheet.create({
 
 	flexpt5: { flex: .5 },
 
-	contCard: { width: '55%', marginTop: 30, padding: 0, borderRadius: 8 },
+	contCard: { width: '60%', marginTop: 30, padding: 0, borderRadius: 8 },
 
 	inputText: {
 		alignSelf: 'center',

@@ -60,8 +60,6 @@ class OrderSummaryScreen extends React.PureComponent {
 			isDisabled: false,
 			swipeToClose: true,
 			sliderValue: 0.3,
-
-
 			isWalkIn: true,
 			//isDisabled: false,
 			buttonDisabled: false,
@@ -88,12 +86,13 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.handleCompleteSale = this.handleCompleteSale.bind(this);
 		this.orderItems = [...this.props.orderItems];
 	}
+
 	static whyDidYouRender = true;
 	orderSummaryElement = () => {
 		return (
 			<View style={styles.container}>
 				<View style={orderItemStyles.rowDirection}>
-					<Text style={[styles.orderSummaryViewTextOne, , styles.summaryText]}>{i18n.t('order-summary')}</Text>
+					<Text style={[styles.orderSummaryViewTextOne, styles.summaryText]}>{i18n.t('order-summary')}</Text>
 					<Text style={[orderItemStyles.flexOne, styles.summaryText]}>{i18n.t('cart')} ({this.getTotalOrders()})</Text>
 				</View>
 			</View>

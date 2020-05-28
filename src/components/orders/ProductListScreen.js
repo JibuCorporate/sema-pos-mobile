@@ -16,8 +16,7 @@ import {
 	StyleSheet,
 	Image,
 	Dimensions,
-	TouchableOpacity,
-	InteractionManager
+	TouchableOpacity
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from "react-redux";
@@ -26,7 +25,6 @@ import ProductMRPRealm from '../../database/productmrp/productmrp.operations';
 import SalesChannelRealm from '../../database/sales-channels/sales-channels.operations';
 import * as ProductActions from '../../actions/ProductActions';
 import * as OrderActions from '../../actions/OrderActions';
-import OrderSummaryScreen from "./OrderSummaryScreen";
 class ProductListScreen extends React.PureComponent {
 	constructor(props) {
 		super(props);

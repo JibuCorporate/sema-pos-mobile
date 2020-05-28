@@ -6,7 +6,17 @@
   "env": {
     "production": {
       "plugins": ["transform-remove-console"]
-    }
+	},
+	"dev": {
+		"plugins": ["@babel/plugin-transform-runtime",
+			[
+			  "@babel/plugin-transform-spread",
+			  {
+				"loose": true
+			  }
+			]
+		]
+	}
   }
 }
 

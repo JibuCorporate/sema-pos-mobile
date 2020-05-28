@@ -134,7 +134,7 @@ const ListCustomerStack = createStackNavigator({
 const TransactionStack = createStackNavigator({
     Transactions: {
         screen: Transactions,
-        navigationOptions: () => ({
+        navigationOptions: ({navigation}) => ({
             title: 'Transactions',
             headerLeft: () => <NavigationDrawerStructure />,
             headerStyle: {
