@@ -21,7 +21,13 @@ class DateFilter extends React.PureComponent {
 		};
 		this.maxDate = new Date(this.state.currentDate.getTime() + dayInMilliseconds);
 		this.minDate = new Date(this.maxDate.getTime() - 30 * dayInMilliseconds);
-		this.props.reportActions.setReportFilter(new Date(), new Date(this.state.currentDate.getTime() - dayInMilliseconds));
+	}
+
+	componentDidMount() {
+		this.props.reportActions.setReportFilter(
+			new Date(),
+			new Date(this.state.currentDate.getTime() - dayInMilliseconds));
+
 	}
 
 	render() {
@@ -60,7 +66,7 @@ class DateFilter extends React.PureComponent {
 					name='md-arrow-round-back'
 					size={40}
 					color='black'
-					style={{ opacity: .4 }}
+					style={styles.opacity4}
 				/>
 
 			);
@@ -85,7 +91,7 @@ class DateFilter extends React.PureComponent {
 					name='md-arrow-round-forward'
 					size={40}
 					color='black'
-					style={{ opacity: .4 }}
+					style={styles.opacity4}
 				/>
 			);
 		}
@@ -138,6 +144,10 @@ const styles = StyleSheet.create({
 	filterImage: {
 		width: 30,
 		height: 30
+	},
+
+	opacity4: {
+		opacity: .4
 	}
 
 });

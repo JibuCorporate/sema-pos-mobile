@@ -4,11 +4,9 @@ if (process.env.NODE_ENV === 'development') {
 	const ReactRedux = require('react-redux');
 	whyDidYouRender(React, {
 		trackAllPureComponents: true,
-		trackExtraHooks: [
-			[ReactRedux, 'useSelector']
-		]
 	});
 }
+
 import { View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight, StyleSheet, Alert } from "react-native";
 import orderItemStyles from "./orderItemStyles";
 import orderCheckOutStyles from "./orderCheckOutStyles";
@@ -45,6 +43,7 @@ import CustomerReminderRealm from '../../database/customer-reminder/customer-rem
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
 const uuidv1 = require('uuid/v1');
 import { withNavigation } from 'react-navigation';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 class OrderSummaryScreen extends React.PureComponent {
 
 	constructor(props) {
@@ -169,10 +168,8 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		if (this.state.isorderItemsModal) {
 			return (
-
-
-				<ScrollView>
-					<TouchableOpacity>
+				<KeyboardAwareScrollView>
+					{/* <TouchableOpacity> */}
 						<View style={[orderItemStyles.headerBackground, orderItemStyles.alignment]}>
 							<View style={orderItemStyles.third}>
 								{this.getProductDescripion()}
@@ -232,8 +229,8 @@ class OrderSummaryScreen extends React.PureComponent {
 							</View>
 
 						</View>
-					</TouchableOpacity>
-				</ScrollView>
+					{/* </TouchableOpacity> */}
+				</KeyboardAwareScrollView>
 
 			)
 		} else {
@@ -345,7 +342,7 @@ class OrderSummaryScreen extends React.PureComponent {
 									onPress={this.counterChangedHandler.bind(this, 'dec')}>
 									<Icon
 										size={40}
-										style={[{ textAlign: 'center' }, orderItemStyles.leftMargin]}
+										style={orderItemStyles.iconleftMargin}
 										name="md-remove-circle-outline"
 										color="black"
 									/>
@@ -361,7 +358,7 @@ class OrderSummaryScreen extends React.PureComponent {
 									onPress={this.counterChangedHandler.bind(this, 'inc')}>
 									<Icon
 										size={40}
-										style={[{ textAlign: 'center' }, orderItemStyles.leftMargin]}
+										style={orderItemStyles.iconleftMargin}
 										name="md-add-circle-outline"
 										color="black"
 									/>
@@ -997,7 +994,6 @@ class OrderSummaryScreen extends React.PureComponent {
 	// End Order Items  //
 
 	render() {
-		console.log('this.props.orderItems', this.props.orderItems.length)
 		return (
 			<View style={orderItemStyles.orderSideBar}>
 				{this.orderSummaryElement()}
@@ -1149,7 +1145,6 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	paymentModalModal = (isRefill) => {
-		console.log('this.state.isPaymentModal', this.state.isPaymentModal)
 		if (this.state.isPaymentModal) {
 			return (
 
@@ -1756,7 +1751,6 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	onPay = () => {
 		this.setState({ isPaymentModal: true });
-		console.log('isPaymentModal', this.state.isPaymentModal)
 		this.refs.modal6.open();
 	};
 
@@ -2227,6 +2221,11 @@ const styles = StyleSheet.create({
 		alignSelf: 'center'
 	},
 	leftMargin: {
+		left: 10
+	},
+
+	iconleftMargin: {
+		textAlign: 'center',
 		left: 10
 	}
 

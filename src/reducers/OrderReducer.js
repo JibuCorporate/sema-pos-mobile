@@ -55,7 +55,6 @@ const orderReducer = (state = initialState, action) => {
 			// newState.products = newState.products.concat(action.data);
 
 			const index = newState.products.findIndex(u => u.product.productId === action.data.product.productId);
-			console.log('index', index);
 			if (index === -1) {
 				//newState.products.push(action.data);
 				// return newState;
@@ -69,10 +68,10 @@ const orderReducer = (state = initialState, action) => {
 
 			if (index !== -1) {
 				let updateProducts = newState.products.filter(u => u.product.productId !== newState.products[index].product.productId);
-				
-				
+
+
 				//const updateIndex = updateProducts.findIndex(u => u.product.productId === action.data.product.productId);
-			
+
 
 
 				if (newState.products[index].product.productId === action.data.product.productId) {

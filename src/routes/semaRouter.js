@@ -78,7 +78,47 @@ const TabNavigator = createBottomTabNavigator({
                 textTransform: 'uppercase'
             },
         }
-    });
+	});
+
+   const InnerNavigator = createStackNavigator({
+		EditCustomer: {
+			screen: CustomerEdit,
+			navigationOptions: ({ navigation }) => ({
+				title: navigation.getParam('isEdit') ? 'Edit Customer' : 'New Customer',
+				headerStyle: {
+					backgroundColor: '#00549C',
+				},
+				headerTintColor: '#fff',
+			})
+		},
+		CustomerDetails: {
+			screen: TabNavigator,
+			navigationOptions: () => ({
+				title: 'Customer Details',
+				headerStyle: {
+					backgroundColor: '#00549C'
+				},
+				headerTintColor: '#fff',
+			})
+		},
+		OrderView: {
+			screen: OrderView,
+			navigationOptions: () => ({
+				headerTitle: () => <CustomerTitle />,
+				headerStyle: {
+					backgroundColor: '#00549C',
+				},
+				headerTintColor: '#fff',
+			})
+		},
+	},
+		{
+		  headerMode: "screen",
+		  navigationOptions: {
+			header: null
+		  }
+		}
+	);
 
 const ListCustomerStack = createStackNavigator({
     CustomerList: {
@@ -92,37 +132,12 @@ const ListCustomerStack = createStackNavigator({
             headerTintColor: '#fff',
             headerRight: () => <CustomerListHeader />
         }),
-    },
-    EditCustomer: {
-        screen: CustomerEdit,
-        navigationOptions: ({ navigation }) => ({
-            title: navigation.getParam('isEdit') ? 'Edit Customer' : 'New Customer',
-            headerStyle: {
-                backgroundColor: '#00549C',
-            },
-            headerTintColor: '#fff',
-        })
-    },
-    CustomerDetails: {
-        screen: TabNavigator,
-        navigationOptions: () => ({
-            title: 'Customer Details',
-            headerStyle: {
-                backgroundColor: '#00549C'
-            },
-            headerTintColor: '#fff',
-        })
-    },
-    OrderView: {
-        screen: OrderView,
-        navigationOptions: () => ({
-            headerTitle: () => <CustomerTitle />,
-            headerStyle: {
-                backgroundColor: '#00549C',
-            },
-            headerTintColor: '#fff',
-        })
-    },
+	},
+
+	InnerNavigator: {
+		screen: InnerNavigator
+	  }
+
 },
 
     {

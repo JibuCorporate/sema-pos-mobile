@@ -130,10 +130,6 @@ class TransactionDetail extends React.Component {
 		});
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
-        return true;
-    }
-
 
 	onDeleteReceipt(item) {
 		return () => {
@@ -561,9 +557,6 @@ class Transactions extends React.Component {
 	}
 
 
-	shouldComponentUpdate(nextProps, nextState) {
-        return true;
-    }
 
 	componentDidMount() {
 		this.props.navigation.setParams({ paymentTypeValue: 'all' });

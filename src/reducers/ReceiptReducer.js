@@ -49,7 +49,6 @@ const receiptReducer = (state = initialState, action) => {
             return newState;
         case UPDATE_TRANSACTION:
             newState = { ...state };
-            console.log('action.data', action.data)
             // newState.transactions = this.prepareSectionedData();
             return newState;
         case SET_REMOTE_RECEIPTS:

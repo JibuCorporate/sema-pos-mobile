@@ -39,12 +39,10 @@ class ProductListScreen extends React.PureComponent {
 		this.state = {
 			salesChannel: SalesChannelRealm.getSalesChannelFromId(this.props.selectedCustomer.salesChannelId)
 		}
-		this.numColumns = 4;
-		this.horizontal = false;
-		this.removeClippedSubviews =true;
 	};
 
 	static whyDidYouRender = true;
+
 
 
 	handleOnPress = (item) => {
@@ -114,9 +112,8 @@ class ProductListScreen extends React.PureComponent {
 						data={this.prepareData()}
 						renderItem={this._renderItem}
 						keyExtractor={item => item.productId}
-						numColumns={this.numColumns}
-						horizontal={this.horizontal}
-						removeClippedSubviews={this.removeClippedSubviews}
+						numColumns={4}
+						horizontal={false}
 					/>
 				</View>
 			);

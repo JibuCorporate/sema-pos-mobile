@@ -31,8 +31,8 @@ const customerReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case CUSTOMER_SELECTED:
 			newState = { ...state };
-			//	newState.selectedCustomer = action.data;
-			return { ...newState, selectedCustomer: action.data };
+			newState.selectedCustomer = action.data;
+			return newState;
 		case CUSTOMER_PROPS:
 			newState = { ...state };
 			newState.customerProps = action.data;

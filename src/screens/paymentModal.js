@@ -74,6 +74,7 @@ class PaymentModal extends React.PureComponent {
 						)}
 						// extraData={this.props.selectedDebtPaymentTypes}
 						numColumns={3}
+						legacyImplementation={true}
 						contentContainerStyle={styles.container}
 					/>
 					<View style={styles.flexpad}>

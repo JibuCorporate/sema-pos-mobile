@@ -599,7 +599,6 @@ class CustomerDetails extends React.PureComponent {
 		);
 	}
 	componentWillUnmount() {
-		// this.props.customerActions.CustomerSelected({});
 		this.props.customerActions.setCustomerEditStatus(false);
 		Events.rm('ScrollCustomerTo', 'customerId1');
 	}
