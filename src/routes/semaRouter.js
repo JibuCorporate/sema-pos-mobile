@@ -80,46 +80,6 @@ const TabNavigator = createBottomTabNavigator({
         }
 	});
 
-   const InnerNavigator = createStackNavigator({
-		EditCustomer: {
-			screen: CustomerEdit,
-			navigationOptions: ({ navigation }) => ({
-				title: navigation.getParam('isEdit') ? 'Edit Customer' : 'New Customer',
-				headerStyle: {
-					backgroundColor: '#00549C',
-				},
-				headerTintColor: '#fff',
-			})
-		},
-		CustomerDetails: {
-			screen: TabNavigator,
-			navigationOptions: () => ({
-				title: 'Customer Details',
-				headerStyle: {
-					backgroundColor: '#00549C'
-				},
-				headerTintColor: '#fff',
-			})
-		},
-		OrderView: {
-			screen: OrderView,
-			navigationOptions: () => ({
-				headerTitle: () => <CustomerTitle />,
-				headerStyle: {
-					backgroundColor: '#00549C',
-				},
-				headerTintColor: '#fff',
-			})
-		},
-	},
-		{
-		  headerMode: "screen",
-		  navigationOptions: {
-			header: null
-		  }
-		}
-	);
-
 const ListCustomerStack = createStackNavigator({
     CustomerList: {
         screen: CustomerList,
@@ -134,9 +94,37 @@ const ListCustomerStack = createStackNavigator({
         }),
 	},
 
-	InnerNavigator: {
-		screen: InnerNavigator
-	  }
+	OrderView: {
+		screen: OrderView,
+		navigationOptions: () => ({
+			headerTitle: () => <CustomerTitle />,
+			headerStyle: {
+				backgroundColor: '#00549C',
+			},
+			headerTintColor: '#fff',
+		})
+	},
+
+	EditCustomer: {
+		screen: CustomerEdit,
+		navigationOptions: ({ navigation }) => ({
+			title: navigation.getParam('isEdit') ? 'Edit Customer' : 'New Customer',
+			headerStyle: {
+				backgroundColor: '#00549C',
+			},
+			headerTintColor: '#fff',
+		})
+	},
+	CustomerDetails: {
+		screen: TabNavigator,
+		navigationOptions: () => ({
+			title: 'Customer Details',
+			headerStyle: {
+				backgroundColor: '#00549C'
+			},
+			headerTintColor: '#fff',
+		})
+	},
 
 },
 

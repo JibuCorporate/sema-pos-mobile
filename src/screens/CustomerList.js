@@ -61,18 +61,18 @@ class CustomerItem extends React.PureComponent {
 	}
 
     handleOnPress = () => {
-		InteractionManager.runAfterInteractions(() => {
-        this.props.customerActions.CustomerSelected(this.props.item);
-        this.props.customerActions.SetCustomerProp({
-                isDueAmount: this.props.item.dueAmount,
-                isCustomerSelected: false,
-                customerName: '',
-                'title': this.props.item.name + "'s Order"
-            }
-		);
+		// InteractionManager.runAfterInteractions(() => {
+        // this.props.customerActions.CustomerSelected(this.props.item);
+        // this.props.customerActions.SetCustomerProp({
+        //         isDueAmount: this.props.item.dueAmount,
+        //         isCustomerSelected: false,
+        //         customerName: '',
+        //         'title': this.props.item.name + "'s Order"
+        //     }
+		// );
 
 		this.props.navigation.navigate('OrderView');
-		});
+		// });
 
     }
 
@@ -368,8 +368,8 @@ class CustomerList extends React.PureComponent {
                         {i18n.t('account-name')}
                     </Text>
                 </View>
-                <View style={[styles.flexOne]}>
-                    <Text style={[styles.headerItem]}>
+                <View style={styles.flexOne}>
+                    <Text style={styles.headerItem}>
                         {i18n.t('telephone-number')}
                     </Text>
                 </View>
@@ -415,35 +415,6 @@ class CustomerList extends React.PureComponent {
         );
     };
 
-	onLongPressItem(item) {
-        this.props.customerActions.CustomerSelected(item);
-        this.props.customerActions.SetCustomerProp(
-            {
-                isCustomerSelected: true,
-                isDueAmount: item.dueAmount,
-                customerName: item.name,
-                'title': item.name
-            }
-        );
-
-        this.props.customerActions.setCustomerEditStatus(true);
-	}
-
-    handleOnPress(item) {
-        this.props.customerActions.CustomerSelected(item);
-        this.props.customerActions.SetCustomerProp(
-            {
-                isDueAmount: item.dueAmount,
-                isCustomerSelected: false,
-                customerName: '',
-                'title': item.name + "'s Order"
-            }
-        );
-        // if (this.props.products.length > 0) {
-            this.props.navigation.navigate('OrderView');
-        // }
-    }
-
     _renderItem = ({ item, index, separators }) => {
         return (
 				<CustomerItem
@@ -455,8 +426,6 @@ class CustomerList extends React.PureComponent {
 				/>
         )
     };
-
-
 
     render() {
         return (
@@ -478,17 +447,21 @@ class CustomerList extends React.PureComponent {
                 />
                 <FloatingAction
                     onOpen={name => {
-                        this.props.customerActions.CustomerSelected({});
-                        this.props.customerActions.setCustomerEditStatus(false);
-                        this.props.customerActions.SetCustomerProp(
-                            {
-                                isCustomerSelected: false,
-                                isDueAmount: 0,
-                                customerName: '',
-                                'title': '',
-                            }
-                        );
-                        this.props.navigation.navigate('EditCustomer');
+						// requestAnimationFrame(() => {
+						// 	InteractionManager.runAfterInteractions(() => {
+						// 	this.props.customerActions.CustomerSelected({});
+						// 	this.props.customerActions.setCustomerEditStatus(false);
+							// this.props.customerActions.SetCustomerProp(
+							//     {
+							//         isCustomerSelected: false,
+							//         isDueAmount: 0,
+							//         customerName: '',
+							//         'title': '',
+							//     }
+							// );
+							this.props.navigation.navigate('EditCustomer');
+						// 	});
+						// });
                     }}
                 />
 
