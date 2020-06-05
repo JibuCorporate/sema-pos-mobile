@@ -62,14 +62,14 @@ class CustomerItem extends React.PureComponent {
 
     handleOnPress = () => {
 		// InteractionManager.runAfterInteractions(() => {
-        // this.props.customerActions.CustomerSelected(this.props.item);
-        // this.props.customerActions.SetCustomerProp({
-        //         isDueAmount: this.props.item.dueAmount,
-        //         isCustomerSelected: false,
-        //         customerName: '',
-        //         'title': this.props.item.name + "'s Order"
-        //     }
-		// );
+        this.props.customerActions.CustomerSelected(this.props.item);
+        this.props.customerActions.SetCustomerProp({
+                isDueAmount: this.props.item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': this.props.item.name + "'s Order"
+            }
+		);
 
 		this.props.navigation.navigate('OrderView');
 		// });
@@ -526,7 +526,7 @@ class SearchWatcher extends React.PureComponent {
 }
 
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
     return {
         selectedCustomer: state.customerReducer.selectedCustomer,
         customers: state.customerReducer.customers,
