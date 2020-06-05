@@ -395,7 +395,7 @@ class CustomerList extends React.PureComponent {
 
                     </TouchableWithoutFeedback>
                 </View>
-                <View style={[styles.flexOne]}>
+                <View style={styles.flexOne}>
                     <TouchableWithoutFeedback onPress={() => {
                         this.setState({ walletcustomers: !this.state.walletcustomers });
                         this.setState({ refresh: !this.state.refresh });
@@ -447,21 +447,21 @@ class CustomerList extends React.PureComponent {
                 />
                 <FloatingAction
                     onOpen={name => {
-						// requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
 						// 	InteractionManager.runAfterInteractions(() => {
-						// 	this.props.customerActions.CustomerSelected({});
-						// 	this.props.customerActions.setCustomerEditStatus(false);
-							// this.props.customerActions.SetCustomerProp(
-							//     {
-							//         isCustomerSelected: false,
-							//         isDueAmount: 0,
-							//         customerName: '',
-							//         'title': '',
-							//     }
-							// );
+							this.props.customerActions.CustomerSelected({});
+							this.props.customerActions.setCustomerEditStatus(false);
+							this.props.customerActions.SetCustomerProp(
+							    {
+							        isCustomerSelected: false,
+							        isDueAmount: 0,
+							        customerName: '',
+							        'title': '',
+							    }
+							);
 							this.props.navigation.navigate('EditCustomer');
 						// 	});
-						// });
+						});
                     }}
                 />
 
