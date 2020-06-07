@@ -23,8 +23,10 @@ import CustomerListHeader from './CustomerListHeader';
 import CustomerTitle from './CustomerTitle';
 import NavigationDrawerStructure from './NavigationDrawerStructure';
 
-import { enableScreens } from 'react-native-screens';
-enableScreens();
+import { NavigationContainer } from '@react-navigation/native';
+
+// import { enableScreens } from 'react-native-screens';
+// enableScreens();
 
 const CreditHistoryStack = createStackNavigator({
     CreditHistory: {

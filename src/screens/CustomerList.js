@@ -39,13 +39,11 @@ import slowlog from 'react-native-slowlog';
 class CustomerItem extends React.PureComponent {
 	constructor(props) {
         super(props);
-		slowlog(this, /.*/);
 		this.handleOnPress = this.handleOnPress.bind(this);
 		this.onLongPressItem = this.onLongPressItem.bind(this);
 	}
 
 	static whyDidYouRender = true;
-
 
 	onLongPressItem = () => {
         this.props.customerActions.CustomerSelected(this.props.item);
@@ -101,7 +99,6 @@ class CustomerItem extends React.PureComponent {
     }
 
     render() {
-
         return (
 		<TouchableHighlight
             onLongPress={this.onLongPressItem}
@@ -149,7 +146,7 @@ class CustomerItem extends React.PureComponent {
 }
 
 
-class CustomerList extends React.PureComponent {
+class CustomerList extends React.Component {
     constructor(props) {
         super(props);
         slowlog(this, /.*/);
@@ -415,7 +412,7 @@ class CustomerList extends React.PureComponent {
         );
     };
 
-    _renderItem = ({ item, index, separators }) => {
+    renderItem = ({ item, index, separators }) => {
         return (
 				<CustomerItem
 					item={item}
@@ -439,16 +436,15 @@ class CustomerList extends React.PureComponent {
                     ListHeaderComponent={this.showHeader}
                     stickyHeaderIndices={[0]}
                     extraData={this.state.refresh}
-                    renderItem={this._renderItem}
+                    renderItem={this.renderItem}
                     keyExtractor={(item, idx) => item.customerId + idx}
-					// legacyImplementation={false}
+					legacyImplementation={true}
 					maxToRenderPerBatch = {1}
-					initialNumToRender={50}
+					initialNumToRender={0}
                 />
                 <FloatingAction
                     onOpen={name => {
 						requestAnimationFrame(() => {
-						// 	InteractionManager.runAfterInteractions(() => {
 							this.props.customerActions.CustomerSelected({});
 							this.props.customerActions.setCustomerEditStatus(false);
 							this.props.customerActions.SetCustomerProp(
@@ -460,7 +456,7 @@ class CustomerList extends React.PureComponent {
 							    }
 							);
 							this.props.navigation.navigate('EditCustomer');
-						// 	});
+
 						});
                     }}
                 />

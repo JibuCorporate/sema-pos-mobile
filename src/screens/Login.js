@@ -51,7 +51,6 @@ const supportedUILanguages = [
 
 class Login extends React.PureComponent {
 	constructor(props) {
-
 		super(props);
 
 		this.supportedLanguages = React.createRef();
@@ -68,9 +67,6 @@ class Login extends React.PureComponent {
 		this.onLanguageSelected = this.onLanguageSelected.bind(this);
 	}
 
-	componentDidMount() {
-
-	}
 
 	render() {
 		let serviceItems = supportedUILanguages.map((s, i) => {
@@ -85,8 +81,8 @@ class Login extends React.PureComponent {
 					<View style={styles.ctnerstyle}>
 						<Card
 							title={'Welcome to SEMA'}
-							titleStyle={{ fontSize: 26 }}
-							dividerStyle={{ display: 'none' }}
+							titleStyle={styles.font26}
+							dividerStyle={styles.dispnone}
 							containerStyle={styles.cardstyle}>
 
 							<Input
@@ -139,7 +135,7 @@ class Login extends React.PureComponent {
 				this.loadSyncedData().then(results => {
 					this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 					this.setState({ isLoading: false });
-					this.props.navigation.navigate('App');
+					// this.props.navigation.navigate('App');
 				});
 
 			});
@@ -246,7 +242,7 @@ class Login extends React.PureComponent {
 						if (!this.isSiteIdDifferent(result.response.data.kiosk.id, oldSettings.siteId)) {
 							this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 							this.setState({ isLoading: false });
-							this.props.navigation.navigate('App');
+							// this.props.navigation.navigate('App');
 						}
 
 					}else{
@@ -403,8 +399,7 @@ class Login extends React.PureComponent {
 	}
 }
 
-
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
 	return {
 		settings: state.settingsReducer.settings,
 		auth: state.authReducer,
@@ -546,5 +541,11 @@ const styles = StyleSheet.create({
 		color: '#002b80',
 		fontSize: 50,
 		fontWeight: 'bold'
+	},
+	font26: {
+		fontSize: 26
+	},
+	dispnone: {
+		display: "none"
 	}
 });

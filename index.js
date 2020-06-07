@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import App from './App';
 import configureStore from './src/app/store';
 
-
 const store = configureStore();
 
 const MainApp = () => (
@@ -14,4 +13,4 @@ const MainApp = () => (
 );
 
 AppRegistry.registerComponent('semapos', () => MainApp);
-console.disableYellowBox = true;
+console.disableYellowBox = false;
