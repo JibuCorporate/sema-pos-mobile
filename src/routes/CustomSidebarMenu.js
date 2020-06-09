@@ -77,7 +77,8 @@ class CustomSidebarMenu extends React.PureComponent {
         navOptionName: 'LogOut',
         screenToNavigate: 'LogOut',
       }
-    ];
+	];
+	
   }
 
   componentDidMount(){
