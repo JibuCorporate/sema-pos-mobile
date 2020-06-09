@@ -242,7 +242,7 @@ class Login extends React.PureComponent {
 						if (!this.isSiteIdDifferent(result.response.data.kiosk.id, oldSettings.siteId)) {
 							this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 							this.setState({ isLoading: false });
-							// this.props.navigation.navigate('App');
+							this.props.navigation.navigate('App');
 						}
 
 					}else{
