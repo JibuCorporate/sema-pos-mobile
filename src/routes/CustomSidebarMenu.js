@@ -80,10 +80,6 @@ class CustomSidebarMenu extends React.PureComponent {
     ];
   }
 
-  componentDidMount(){
-
-  }
-
   handleOnPress(item, key) {
     requestAnimationFrame(() => {
       global.currentScreenIndex = key;
@@ -158,7 +154,6 @@ class CustomSidebarMenu extends React.PureComponent {
     Communications.setToken('');
     this.props.navigation.navigate('Login');
   };
-
 
   loadSyncedData() {
     this.props.customerActions.setCustomers(
@@ -347,7 +342,6 @@ class CustomSidebarMenu extends React.PureComponent {
   }
 
 }
-
 
 function mapStateToProps(state, props) {
   return {

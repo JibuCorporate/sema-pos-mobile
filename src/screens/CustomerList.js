@@ -1,11 +1,5 @@
 import React from 'react';
 
-if (process.env.NODE_ENV === 'development') {
-    const whyDidYouRender = require('@welldone-software/why-did-you-render');
-    whyDidYouRender(React, {
-        trackAllPureComponents: true,
-    });
-}
 import {
     View,
     Text,
@@ -13,8 +7,7 @@ import {
     Alert,
     FlatList,
     TouchableWithoutFeedback,
-	TouchableHighlight,
-	InteractionManager
+	TouchableHighlight
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
@@ -34,18 +27,12 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 
 import PaymentModal from './paymentModal';
 
-import slowlog from 'react-native-slowlog';
-
 class CustomerItem extends React.PureComponent {
 	constructor(props) {
         super(props);
-		slowlog(this, /.*/);
 		this.handleOnPress = this.handleOnPress.bind(this);
 		this.onLongPressItem = this.onLongPressItem.bind(this);
 	}
-
-	static whyDidYouRender = true;
-
 
 	onLongPressItem = () => {
         this.props.customerActions.CustomerSelected(this.props.item);
@@ -62,6 +49,7 @@ class CustomerItem extends React.PureComponent {
 
     handleOnPress = () => {
 		// InteractionManager.runAfterInteractions(() => {
+			requestAnimationFrame(() => {
         this.props.customerActions.CustomerSelected(this.props.item);
         this.props.customerActions.SetCustomerProp({
                 isDueAmount: this.props.item.dueAmount,
@@ -72,7 +60,7 @@ class CustomerItem extends React.PureComponent {
 		);
 
 		this.props.navigation.navigate('OrderView');
-		// });
+		});
 
     }
 
@@ -152,7 +140,6 @@ class CustomerItem extends React.PureComponent {
 class CustomerList extends React.PureComponent {
     constructor(props) {
         super(props);
-        slowlog(this, /.*/);
 
         this.state = {
             refresh: false,
@@ -166,8 +153,6 @@ class CustomerList extends React.PureComponent {
         };
 
 	}
-
-	static whyDidYouRender = true;
 
     componentDidMount() {
         this.props.navigation.setParams({
@@ -425,7 +410,21 @@ class CustomerList extends React.PureComponent {
 					navigation={this.props.navigation}
 				/>
         )
-    };
+	};
+
+	floatActionOpen = () => {
+							this.props.customerActions.CustomerSelected({});
+							this.props.customerActions.setCustomerEditStatus(false);
+							this.props.customerActions.SetCustomerProp(
+							    {
+							        isCustomerSelected: false,
+							        isDueAmount: 0,
+							        customerName: '',
+							        'title': '',
+							    }
+							);
+							this.props.navigation.navigate('EditCustomer');
+	}
 
     render() {
         return (
@@ -446,23 +445,7 @@ class CustomerList extends React.PureComponent {
 					initialNumToRender={50}
                 />
                 <FloatingAction
-                    onOpen={name => {
-						requestAnimationFrame(() => {
-						// 	InteractionManager.runAfterInteractions(() => {
-							this.props.customerActions.CustomerSelected({});
-							this.props.customerActions.setCustomerEditStatus(false);
-							this.props.customerActions.SetCustomerProp(
-							    {
-							        isCustomerSelected: false,
-							        isDueAmount: 0,
-							        customerName: '',
-							        'title': '',
-							    }
-							);
-							this.props.navigation.navigate('EditCustomer');
-						// 	});
-						});
-                    }}
+                    onOpen={name => this.floatActionOpen()}
                 />
 
                 <View style={styles.modalPayment}>

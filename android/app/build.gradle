@@ -111,7 +111,7 @@ android {
         applicationId "com.semapos"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 79
+        versionCode 80
         versionName "0.7.0"
     }
 
@@ -174,7 +174,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
 	implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
-	implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
+	implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
 	if (enableHermes) {
     def hermesPath = "../../node_modules/hermesvm/android/";

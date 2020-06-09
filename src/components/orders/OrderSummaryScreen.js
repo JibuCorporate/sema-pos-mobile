@@ -1,12 +1,4 @@
 import React from "react";
-if (process.env.NODE_ENV === 'development') {
-	const whyDidYouRender = require('@welldone-software/why-did-you-render');
-	const ReactRedux = require('react-redux');
-	whyDidYouRender(React, {
-		trackAllPureComponents: true,
-	});
-}
-
 import { View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight, StyleSheet, Alert } from "react-native";
 import orderItemStyles from "./orderItemStyles";
 import orderCheckOutStyles from "./orderCheckOutStyles";
@@ -17,7 +9,6 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DiscountRealm from '../../database/discount/discount.operations';
 import ToggleSwitch from 'toggle-switch-react-native';
-import slowlog from 'react-native-slowlog';
 
 import { bindActionCreators } from "redux";
 import * as OrderActions from "../../actions/OrderActions";
@@ -48,7 +39,6 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
-		slowlog(this, /.*/);
 		this.state = {
 			selectedItem: {},
 			accumulator: 0,
@@ -86,7 +76,6 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.orderItems = [...this.props.orderItems];
 	}
 
-	static whyDidYouRender = true;
 	orderSummaryElement = () => {
 		return (
 			<View style={styles.container}>
@@ -1038,9 +1027,9 @@ class OrderSummaryScreen extends React.PureComponent {
 	};
 
 	handleCompleteSale() {
-		// requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
 		this.onCompleteOrder();
-		// });
+		});
 	};
 
 	deliveryMode = () => {
@@ -1151,7 +1140,7 @@ class OrderSummaryScreen extends React.PureComponent {
 				<View style={{ flex: 1, padding: 0, margin: 0 }}>
 					<ScrollView>
 
-
+					<TouchableOpacity>
 						<View
 							style={{
 								justifyContent: 'flex-end',
@@ -1301,7 +1290,7 @@ class OrderSummaryScreen extends React.PureComponent {
 								</View>
 							</View>
 						</View>
-
+						</TouchableOpacity>
 					</ScrollView>
 					<View style={orderCheckOutStyles.completeOrderBtn}>
 						<View style={orderItemStyles.justifyCenter}>
@@ -2023,7 +2012,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 			receipt.customer_account = this.props.selectedCustomer;
 			if (this.props.selectedPaymentTypes.length > 0) {
-				ReceiptPaymentTypeRealm.createManyReceiptPaymentType(this.props.selectedPaymentTypes, receipt.id);
+				ReceiptPaymentTypeRealm.createManyReceiptPaymentType(this.props.selectedPaymentTypes, receipt.id );
 				this.props.paymentTypesActions.setRecieptPaymentTypes(
 					ReceiptPaymentTypeRealm.getReceiptPaymentTypes()
 				);

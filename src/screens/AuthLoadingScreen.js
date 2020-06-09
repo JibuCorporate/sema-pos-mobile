@@ -4,7 +4,8 @@ import {
     View,
     StyleSheet,
     ActivityIndicator,
-    StatusBar,
+	StatusBar,
+	InteractionManager
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -66,9 +67,11 @@ class AuthLoadingScreen extends React.PureComponent {
         }
 
         if (settings.site != "" && settings.siteId > 0) {
-            this.loadSyncedData();
-            if (settings.token.length > 1) {
+			InteractionManager.runAfterInteractions(() => {
+			  this.loadSyncedData();
+			});
 
+            if (settings.token.length > 1) {
                 this.props.settingsActions.setSettings({ ...settings, loginSync: false });
                 this.props.navigation.navigate('App');
             }
@@ -140,8 +143,6 @@ class AuthLoadingScreen extends React.PureComponent {
         );
         Synchronization.setConnected(this.props.network.isNWConnected);
     };
-
-    componentWillUnmount() { }
 
     render() {
         const animating = this.state.animating;

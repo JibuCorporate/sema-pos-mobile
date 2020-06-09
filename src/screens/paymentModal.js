@@ -1,6 +1,7 @@
 import React from "react";
 
-import { View, Alert, Text, TextInput, FlatList, ScrollView, TouchableHighlight, StyleSheet } from "react-native";
+import { View, Alert, Text, TextInput, FlatList, ScrollView, TouchableHighlight,
+	TouchableOpacity, StyleSheet } from "react-native";
 import { CheckBox, Card } from 'react-native-elements';
 import * as CustomerActions from '../actions/CustomerActions';
 import * as PaymentTypesActions from "../actions/PaymentTypesActions";
@@ -44,6 +45,7 @@ class PaymentModal extends React.PureComponent {
 	render() {
 		return (
 				<ScrollView>
+					<TouchableOpacity>
 					<View
 					style={styles.paymodcont}>
 						<View
@@ -107,6 +109,7 @@ class PaymentModal extends React.PureComponent {
 				</View>
 
 			</View>
+			</TouchableOpacity>
 		</ScrollView>
 
 		);
