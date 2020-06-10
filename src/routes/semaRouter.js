@@ -270,7 +270,7 @@ const JibuDrawerNavigation = createDrawerNavigator({
         },
         drawerType: 'slide',
         drawerWidth: Dimensions.get('window').width * .3,
-    });
+ });
 
 const JibuRouter = createSwitchNavigator(
     {

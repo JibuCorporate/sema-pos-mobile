@@ -78,7 +78,7 @@ class CustomSidebarMenu extends React.PureComponent {
         screenToNavigate: 'LogOut',
       }
 	];
-	
+
   }
 
   componentDidMount(){
@@ -94,7 +94,7 @@ class CustomSidebarMenu extends React.PureComponent {
       }
 
       if (item.screenToNavigate != 'LogOut' || item.screenToNavigate != 'Sync') {
-        this.props.navigation.navigate(item.screenToNavigate);
+        this.props.navigationProps.navigate(item.screenToNavigate);
       }
       if (item.screenToNavigate === 'Sync') {
         this.onSynchronize();
@@ -157,7 +157,7 @@ class CustomSidebarMenu extends React.PureComponent {
     this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
     //As we are not going to the Login, the reason no reason to disable the token
     Communications.setToken('');
-    this.props.navigation.navigate('Login');
+    this.props.navigationProps.navigate('Login');
   };
 
 
