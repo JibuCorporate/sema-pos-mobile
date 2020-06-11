@@ -152,7 +152,7 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(
     mapStateToProps, mapDispatchToProps
-)(withNavigation(CustomerListHeader));
+)(CustomerListHeader);
 
 const styles = StyleSheet.create({
 	iconStyle: {
