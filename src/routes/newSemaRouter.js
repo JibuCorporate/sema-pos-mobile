@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Dimensions, Picker, StyleSheet } from 'react-native';
+import { View, Picker, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -28,7 +28,6 @@ import NewNavigationDrawerStructure from './NewNavigationDrawerStructure';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
-
 
 function CreditHistoryStack() {
 	return (
@@ -85,7 +84,7 @@ function TabNavigator(){
 	)
 }
 
-function ListCustomerStack({ navigation }) {
+function ListCustomerStack({ navigation, route }) {
 	return (
 	  <Stack.Navigator
 		initialRouteName="CustomerList"
@@ -116,7 +115,7 @@ function ListCustomerStack({ navigation }) {
 		  name="CustomerEdit"
 		  component={CustomerEdit}
 		  screenOptions={{
-			title: navigation.getParam('isEdit') ? 'Edit Customer' : 'New Customer',
+			title: route.params?.isEdit ? 'Edit Customer' : 'New Customer',
 			headerStyle: {
 			  backgroundColor: '#00549C',
 			},
@@ -136,7 +135,7 @@ function ListCustomerStack({ navigation }) {
 	);
   }
 
-function TransactionStack({ navigation }){
+function TransactionStack({ route }){
 	return (
 		<Stack.Navigator initialRouteName="Transactions">
 		  <Stack.Screen
@@ -144,7 +143,7 @@ function TransactionStack({ navigation }){
 			component={Transactions}
 			options={{
 				title: 'Transactions', //Set Header Title
-				headerLeft: ()=> <NewNavigationDrawerStructure />,
+				headerLeft: ()=> <NewnavigationDrawerStructure />,
 				headerStyle: {
 				  backgroundColor: '#00549C', //Set Header color
 				},
@@ -156,9 +155,9 @@ function TransactionStack({ navigation }){
 							style={styles.custpicker}>
 							<Picker
 								mode="dropdown"
-								selectedValue={navigation.getParam('paymentTypeValue')}
+								selectedValue={route.params?.paymentTypeValue ?? ''}
 								style={styles.smropicker}
-								onValueChange={navigation.getParam('checkPaymentTypefilter')}>
+								onValueChange={route.params?.checkPaymentTypefilter ?? ''}>
 								<Picker.Item label="All Payment Types" value="all" />
 								<Picker.Item label="Cash" value="cash" />
 								<Picker.Item label="Mobile" value="mobile" />
@@ -255,26 +254,26 @@ function DrawerContainer() {
 		itemStyle: { marginVertical: 5 },
 		}}
 		drawerContent={props => <CustomSidebarMenu {...props} />}>
-	<Drawer.Screen
-	  name="ListCustomerStack"
-	  options={{  drawerLabel: 'Customers' }}
-	  component={ListCustomerStack} />
-	<Drawer.Screen
-	  name="TransactionStack"
-	  options={{ drawerLabel: 'Transactions' }}
-	  component={TransactionStack} />
-	<Drawer.Screen
-	  name="SalesReportStack"
-	  options={{  drawerLabel: 'Sales Report', }}
-	  component={SalesReportStack} />
-	<Drawer.Screen
-	  name="InventoryStack"
-	  options={{ drawerLabel: 'Wastage Report' }}
-	  component={InventoryStack} />
-	<Drawer.Screen
-	  name="ReminderStack"
-	  options={{ drawerLabel: 'Reminders' }}
-	  component={ReminderStack} />
+			<Drawer.Screen
+			name="ListCustomerStack"
+			options={{  drawerLabel: 'Customers' }}
+			component={ListCustomerStack} />
+			<Drawer.Screen
+			name="TransactionStack"
+			options={{ drawerLabel: 'Transactions' }}
+			component={TransactionStack} />
+			<Drawer.Screen
+			name="SalesReportStack"
+			options={{  drawerLabel: 'Sales Report', }}
+			component={SalesReportStack} />
+			<Drawer.Screen
+			name="InventoryStack"
+			options={{ drawerLabel: 'Wastage Report' }}
+			component={InventoryStack} />
+			<Drawer.Screen
+			name="ReminderStack"
+			options={{ drawerLabel: 'Reminders' }}
+			component={ReminderStack} />
   </Drawer.Navigator>
 	);
 }
@@ -282,8 +281,8 @@ function DrawerContainer() {
 function App() {
   return (
     <NavigationContainer>
-		{/* <DrawerContainer /> */}
-		<Login />
+		<DrawerContainer />
+		{/* <Login /> */}
 	  {/* <Stack.Navigator>
         {isLoggedIn ? (
           <>

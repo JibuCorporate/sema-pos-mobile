@@ -45,7 +45,7 @@ class CustomSidebarMenu extends React.PureComponent {
       {
         navOptionThumb: 'md-contact',
         navOptionName: 'Customers',
-        screenToNavigate: 'ListCustomers',
+		screenToNavigate: 'ListCustomers',
       },
       {
         navOptionThumb: 'md-pricetag',
@@ -94,7 +94,7 @@ class CustomSidebarMenu extends React.PureComponent {
       }
 
       if (item.screenToNavigate != 'LogOut' || item.screenToNavigate != 'Sync') {
-        this.props.navigationProps.navigate(item.screenToNavigate);
+		this.props.navigation.navigate({ name: item.screenToNavigate, key: item.screenToNavigate });
       }
       if (item.screenToNavigate === 'Sync') {
         this.onSynchronize();
@@ -157,7 +157,7 @@ class CustomSidebarMenu extends React.PureComponent {
     this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
     //As we are not going to the Login, the reason no reason to disable the token
     Communications.setToken('');
-    this.props.navigationProps.navigate('Login');
+	this.props.navigation.navigate({ name: 'Login', key: 'Login' });
   };
 
 
