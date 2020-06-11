@@ -12,9 +12,8 @@ import {
     StyleSheet,
     Alert,
     FlatList,
-    TouchableWithoutFeedback,
-    TouchableHighlight,
-    InteractionManager
+    VirtualizedList,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
@@ -36,117 +35,25 @@ import PaymentModal from './paymentModal';
 
 import slowlog from 'react-native-slowlog';
 
-class CustomerItem extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.handleOnPress = this.handleOnPress.bind(this);
-        this.onLongPressItem = this.onLongPressItem.bind(this);
-    }
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
-    static whyDidYouRender = true;
+const initialNumToRender = 50;
 
-    onLongPressItem = () => {
-        this.props.customerActions.CustomerSelected(this.props.item);
-        this.props.customerActions.SetCustomerProp({
-            isCustomerSelected: true,
-            isDueAmount: this.props.item.dueAmount,
-            customerName: this.props.item.name,
-            'title': this.props.item.name
-        }
-        );
-
-        this.props.customerActions.setCustomerEditStatus(true);
-    }
-
-    handleOnPress = () => {
-        // InteractionManager.runAfterInteractions(() => {
-        this.props.customerActions.CustomerSelected(this.props.item);
-        this.props.customerActions.SetCustomerProp({
-            isDueAmount: this.props.item.dueAmount,
-            isCustomerSelected: false,
-            customerName: '',
-            'title': this.props.item.name + "'s Order"
-        }
-        );
-        this.props.navigation.navigate('ListCustomerStack', { screen: 'OrderView' });
-        // this.props.navigation.navigate('OrderView');
-        // });
-
-    }
-
-    getRowBackground() {
-        let isSelected = false;
-        if (isSelected) {
-            return styles.selectedBackground;
-        } else {
-            return this.props.index % 2 === 0
-                ? styles.lightBackground
-                : styles.darkBackground;
-        }
-    }
-
-    getCustomerTypes() {
-        const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
-        try {
-            for (let i = 0; i < customerTypeIts.length; i++) {
-                if (customerTypeIts[i].id === this.props.item.customerTypeId) {
-                    return customerTypeIts[i].name;
-                }
-            }
-        } catch (error) {
-            return 'Walk-up';
-        }
-    }
-
-    render() {
-        return (
-            <TouchableHighlight
-                onLongPress={this.onLongPressItem}
-                onPress={this.handleOnPress}
-                onShowUnderlay={this.props.separators.highlight}
-                onHideUnderlay={this.props.separators.unhighlight}>
-                <View
-                    style={[
-                        this.getRowBackground(), styles.listStyles
-                    ]}>
-                    <View style={styles.OneHalf}>
-                        <Text style={[styles.baseItem, styles.leftMargin]}>
-                            {this.props.item.name}
-                        </Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {this.props.item.phoneNumber}
-                        </Text>
-                    </View>
-
-                    <View style={styles.OneHalf}>
-                        <Text style={[styles.baseItem]}>{this.props.item.address}</Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {this.getCustomerTypes()}
-                        </Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {this.props.item.dueAmount ? this.props.item.dueAmount.toFixed(2) : 0}
-                        </Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {this.props.item.walletBalance.toFixed(2)}
-                        </Text>
-                    </View>
-                </View>
-            </TouchableHighlight>
-
-        );
-    }
-}
-
-
-class CustomerList extends React.Component {
+const DATA = [
+    {
+        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+        title: 'First Item',
+    },
+    {
+        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+        title: 'Second Item',
+    },
+    {
+        id: '58694a0f-3da1-471f-bd96-145571e29d72',
+        title: 'Third Item',
+    },
+];
+class CustomerList extends React.PureComponent {
     constructor(props) {
         super(props);
         slowlog(this, /.*/);
@@ -161,12 +68,11 @@ class CustomerList extends React.Component {
             hasScrolled: false,
             isPaymentModal: true,
         };
+        this.windowSize = 10;
+        this.stickyHeaderIndices = [0];
+        this.removeClippedSubviews = true;
+        this.isSelected = false;
 
-    }
-
-    static whyDidYouRender = true;
-
-    componentDidMount() {
         this.props.navigation.setParams({
             isCustomerSelected: false,
             customerTypeValue: 'all',
@@ -179,7 +85,29 @@ class CustomerList extends React.Component {
 
         this.props.customerActions.CustomerSelected({});
         this.props.customerActions.setCustomerEditStatus(false);
+
     }
+
+    componentDidMount() {
+
+    }
+
+    // shouldComponentUpdate(){
+    //     return false;
+    // }
+
+    // componentWillMount() {
+
+    // }
+
+    static whyDidYouRender = true;
+
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     console.log('nextProps', this.props.isUpdate);
+    //    // return this.props.isUpdate;
+    //     return this.props.isUpdate;
+    // }
+
 
     getCustomerTypes = (item) => {
         const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
@@ -193,7 +121,6 @@ class CustomerList extends React.Component {
             return 'Walk-up';
         }
     }
-
 
     filterItems = data => {
         let filter = {
@@ -239,11 +166,11 @@ class CustomerList extends React.Component {
     };
 
     prepareData = () => {
-        let data = [];
         if (this.props.customers.length > 0) {
-            data = this.filterItems(this.props.customers);
+            return this.filterItems(this.props.customers)
+        } else {
+            return []
         }
-        return data;
     };
 
     getItemLayout = (data, index) => ({
@@ -256,11 +183,9 @@ class CustomerList extends React.Component {
         this.props.customerActions.SearchCustomers(searchText);
     };
 
-
     checkCustomerTypefilter = (searchText) => {
         this.props.customerActions.SearchCustomerTypes(searchText);
     };
-
 
     modalOnClose() {
         PaymentTypeRealm.resetSelected();
@@ -355,6 +280,13 @@ class CustomerList extends React.Component {
         }
     };
 
+    sortDebtList = () => {
+        this.setState({ debtcustomers: !this.state.debtcustomers, refresh: !this.state.refresh });
+    }
+
+    sortWalletList = () => {
+        this.setState({ walletcustomers: !this.state.walletcustomers, refresh: !this.state.refresh });
+    }
 
     showHeader = () => {
         return (
@@ -365,8 +297,8 @@ class CustomerList extends React.Component {
                         {i18n.t('account-name')}
                     </Text>
                 </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.headerItem}>
+                <View style={[styles.flexOne]}>
+                    <Text style={[styles.headerItem]}>
                         {i18n.t('telephone-number')}
                     </Text>
                 </View>
@@ -377,10 +309,7 @@ class CustomerList extends React.Component {
                     <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
                 </View>
                 <View style={[styles.balance]}>
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.setState({ debtcustomers: !this.state.debtcustomers });
-                        this.setState({ refresh: !this.state.refresh });
-                    }}>
+                    <TouchableWithoutFeedback onPress={this.sortDebtList}>
                         <Text style={styles.headerItem}>{i18n.t('balance')}
                             <Icons
                                 name='sort'
@@ -392,11 +321,8 @@ class CustomerList extends React.Component {
 
                     </TouchableWithoutFeedback>
                 </View>
-                <View style={styles.flexOne}>
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.setState({ walletcustomers: !this.state.walletcustomers });
-                        this.setState({ refresh: !this.state.refresh });
-                    }}>
+                <View style={[styles.flexOne]}>
+                    <TouchableWithoutFeedback onPress={this.sortWalletList}>
                         <Text style={[styles.headerItem]}>Wallet
                             <Icons
                                 name='sort'
@@ -412,68 +338,212 @@ class CustomerList extends React.Component {
         );
     };
 
-    renderItem = ({ item, index, separators }) => {
+    onLongPressItem = (item) => {
+        this.props.customerActions.setIsUpate(false);
+        this.props.customerActions.CustomerSelected(item);
+        this.props.customerActions.SetCustomerProp(
+            {
+                isCustomerSelected: true,
+                isDueAmount: item.dueAmount,
+                customerName: item.name,
+                'title': item.name
+            }
+        );
+        this.props.customerActions.setCustomerEditStatus(true);
+    };
+
+    handleOnPress = (item) => {
+        if (this.props.products.length > 0) {
+            this.props.customerActions.SetCustomerAndProp(item, {
+                isDueAmount: item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': item.name + "'s Order"
+            })
+            this.props.navigation.navigate('ListCustomerStack', { screen: 'OrderView' });
+        }
+
+        if (this.props.products.length === 0) {
+            Alert.alert(
+                'Products Not Found',
+                'Please Synchronise !',
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => { },
+                        style: 'cancel'
+                    },
+                    {
+                        text: 'OK',
+                        onPress: () => {
+
+                        }
+                    }
+                ],
+                { cancelable: false }
+            );
+        }
+    }
+
+    getRowBackground = (index, isSelected) => {
+        if (isSelected) {
+            return styles.selectedBackground;
+        } else {
+            return index % 2 === 0
+                ? styles.lightBackground
+                : styles.darkBackground;
+        }
+    };
+
+    _renderItem2 = ({ item, index, separators }) => {
         return (
-            <CustomerItem
-                item={item}
-                index={index}
-                separators={separators}
-                customerActions={this.props.customerActions}
-                navigation={this.props.navigation}
-            />
+            <View style={styles.item}>
+                <Text style={styles.title}>{item.name}</Text>
+            </View>
+        );
+    }
+
+    _renderItem = ({ item, index, separators }) => {
+        return (
+            <TouchableHighlight
+                onLongPress={this.onLongPressItem(item)}
+                onPress={this.handleOnPress(item)}
+                onShowUnderlay={separators.highlight}
+                onHideUnderlay={separators.unhighlight}>
+                <View
+                    style={[
+                        this.getRowBackground(index, this.isSelected), styles.listStyles
+                    ]}>
+                    <View style={styles.OneHalf}>
+                        <Text style={[styles.baseItem, styles.leftMargin]}>
+                            {item.name}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {item.phoneNumber}
+                        </Text>
+                    </View>
+
+                    <View style={styles.OneHalf}>
+                        <Text style={[styles.baseItem]}>{item.address}</Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {this.getCustomerTypes(item)}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {item.dueAmount}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {item.walletBalance}
+                        </Text>
+                    </View>
+                </View>
+            </TouchableHighlight>
         )
     };
+
+
+    _renderItem3 = ({ item, index, separators }) => {
+        return (
+            <TouchableHighlight
+                onLongPress={this.onLongPressItem.bind(this, item)}
+                onPress={this.handleOnPress.bind(this, item)}
+                onShowUnderlay={separators.highlight}
+                onHideUnderlay={separators.unhighlight}>
+                <View
+                    style={[this.getRowBackground(index, this.isSelected), styles.listStyles]}>
+                    <View style={styles.OneHalf}>
+                        <Text style={[styles.baseItem, styles.leftMargin]}>
+                            {item.name}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {item.phoneNumber}
+                        </Text>
+                    </View>
+
+                    <View style={styles.OneHalf}>
+                        <Text style={[styles.baseItem]}>{item.address}</Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {this.getCustomerTypes(item)}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {item.dueAmount}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {item.walletBalance}
+                        </Text>
+                    </View>
+                </View>
+            </TouchableHighlight>
+        )
+    };
+
+
+    floatAction = () => {
+        console.log('floating');
+        this.props.customerActions.CustomerSelected({});
+        this.props.customerActions.setCustomerEditStatus(false);
+        this.props.customerActions.SetCustomerProp(
+            {
+                isCustomerSelected: false,
+                isDueAmount: 0,
+                customerName: '',
+                'title': '',
+            }
+        );
+        this.props.navigation.navigate('ListCustomerStack', { screen: 'EditCustomer' });
+
+    }
+
 
     render() {
         return (
             <View style={styles.list}>
-                <FlatList
-                    ref={ref => {
-                        this.flatListRef = ref;
-                    }}
+                {/* <FlatList
                     getItemLayout={this.getItemLayout}
-                    data={this.prepareData()}
+                    data={this.props.customers}
                     ListHeaderComponent={this.showHeader}
-                    stickyHeaderIndices={[0]}
+                    stickyHeaderIndices={this.stickyHeaderIndices}
                     extraData={this.state.refresh}
-                    renderItem={this.renderItem}
-                    keyExtractor={(item, idx) => item.customerId + idx}
-                    legacyImplementation={true}
-                    maxToRenderPerBatch={1}
-                    initialNumToRender={0}
+                    renderItem={this._renderItem}
+                    keyExtractor={(item) => item.customerId}
+                    windowSize={this.windowSize}
+                    initialNumToRender={initialNumToRender}
+                   removeClippedSubviews={this.removeClippedSubviews}
+                /> */}
+                <FlatList
+                    data={this.props.customers}
+                    stickyHeaderIndices={this.stickyHeaderIndices}
+                    ListHeaderComponent={this.showHeader}
+                    renderItem={this._renderItem3}
+                    keyExtractor={item => item.customerId}
                 />
                 <FloatingAction
-                    onOpen={name => {
-                        requestAnimationFrame(() => {
-                            this.props.customerActions.CustomerSelected({});
-                            this.props.customerActions.setCustomerEditStatus(false);
-                            this.props.customerActions.SetCustomerProp(
-                                {
-                                    isCustomerSelected: false,
-                                    isDueAmount: 0,
-                                    customerName: '',
-                                    'title': '',
-                                }
-                            );
-                            this.props.navigation.navigate('ListCustomerStack', { screen: 'EditCustomer' });
-
-
-                        });
-                    }}
+                    onOpen={this.floatAction}
                 />
 
                 <View style={styles.modalPayment}>
                     <Modal
                         style={styles.modal3}
                         coverScreen={true}
-                        position={"center"}
-                        ref={"modal6"}
+                        position={"center"} ref={"modal6"}
                         onClosed={() => this.modalOnClose()}
                         isDisabled={this.state.isDisabled}>
-
                         {this.openModal()}
-
-
                     </Modal>
                 </View>
                 <SearchWatcher parent={this}>
@@ -506,24 +576,26 @@ class SearchWatcher extends React.PureComponent {
 
         let that = this;
 
-        setTimeout(() => {
-            if (
-                that.props.parent.props.searchString !==
-                that.props.parent.state.searchString
-            ) {
-                that.props.parent.state.searchString =
-                    that.props.parent.props.searchString;
-                that.props.parent.setState({
-                    refresh: !that.props.parent.state.refresh
-                });
-            }
-        }, 50);
-        return null;
+        //   setTimeout(() => {
+        if (
+            that.props.parent.props.searchString.length
+        ) {
+            that.props.parent.state.searchString =
+                that.props.parent.props.searchString;
+            that.props.parent.setState({
+                refresh: !that.props.parent.state.refresh
+            });
+            this.props.customerActions.setIsUpate(false);
+        } else {
+            return null
+        }
+        // }, 50);
+        // return null;
     }
 }
 
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
     return {
         selectedCustomer: state.customerReducer.selectedCustomer,
         customers: state.customerReducer.customers,
@@ -560,6 +632,15 @@ const styles = StyleSheet.create({
     headerItem: {
         fontWeight: 'bold',
         fontSize: 18
+    },
+    item: {
+        backgroundColor: '#f9c2ff',
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
+    },
+    title: {
+        fontSize: 32,
     },
     OneHalf: { flex: 1.5 },
     headerBackground: {
