@@ -12,13 +12,15 @@ import {
     UPDATE_SELECTED_DEBT_PAYMENT_TYPES,
     SET_SELECTED_PAYMENT_TYPES
 } from "../actions/PaymentTypesActions";
-
+import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
+import ReceiptPaymentTypeRealm from '../database/reciept_payment_types/reciept_payment_types.operations';
+import PaymentTypeRealm from '../database/payment_types/payment_types.operations';
 let initialState = {
-    paymentTypes: [],
+    paymentTypes: PaymentTypeRealm.getPaymentTypes(),
     selectedPaymentTypes: [],
-    receiptsPaymentTypes: [],
+    receiptsPaymentTypes: ReceiptPaymentTypeRealm.getReceiptPaymentTypes(),
     selectedDebtPaymentTypes: [],
-    customerPaidDebt: [],
+    customerPaidDebt: CustomerDebtRealm.getCustomerDebts(),
     delivery: 'delivery'
 };
 

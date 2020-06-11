@@ -42,7 +42,6 @@ import CustomerReminderRealm from '../../database/customer-reminder/customer-rem
 
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
 const uuidv1 = require('uuid/v1');
-import { withNavigation } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 class OrderSummaryScreen extends React.PureComponent {
 
@@ -2186,7 +2185,7 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(OrderSummaryScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(OrderSummaryScreen);
 
 const styles = StyleSheet.create({
 	container: {

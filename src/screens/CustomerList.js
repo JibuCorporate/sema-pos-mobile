@@ -13,8 +13,8 @@ import {
     Alert,
     FlatList,
     TouchableWithoutFeedback,
-	TouchableHighlight,
-	InteractionManager
+    TouchableHighlight,
+    InteractionManager
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
@@ -37,45 +37,45 @@ import PaymentModal from './paymentModal';
 import slowlog from 'react-native-slowlog';
 
 class CustomerItem extends React.PureComponent {
-	constructor(props) {
+    constructor(props) {
         super(props);
-		this.handleOnPress = this.handleOnPress.bind(this);
-		this.onLongPressItem = this.onLongPressItem.bind(this);
-	}
+        this.handleOnPress = this.handleOnPress.bind(this);
+        this.onLongPressItem = this.onLongPressItem.bind(this);
+    }
 
-	static whyDidYouRender = true;
+    static whyDidYouRender = true;
 
-	onLongPressItem = () => {
+    onLongPressItem = () => {
         this.props.customerActions.CustomerSelected(this.props.item);
         this.props.customerActions.SetCustomerProp({
-                isCustomerSelected: true,
-                isDueAmount: this.props.item.dueAmount,
-                customerName: this.props.item.name,
-                'title': this.props.item.name
-            }
+            isCustomerSelected: true,
+            isDueAmount: this.props.item.dueAmount,
+            customerName: this.props.item.name,
+            'title': this.props.item.name
+        }
         );
 
-		this.props.customerActions.setCustomerEditStatus(true);
-	}
+        this.props.customerActions.setCustomerEditStatus(true);
+    }
 
     handleOnPress = () => {
-		// InteractionManager.runAfterInteractions(() => {
+        // InteractionManager.runAfterInteractions(() => {
         this.props.customerActions.CustomerSelected(this.props.item);
         this.props.customerActions.SetCustomerProp({
-                isDueAmount: this.props.item.dueAmount,
-                isCustomerSelected: false,
-                customerName: '',
-                'title': this.props.item.name + "'s Order"
-            }
-		);
-
-		this.props.navigation.navigate('OrderView');
-		// });
+            isDueAmount: this.props.item.dueAmount,
+            isCustomerSelected: false,
+            customerName: '',
+            'title': this.props.item.name + "'s Order"
+        }
+        );
+        this.props.navigation.navigate('ListCustomerStack', { screen: 'OrderView' });
+        // this.props.navigation.navigate('OrderView');
+        // });
 
     }
 
-	getRowBackground() {
-		let isSelected = false;
+    getRowBackground() {
+        let isSelected = false;
         if (isSelected) {
             return styles.selectedBackground;
         } else {
@@ -83,9 +83,9 @@ class CustomerItem extends React.PureComponent {
                 ? styles.lightBackground
                 : styles.darkBackground;
         }
-	}
+    }
 
-	getCustomerTypes() {
+    getCustomerTypes() {
         const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
         try {
             for (let i = 0; i < customerTypeIts.length; i++) {
@@ -100,46 +100,46 @@ class CustomerItem extends React.PureComponent {
 
     render() {
         return (
-		<TouchableHighlight
-            onLongPress={this.onLongPressItem}
-            onPress={this.handleOnPress}
-            onShowUnderlay={this.props.separators.highlight}
-            onHideUnderlay={this.props.separators.unhighlight}>
-            <View
-                style={[
-                    this.getRowBackground(), styles.listStyles
-                ]}>
-                <View style={styles.OneHalf}>
-                    <Text style={[styles.baseItem, styles.leftMargin]}>
-                        {this.props.item.name}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.props.item.phoneNumber}
-                    </Text>
-                </View>
+            <TouchableHighlight
+                onLongPress={this.onLongPressItem}
+                onPress={this.handleOnPress}
+                onShowUnderlay={this.props.separators.highlight}
+                onHideUnderlay={this.props.separators.unhighlight}>
+                <View
+                    style={[
+                        this.getRowBackground(), styles.listStyles
+                    ]}>
+                    <View style={styles.OneHalf}>
+                        <Text style={[styles.baseItem, styles.leftMargin]}>
+                            {this.props.item.name}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {this.props.item.phoneNumber}
+                        </Text>
+                    </View>
 
-                <View style={styles.OneHalf}>
-                    <Text style={[styles.baseItem]}>{this.props.item.address}</Text>
+                    <View style={styles.OneHalf}>
+                        <Text style={[styles.baseItem]}>{this.props.item.address}</Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {this.getCustomerTypes()}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {this.props.item.dueAmount ? this.props.item.dueAmount.toFixed(2) : 0}
+                        </Text>
+                    </View>
+                    <View style={styles.flexOne}>
+                        <Text style={styles.baseItem}>
+                            {this.props.item.walletBalance.toFixed(2)}
+                        </Text>
+                    </View>
                 </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.getCustomerTypes()}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.props.item.dueAmount ? this.props.item.dueAmount.toFixed(2) : 0}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.props.item.walletBalance.toFixed(2)}
-                    </Text>
-                </View>
-            </View>
-			</TouchableHighlight>
+            </TouchableHighlight>
 
         );
     }
@@ -162,9 +162,9 @@ class CustomerList extends React.Component {
             isPaymentModal: true,
         };
 
-	}
+    }
 
-	static whyDidYouRender = true;
+    static whyDidYouRender = true;
 
     componentDidMount() {
         this.props.navigation.setParams({
@@ -179,9 +179,9 @@ class CustomerList extends React.Component {
 
         this.props.customerActions.CustomerSelected({});
         this.props.customerActions.setCustomerEditStatus(false);
-	}
+    }
 
-	getCustomerTypes = (item) => {
+    getCustomerTypes = (item) => {
         const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
         try {
             for (let i = 0; i < customerTypeIts.length; i++) {
@@ -414,13 +414,13 @@ class CustomerList extends React.Component {
 
     renderItem = ({ item, index, separators }) => {
         return (
-				<CustomerItem
-					item={item}
-					index={index}
-					separators={separators}
-					customerActions={this.props.customerActions}
-					navigation={this.props.navigation}
-				/>
+            <CustomerItem
+                item={item}
+                index={index}
+                separators={separators}
+                customerActions={this.props.customerActions}
+                navigation={this.props.navigation}
+            />
         )
     };
 
@@ -438,26 +438,27 @@ class CustomerList extends React.Component {
                     extraData={this.state.refresh}
                     renderItem={this.renderItem}
                     keyExtractor={(item, idx) => item.customerId + idx}
-					legacyImplementation={true}
-					maxToRenderPerBatch = {1}
-					initialNumToRender={0}
+                    legacyImplementation={true}
+                    maxToRenderPerBatch={1}
+                    initialNumToRender={0}
                 />
                 <FloatingAction
                     onOpen={name => {
-						requestAnimationFrame(() => {
-							this.props.customerActions.CustomerSelected({});
-							this.props.customerActions.setCustomerEditStatus(false);
-							this.props.customerActions.SetCustomerProp(
-							    {
-							        isCustomerSelected: false,
-							        isDueAmount: 0,
-							        customerName: '',
-							        'title': '',
-							    }
-							);
-							this.props.navigation.navigate('EditCustomer');
+                        requestAnimationFrame(() => {
+                            this.props.customerActions.CustomerSelected({});
+                            this.props.customerActions.setCustomerEditStatus(false);
+                            this.props.customerActions.SetCustomerProp(
+                                {
+                                    isCustomerSelected: false,
+                                    isDueAmount: 0,
+                                    customerName: '',
+                                    'title': '',
+                                }
+                            );
+                            this.props.navigation.navigate('ListCustomerStack', { screen: 'EditCustomer' });
 
-						});
+
+                        });
                     }}
                 />
 
@@ -465,8 +466,8 @@ class CustomerList extends React.Component {
                     <Modal
                         style={styles.modal3}
                         coverScreen={true}
-						position={"center"}
-						ref={"modal6"}
+                        position={"center"}
+                        ref={"modal6"}
                         onClosed={() => this.modalOnClose()}
                         isDisabled={this.state.isDisabled}>
 

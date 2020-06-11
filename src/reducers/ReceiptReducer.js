@@ -335,7 +335,7 @@ prepareSectionedData = () => {
 let initialState = {
     localReceipts: [],
     remoteReceipts: [],
-    receipts: [],
+    receipts: OrderRealm.getAllOrder(),
     //transactions: [],
     transactions: this.prepareSectionedData(),
     updatedRemoteReceipts: [],

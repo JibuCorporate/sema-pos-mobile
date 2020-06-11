@@ -7,6 +7,11 @@ export const REPORT_TYPE = 'REPORT_TYPE';
 export const REPORT_FILTER = 'REPORT_FILTER';
 import { parseISO, isSameDay } from 'date-fns';
 
+export function subtractDays(theDate, days){
+	return new Date(theDate.getTime() - days * 24 * 60 * 60 * 1000);
+};
+
+
 export function GetInventoryReportData(beginDate, previousDate, products) {
 	return dispatch => {
 		getWastageData(beginDate, previousDate, getMrps(products))
