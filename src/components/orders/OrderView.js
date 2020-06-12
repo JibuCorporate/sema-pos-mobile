@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === 'development') {
 	});
 }
 
- 
+
 import { View, Text, Button, TouchableOpacity,
 	Dimensions,
 	Image,
@@ -45,7 +45,7 @@ import CustomerRealm from '../../database/customers/customer.operations';
 import OrderRealm from '../../database/orders/orders.operations';
 import CustomerReminderRealm from '../../database/customer-reminder/customer-reminder.operations';
 import { productListStyles, newStyle } from './ProductListScreen';
-import randomMC from 'random-material-color';  
+import randomMC from 'random-material-color';
 
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
 const uuidv1 = require('uuid/v1');
@@ -56,7 +56,6 @@ class OrderView extends React.PureComponent {
 		super(props);
 		slowlog(this, /.*/);
 
-
 		let { width } = Dimensions.get('window');
 		// Empirically we know that this view has flex of 1 and the view beside it,
 		// (OrderSummaryScreen has a flex of .6 This makes the width of this view 1/1.6 * screen width
@@ -65,7 +64,7 @@ class OrderView extends React.PureComponent {
 		this.viewWidth = 1 / 1.6 * width;
 		//this.salesChannelId = this.props.selectedCustomer.hasOwnProperty('salesChannelId') ? this.props.selectedCustomer.salesChannelId : this.props.navigation.state.params.selectedCustomer.salesChannelId;
 		this.salesChannelId =  this.props.selectedCustomer.salesChannelId;
-		
+
 		this.numColumns = 4;
 		this.horizontal = false;
 		this.removeClippedSubviews = true;
@@ -2177,7 +2176,7 @@ class OrderView extends React.PureComponent {
 			this.props.receiptActions.setReceipts(
 				OrderRealm.getAllOrder()
 			);
-		
+
 
 			this.saveCustomerFrequency(OrderRealm.getAllOrder().filter(r => r.customer_account_id === this.props.selectedCustomer.customerId));
 			this.props.customerReminderActions.setCustomerReminders(
