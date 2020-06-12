@@ -3,22 +3,27 @@ import {
 	REPORT_TYPE,
 	INVENTORY_REPORT,
 	REPORT_FILTER,
+	GetInventoryReportData,
+	subtractDays
 } from '../actions/WastageActions';
-
+import ProductsRealm from '../database/products/product.operations';
 let initialState = {
 	salesData: { totalLiters: 0, totalSales: 0, totalDebt: 0, salesItems: [] },
-	inventoryData: {
-		salesAndProducts: { totalLiters: 0, totalSales: 0, totalDebt: 0, salesItems: [] },
-		inventory: {
-			date: new Date(),
-			currentMeter: 0,
-			currentProductSkus: [],
-			previousMeter: 0,
-			previousProductSkus: []
-		}
-	},
+	// inventoryData: {
+	// 	salesAndProducts: { totalLiters: 0, totalSales: 0, totalDebt: 0, salesItems: [] },
+	// 	inventory: {
+	// 		date: new Date(),
+	// 		currentMeter: 0,
+	// 		currentProductSkus: [],
+	// 		previousMeter: 0,
+	// 		previousProductSkus: []
+	// 	}
+	// },
+	inventoryData: GetInventoryReportData(subtractDays(new Date(), 1), new Date(), ProductsRealm.getProducts()),
 	dateFilter: {}
 };
+
+
 
 const wastageReducer = (state = initialState, action) => {
 	let newState;

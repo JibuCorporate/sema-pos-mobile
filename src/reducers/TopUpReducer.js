@@ -1,7 +1,7 @@
-
+import CreditRealm from '../database/credit/credit.operations';
 import { TOPUP_TOTAL, TOPUPS_SET, TOPUP_BALANCE } from "../actions/TopUpActions";
 
-let initialState = { total: 0, topups: [], balance: 0 };
+let initialState = { total: 0, topups: CreditRealm.getAllCredit(), balance: 0 };
 
 const topupReducer = (state = initialState, action) => {
 	let newState;

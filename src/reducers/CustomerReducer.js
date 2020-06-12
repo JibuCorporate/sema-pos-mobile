@@ -1,3 +1,4 @@
+import CustomerRealm from '../database/customers/customer.operations'
 import {
 	CUSTOMER_SELECTED,
 	CUSTOMERS_PAYMENT_TYPE_SEARCH,
@@ -11,7 +12,7 @@ import {
 } from "../actions/CustomerActions";
 let initialState = {
 	selectedCustomer: {},
-	customers: [],
+	customers: CustomerRealm.getAllCustomer(),
 	searchString: "",
 	paymentTypeFilter: "",
 	customerProps: {

@@ -1,6 +1,6 @@
 import { DISCOUNTS_SET } from "../actions/DiscountActions";
-
-let initialState = { discounts: [] };
+import DiscountRealm from '../database/discount/discount.operations';
+let initialState = { discounts: DiscountRealm.getDiscounts() };
 
 const discountReducer = (state = initialState, action) => {
     let newState;

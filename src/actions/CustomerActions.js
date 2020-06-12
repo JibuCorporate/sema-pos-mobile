@@ -9,7 +9,7 @@ export const CUSTOMERS_TYPE_SEARCH = 'CUSTOMERS_TYPE_SEARCH';
 export const CUSTOMERS_PAYMENT_TYPE_SEARCH = 'CUSTOMERS_PAYMENT_TYPE_SEARCH';
 export const CUSTOMER_PROPS = 'CUSTOMER_PROPS';
 export const IS_UPDATE = 'IS_UPDATE';
-
+import { batch } from 'react-redux'
 export function CustomerSelected(customer) {
 	const data = customer;
 	return (dispatch) => { dispatch({ type: CUSTOMER_SELECTED, data: data });	};
@@ -19,6 +19,19 @@ export function SetCustomerProp(customer) {
 	const data = customer;
 	return (dispatch) => { dispatch({ type: CUSTOMER_PROPS, data: data });	};
 }
+
+export function SetCustomerAndProp(customer, customerProps) {
+	const data = customer;
+	return (dispatch) => {
+
+		batch(() => {
+			dispatch({ type: CUSTOMER_SELECTED, data: customer });
+			dispatch({ type: CUSTOMER_PROPS, data: customerProps });
+		})
+
+	};
+}
+
 
 export function setCustomers(customers) {
 	return (dispatch) => { dispatch({ type: CUSTOMERS_SET, data: customers }) };

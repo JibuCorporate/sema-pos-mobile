@@ -1,7 +1,7 @@
 
 import { INVENTORY_SET, SET_METER_READING } from "../actions/InventoryActions";
-
-let initialState = { inventory: [], meterReadings: [] };
+import InventroyRealm from '../database/inventory/inventory.operations';
+let initialState = { inventory:  InventroyRealm.getAllInventory(), meterReadings: [] };
 
 const inventoryReducer = (state = initialState, action) => {
 	let newState;

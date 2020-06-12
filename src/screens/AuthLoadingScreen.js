@@ -25,14 +25,13 @@ import CreditRealm from '../database/credit/credit.operations';
 import CustomerRealm from '../database/customers/customer.operations'
 import InventroyRealm from '../database/inventory/inventory.operations';
 import SettingRealm from '../database/settings/settings.operations';
-import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
+
 import OrderRealm from '../database/orders/orders.operations';
-import ReceiptPaymentTypeRealm from '../database/reciept_payment_types/reciept_payment_types.operations';
-import CustomerReminderRealm from '../database/customer-reminder/customer-reminder.operations';
+
 
 import ProductsRealm from '../database/products/product.operations';
 import DiscountRealm from '../database/discount/discount.operations';
-import PaymentTypeRealm from '../database/payment_types/payment_types.operations';
+
 
 import Synchronization from '../services/Synchronization';
 import Communications from '../services/Communications';
@@ -90,54 +89,12 @@ class AuthLoadingScreen extends React.PureComponent {
     };
 
     loadSyncedData() {
-        this.props.customerActions.setCustomers(
-            CustomerRealm.getAllCustomer()
-        );
-        this.props.topUpActions.setTopups(
-            CreditRealm.getAllCredit()
-        );
+         
+       
 
-        this.props.wastageActions.GetInventoryReportData(this.subtractDays(new Date(), 1), new Date(), ProductsRealm.getProducts());
-
-
-        this.props.inventoryActions.setInventory(
-            InventroyRealm.getAllInventory()
-        );
-        this.props.productActions.setProducts(
-            ProductsRealm.getProducts()
-        );
-
-        this.props.receiptActions.setReceipts(
-            OrderRealm.getAllOrder()
-        );
-
-        this.props.paymentTypesActions.setPaymentTypes(
-            PaymentTypeRealm.getPaymentTypes()
-        );
-
-        this.props.paymentTypesActions.setRecieptPaymentTypes(
-            ReceiptPaymentTypeRealm.getReceiptPaymentTypes()
-        );
-
-        this.props.customerReminderActions.setCustomerReminders(
-            CustomerReminderRealm.getCustomerReminders()
-        );
-
-        this.props.paymentTypesActions.setCustomerPaidDebt(
-            CustomerDebtRealm.getCustomerDebts()
-        );
-
-        this.props.discountActions.setDiscounts(
-            DiscountRealm.getDiscounts()
-        );
-
-        Synchronization.initialize(
-            CustomerRealm.getLastCustomerSync(),
-            ProductsRealm.getLastProductsync(),
-            '',
-            CreditRealm.getLastCreditSync(),
-            InventroyRealm.getLastInventorySync(),
-        );
+        
+    
+        
         Synchronization.setConnected(this.props.network.isNWConnected);
     };
 

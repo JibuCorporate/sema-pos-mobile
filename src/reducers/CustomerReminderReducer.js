@@ -4,9 +4,10 @@ import {
     UPDATE_CUSTOMER_REMINDER,
     REMOVE_CUSTOMER_REMINDER,
 } from "../actions/CustomerReminderActions";
+import CustomerReminderRealm from '../database/customer-reminder/customer-reminder.operations';
 
 let initialState = {
-    customerReminder: [],
+    customerReminder: CustomerReminderRealm.getCustomerReminders(),
 };
 
 
