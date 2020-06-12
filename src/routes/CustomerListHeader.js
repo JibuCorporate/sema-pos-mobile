@@ -11,6 +11,8 @@ import {withNavigation} from 'react-navigation';
 class CustomerListHeader extends React.PureComponent {
 
     render() {
+        console.log('this.props.route',this.props.route)
+        console.log('this.props.navigation',this.props.navigation)
         return (
             <View
                 style={styles.headerCont}>
@@ -22,7 +24,7 @@ class CustomerListHeader extends React.PureComponent {
                             size={25}
                             color="white"
                             style={styles.iconStyle}
-                            onPress={this.props.navigation.getParam('clearLoan')}
+                            onPress={this.props.route.params.clearLoan}
                         />
 
                     )}
@@ -64,7 +66,7 @@ class CustomerListHeader extends React.PureComponent {
                             size={25}
                             color="white"
                             style={styles.iconStyle}
-                            onPress={this.props.navigation.getParam('onDelete')}
+                            onPress={this.props.route.params.onDelete}
                         />
                     )}
                     {this.props.customerProps.isCustomerSelected && (
@@ -82,7 +84,7 @@ class CustomerListHeader extends React.PureComponent {
                                         'title': '',
                                     }
                                 );
-                                this.props.navigation.navigate('EditCustomer');
+                                this.props.navigation.navigate('ListCustomerStack', { screen: 'CustomerEdit' });
                             }}
                         />
                     )}

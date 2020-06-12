@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 class NewNavigationDrawerStructure extends React.PureComponent {
     toggleDrawer = () => {
-        this.props.navigationProps.toggleDrawer();
+        this.props.navigation.toggleDrawer();
     };
 
     render() {

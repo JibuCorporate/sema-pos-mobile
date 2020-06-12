@@ -3,7 +3,7 @@ import { View, Dimensions, Picker, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 import {
 	createDrawerNavigator,
 	DrawerContentScrollView,
@@ -100,16 +100,32 @@ function ListCustomerStack({ route, navigation }) {
 		>
 			<Stack.Screen
 				name="CustomerList"
+				initialParams={{
+					isCustomerSelected: false,
+					customerTypeValue: 'all',
+					customerName: '',
+				}}
 				component={CustomerList}
-				options={{
+				options={({ route }) => ({ 
 					headerTitle: () => <CustomerTitle title={`Customers`} />,
-					headerLeft: () => <NewNavigationDrawerStructure navigationProps={navigation} />,
+					headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
 					headerStyle: {
 						backgroundColor: '#00549C',
 					},
 					headerTintColor: '#fff',
-					headerRight: () => <CustomerListHeader />
-				}} />
+					headerRight: () => <CustomerListHeader navigation={navigation} route={route} />
+				
+				})}
+				// options={{
+				// 	headerTitle: () => <CustomerTitle title={`Customers`} />,
+				// 	headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
+				// 	headerStyle: {
+				// 		backgroundColor: '#00549C',
+				// 	},
+				// 	headerTintColor: '#fff',
+				// 	headerRight: (route) => <CustomerListHeader navigation={navigation} route={route} />
+				// }} 
+				/>
 			<Stack.Screen
 				name="OrderView"
 				component={OrderView}
@@ -152,7 +168,7 @@ function TransactionStack({ route, navigation }) {
 				component={Transactions}
 				options={{
 					title: 'Transactions', //Set Header Title
-					headerLeft: () => <NewNavigationDrawerStructure />,
+					headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
 					headerStyle: {
 						backgroundColor: '#00549C', //Set Header color
 					},
@@ -184,7 +200,7 @@ function TransactionStack({ route, navigation }) {
 	);
 }
 
-function SalesReportStack() {
+function SalesReportStack({ route, navigation }) {
 	return (
 		<Stack.Navigator initialRouteName="SalesReport">
 			<Stack.Screen
@@ -192,7 +208,7 @@ function SalesReportStack() {
 				component={SalesReport}
 				options={{
 					title: 'Sales Report', //Set Header Title
-					headerLeft: () => <NewNavigationDrawerStructure />,
+					headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
 					headerStyle: {
 						backgroundColor: '#00549C', //Set Header color
 					},
@@ -203,7 +219,7 @@ function SalesReportStack() {
 	);
 }
 
-function InventoryStack() {
+function InventoryStack({ route, navigation }) {
 	return (
 		<Stack.Navigator initialRouteName="Inventory">
 			<Stack.Screen
@@ -211,7 +227,7 @@ function InventoryStack() {
 				component={InventoryReport}
 				options={{
 					title: 'Wastage Report', //Set Header Title
-					headerLeft: () => <NewNavigationDrawerStructure />,
+					headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
 					headerStyle: {
 						backgroundColor: '#00549C', //Set Header color
 					},
@@ -222,7 +238,7 @@ function InventoryStack() {
 	);
 }
 
-function ReminderStack() {
+function ReminderStack({ route, navigation }) {
 	return (
 		<Stack.Navigator initialRouteName="Reminders">
 			<Stack.Screen
@@ -230,7 +246,7 @@ function ReminderStack() {
 				component={RemindersReport}
 				options={{
 					title: 'Reminders', //Set Header Title
-					headerLeft: () => <NewNavigationDrawerStructure />,
+					headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
 					headerStyle: {
 						backgroundColor: '#00549C', //Set Header color
 					},
@@ -257,14 +273,13 @@ function LoginStack() {
 function CustomDrawerContent(props) {
 	return (
 		<DrawerContentScrollView {...props}>
-
 			<Image source={require('../images/jibulogo.png')} resizeMode={'stretch'} style={{
 				width: 100,
 				height: 100,
 				alignSelf: 'center'
 			}} />
 			<DrawerItemList {...props} />
-			<DrawerItem label="Help" onPress={() => alert('Link to help')} />
+			{/* <DrawerItem label="Help" onPress={() => alert('Link to help')} /> */}
 		</DrawerContentScrollView>
 	);
 }
@@ -273,7 +288,8 @@ function DrawerContainer() {
 	return (
 		<Drawer.Navigator
 			initialRouteName="ListCustomerStack"
-			drawerContent={props => <CustomSidebarMenu {...props} />}
+			//drawerContent={props => <CustomSidebarMenu {...props} />}
+			drawerContent={props => <CustomDrawerContent {...props} />}
 			drawerContentOptions={{
 				activeTintColor: '#e91e63',
 				itemStyle: { marginVertical: 5 },
@@ -281,7 +297,7 @@ function DrawerContainer() {
 			<Drawer.Screen
 				name="ListCustomerStack"
 				options={{ drawerLabel: 'Customers' }}
-				component={props => <ListCustomerStack {...props} />} />
+				component={ListCustomerStack} />
 			<Drawer.Screen
 				name="TransactionStack"
 				options={{ drawerLabel: 'Transactions' }}
@@ -347,3 +363,19 @@ function App() {
 
 
 export default App;
+const styles = StyleSheet.create({
+	rowdir: {
+		flexDirection: 'row',
+	},
+	custpicker: {
+		marginTop: 12,
+		flex: 1
+	},
+	smropicker: {
+		height: 50,
+		width: 190,
+		color: 'white',
+		alignContent: 'flex-end'
+	}
+
+});

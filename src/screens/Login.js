@@ -242,10 +242,16 @@ class Login extends React.PureComponent {
 						if (!this.isSiteIdDifferent(result.response.data.kiosk.id, oldSettings.siteId)) {
 							this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 							this.setState({ isLoading: false });
-							this.props.navigation.navigate('ListCustomerStack');
+							this.props.navigation.navigate('ListCustomerStack', {
+								screen: 'CustomerList', params: {
+									isCustomerSelected: false,
+									customerTypeValue: 'all',
+									customerName: '',
+								}
+							});
 						}
 
-					}else{
+					} else {
 						Alert.alert(
 							i18n.t('network-connection'),
 							`Account has been De-activated`,
@@ -447,9 +453,9 @@ const styles = StyleSheet.create({
 	},
 	cardstyle: {
 		width: '50%',
-		 marginTop: 30,
-		  borderRadius: 5,
-		   elevation: 10,
+		marginTop: 30,
+		borderRadius: 5,
+		elevation: 10,
 	},
 	container: {
 		flex: 1,
