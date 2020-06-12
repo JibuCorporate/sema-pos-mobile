@@ -82,9 +82,8 @@ class CustomerEdit extends React.PureComponent {
 
 	componentWillUnmount() {
 		this.props.customerActions.CustomerSelected({});
-		this.props.customerActions.setCustomerEditStatus(false);
-		this.props.navigation.setParams({ isCustomerSelected: false });
-		this.props.navigation.setParams({ customerName: '' });
+		this.props.customerActions.setCustomerEditStatus(false); 
+		//this.props.navigation.setParams({ customerName: '', isCustomerSelected: false  });
 	}
 
 	onEdit() {

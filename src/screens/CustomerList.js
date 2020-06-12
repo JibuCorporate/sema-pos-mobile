@@ -73,6 +73,16 @@ class CustomerList extends React.PureComponent {
         this.removeClippedSubviews = true;
         this.isSelected = false;
 
+       
+
+        this.props.customerActions.CustomerSelected({});
+        this.props.customerActions.setCustomerEditStatus(false);
+
+    }
+
+    componentDidMount() {
+        // console.log('this.props.route-customer',this.props.route)
+        // console.log('this.props.navigation-cust',this.props.navigation)
         this.props.navigation.setParams({
             isCustomerSelected: false,
             customerTypeValue: 'all',
@@ -82,14 +92,6 @@ class CustomerList extends React.PureComponent {
             onDelete: this.onDelete,
             clearLoan: this.clearLoan,
         });
-
-        this.props.customerActions.CustomerSelected({});
-        this.props.customerActions.setCustomerEditStatus(false);
-
-    }
-
-    componentDidMount() {
-
     }
 
     // shouldComponentUpdate(){
@@ -505,7 +507,7 @@ class CustomerList extends React.PureComponent {
                 'title': '',
             }
         );
-        this.props.navigation.navigate('ListCustomerStack', { screen: 'EditCustomer' });
+        this.props.navigation.navigate('ListCustomerStack', { screen: 'CustomerEdit' });
 
     }
 
