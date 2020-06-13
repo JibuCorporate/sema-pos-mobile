@@ -28,7 +28,7 @@ import * as discountActions from '../actions/DiscountActions';
 import * as paymentTypesActions from '../actions/PaymentTypesActions';
 import * as CustomerReminderActions from '../actions/CustomerReminderActions';
 import i18n from '../app/i18n';
-
+import { useNavigation } from '@react-navigation/native';
 class CustomSidebarMenu extends React.PureComponent {
   constructor() {
     super();
@@ -77,11 +77,11 @@ class CustomSidebarMenu extends React.PureComponent {
         navOptionName: 'LogOut',
         screenToNavigate: 'LogOut',
       }
-	];
+    ];
 
   }
 
-  componentDidMount(){
+  componentDidMount() {
 
   }
 
@@ -89,14 +89,15 @@ class CustomSidebarMenu extends React.PureComponent {
     requestAnimationFrame(() => {
       global.currentScreenIndex = key;
       console.log('item-item', item);
-     // this.onSynchronize();
+      // this.onSynchronize();
       if (item.screenToNavigate === 'LogOut') {
         this.onLogout();
       }
 
-      if (item.screenToNavigate != 'LogOut' || item.screenToNavigate != 'Sync') {
-        this.props.navigationProps.navigate(item.screenToNavigate);
+      if (item.screenToNavigate !== 'LogOut' && item.screenToNavigate !== 'Sync') {
+        this.props.navigation.navigate(item.screenToNavigate);
       }
+
       if (item.screenToNavigate === 'Sync') {
         this.onSynchronize();
       }
@@ -158,7 +159,7 @@ class CustomSidebarMenu extends React.PureComponent {
     this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
     //As we are not going to the Login, the reason no reason to disable the token
     Communications.setToken('');
-	this.props.navigation.navigate({ name: 'Login', key: 'Login' });
+    this.props.navigation.navigate('Login');
   };
 
 
@@ -387,28 +388,28 @@ export default connect(
 )(CustomSidebarMenu);
 
 const txtStyle = (key, index) => StyleSheet.create({
-	txtCol: {
-		fontSize: 15,
-		color: index === key ? 'red' : 'black',
-	}
+  txtCol: {
+    fontSize: 15,
+    color: index === key ? 'red' : 'black',
+  }
 });
 
 const drwrStyle = (key, index) => StyleSheet.create({
-	drawerSty: {
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingTop: 10,
-		paddingBottom: 10,
-		backgroundColor: index === key ? '#e0dbdb' : '#ffffff'
-	}
+  drawerSty: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: index === key ? '#e0dbdb' : '#ffffff'
+  }
 })
 const styles = StyleSheet.create({
   viewMargins: {
-	marginRight: 10, marginLeft: 20
+    marginRight: 10, marginLeft: 20
   },
-  viewFlex:{
-	  flex: 1
+  viewFlex: {
+    flex: 1
   },
   imageStyle: {
     width: 100,

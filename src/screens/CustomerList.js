@@ -356,12 +356,12 @@ class CustomerList extends React.PureComponent {
 
     handleOnPress = (item) => {
         if (this.props.products.length > 0) {
-            this.props.customerActions.SetCustomerAndProp(item, {
-                isDueAmount: item.dueAmount,
-                isCustomerSelected: false,
-                customerName: '',
-                'title': item.name + "'s Order"
-            })
+            // this.props.customerActions.SetCustomerAndProp(item, {
+            //     isDueAmount: item.dueAmount,
+            //     isCustomerSelected: false,
+            //     customerName: '',
+            //     'title': item.name + "'s Order"
+            // })
             this.props.navigation.navigate('ListCustomerStack', { screen: 'OrderView' });
         }
 
