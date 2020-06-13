@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Dimensions, Picker, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import Communications from '../services/Communications';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
@@ -20,6 +21,7 @@ import Login from '../screens/Login';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import Transactions from '../screens/Transactions';
 import SettingRealm from '../database/settings/settings.operations';
+import * as SettingsActions from '../actions/SettingsActions';
 import OrderView from '../components/orders/OrderView';
 
 import InventoryReport from '../components/reports/InventoryReport';
@@ -35,7 +37,7 @@ import NewNavigationDrawerStructure from './NewNavigationDrawerStructure';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
-
+import { useNavigation } from '@react-navigation/native';
 
 function CreditHistoryStack() {
 	return (
@@ -106,7 +108,7 @@ function ListCustomerStack({ route, navigation }) {
 					customerName: '',
 				}}
 				component={CustomerList}
-				options={({ route }) => ({ 
+				options={({ route }) => ({
 					headerTitle: () => <CustomerTitle title={`Customers`} />,
 					headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
 					headerStyle: {
@@ -114,18 +116,18 @@ function ListCustomerStack({ route, navigation }) {
 					},
 					headerTintColor: '#fff',
 					headerRight: () => <CustomerListHeader navigation={navigation} route={route} />
-				
+
 				})}
-				// options={{
-				// 	headerTitle: () => <CustomerTitle title={`Customers`} />,
-				// 	headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
-				// 	headerStyle: {
-				// 		backgroundColor: '#00549C',
-				// 	},
-				// 	headerTintColor: '#fff',
-				// 	headerRight: (route) => <CustomerListHeader navigation={navigation} route={route} />
-				// }} 
-				/>
+			// options={{
+			// 	headerTitle: () => <CustomerTitle title={`Customers`} />,
+			// 	headerLeft: () => <NewNavigationDrawerStructure navigation={navigation} />,
+			// 	headerStyle: {
+			// 		backgroundColor: '#00549C',
+			// 	},
+			// 	headerTintColor: '#fff',
+			// 	headerRight: (route) => <CustomerListHeader navigation={navigation} route={route} />
+			// }} 
+			/>
 			<Stack.Screen
 				name="OrderView"
 				component={OrderView}
@@ -270,7 +272,35 @@ function LoginStack() {
 	);
 }
 
+function onLogout() {
+	let settings = SettingRealm.getAllSetting();
+
+	// // Save with empty token - This will force username/password validation
+	SettingRealm.saveSettings(
+		settings.semaUrl,
+		settings.site,
+		settings.user,
+		settings.password,
+		settings.uiLanguage,
+		'',
+		settings.siteId,
+		false,
+		settings.currency
+	);
+	SettingsActions.setSettings(SettingRealm.getAllSetting());
+	//As we are not going to the Login, the reason no reason to disable the token
+	Communications.setToken('');
+	// this.props.navigationProps.navigate('Login');
+	return (
+		<NavigationContainer>
+			<LoginStack />
+		</NavigationContainer>)
+	//navigation.navigate('Login');
+};
+
+
 function CustomDrawerContent(props) {
+	console.log('props-props-props', props)
 	return (
 		<DrawerContentScrollView {...props}>
 			<Image source={require('../images/jibulogo.png')} resizeMode={'stretch'} style={{
@@ -279,17 +309,24 @@ function CustomDrawerContent(props) {
 				alignSelf: 'center'
 			}} />
 			<DrawerItemList {...props} />
-			{/* <DrawerItem label="Help" onPress={() => alert('Link to help')} /> */}
+			<DrawerItem label="Sync"
+				icon={({ focused, color, size }) => <Icon size={25} color={"#808080"} name={'md-sync'} />}
+				onPress={() => alert('Link to help')} />
+			<DrawerItem label="LogOut"
+				icon={({ focused, color, size }) => <Icon size={25} color={"#808080"} name={'md-log-out'} />}
+				onPress={() => onLogout()} />
 		</DrawerContentScrollView>
 	);
 }
 
-function DrawerContainer() {
+
+
+function DrawerContainer({ route, navigation }) {
 	return (
 		<Drawer.Navigator
 			initialRouteName="ListCustomerStack"
 			//drawerContent={props => <CustomSidebarMenu {...props} />}
-			drawerContent={props => <CustomDrawerContent {...props} />}
+			drawerContent={(props, navigation) => <CustomDrawerContent {...props} navigation={navigation} />}
 			drawerContentOptions={{
 				activeTintColor: '#e91e63',
 				itemStyle: { marginVertical: 5 },
