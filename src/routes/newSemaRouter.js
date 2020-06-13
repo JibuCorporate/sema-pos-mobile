@@ -322,14 +322,33 @@ function CustomDrawerContent(props) {
 
 function DrawerContainer({ route, navigation }) {
 	return (
+	// 	{
+	// 		contentOptions: {
+	// 			activeTintColor: '#ABC1DE',
+	// 		},
+	// 		initialRouteName: 'ListCustomers',
+	// 		contentComponent: CustomSidebarMenu,
+	// 		drawerBackgroundColor: {
+	// 			light: '#eee',
+	// 			dark: 'rgba(40,40,40,1)',
+	// 		},
+	// 		drawerType: 'slide',
+	// 		drawerWidth: Dimensions.get('window').width * .3,
+	//  });
 		<Drawer.Navigator
 			initialRouteName="ListCustomerStack"
 			//drawerContent={props => <CustomSidebarMenu {...props} />}
-			drawerContent={(props, navigation) => <CustomDrawerContent {...props} navigation={navigation} />}
+			// drawerContent={(props, navigation) => <CustomDrawerContent {...props} navigation={navigation} />}
 			drawerContentOptions={{
-				activeTintColor: '#e91e63',
+				activeTintColor: '#ABC1DE',
 				itemStyle: { marginVertical: 5 },
-			}}>
+				activeBackgroundColor: {
+					light: '#eee',
+					dark: 'rgba(40,40,40,1)',
+				},
+			}}
+			drawerType="slide"
+			>
 			<Drawer.Screen
 				name="ListCustomerStack"
 				options={{ drawerLabel: 'Customers' }}
