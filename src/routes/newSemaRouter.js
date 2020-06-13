@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Dimensions, Picker, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Text, Dimensions, Picker, Alert, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Communications from '../services/Communications';
+import Synchronization from '../services/Synchronization';
+import * as receiptActions from '../actions/ReceiptActions';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as CustomerActions from '../actions/CustomerActions';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
 	createDrawerNavigator,
@@ -311,7 +314,7 @@ function CustomDrawerContent(props) {
 			<DrawerItemList {...props} />
 			<DrawerItem label="Sync"
 				icon={({ focused, color, size }) => <Icon size={25} color={"#808080"} name={'md-sync'} />}
-				onPress={() => alert('Link to help')} />
+				onPress={() => onSynchronize()} />
 			<DrawerItem label="LogOut"
 				icon={({ focused, color, size }) => <Icon size={25} color={"#808080"} name={'md-log-out'} />}
 				onPress={() => onLogout()} />
@@ -320,13 +323,160 @@ function CustomDrawerContent(props) {
 }
 
 
+function onSynchronize() {
+	console.log('start sync');
+    try {
+      this.setState({ isLoading: true });
+      Synchronization.synchronize().then(syncResult => {
+        this.setState({ isLoading: false });
+
+        CustomerActions.setCustomers(
+          CustomerRealm.getAllCustomer()
+        );
+
+        receiptActions.setReceipts(
+          OrderRealm.getAllOrder()
+        );
+
+        receiptActions.setTransaction();
+
+        Alert.alert(
+          i18n.t('sync-results'),
+          _getSyncResults(syncResult),
+          [{ text: i18n.t('ok'), style: 'cancel' }],
+          { cancelable: true }
+        );
+      });
+    } catch (error) { }
+  };
+
+ function _getSyncResults(syncResult) {
+    try {
+
+      if (
+        syncResult.customers.customers == 0 &&
+        syncResult.products.products == 0 &&
+        syncResult.orders.orders == 0 &&
+        syncResult.meterReading.meterReading == 0 &&
+        syncResult.wastageReport.wastageReport == 0 &&
+        syncResult.recieptPayments.recieptPayments == 0 &&
+        syncResult.topups.topups == 0 &&
+        syncResult.customerReminder.customerReminder == 0
+      ) {
+        return i18n.t('data-is-up-to-date');
+      } else {
+
+        let final1 = '';
+        let final2 = '';
+        let final3 = '';
+        let final4 = '';
+        let final5 = '';
+
+        let final6 = '';
+        let final7 = '';
+        let final8 = '';
+        let final9 = '';
+        let final10 = '';
+        let final11 = '';
+
+        if (syncResult.customers.customers > 0) {
+          final1 = `${syncResult.customers.successError === 'success' ? `${syncResult.customers.customers} ` + i18n.t('customers-updated') : `${syncResult.customers.successMessage.message} Please Synchronise Before making any changes`}`
+        }
+
+        if (syncResult.products.products > 0) {
+          final2 = `\n${syncResult.products.successError === 'success' ? `${syncResult.products.products + i18n.t('products-updated')}` : `${syncResult.products.successMessage.message} Please Synchronise Before making any changes`}`
+
+        }
+
+        if (syncResult.wastageReport.wastageReport > 0) {
+          final3 = `\n${syncResult.wastageReport.successError === 'success' ? `${syncResult.wastageReport.wastageReport} ` + i18n.t('wastageReport-updated') : `${syncResult.wastageReport.successMessage.message} Please Synchronise Before making any changes`}`
+
+        }
+
+
+        if (syncResult.orders.orders > 0) {
+          final4 = `\n${syncResult.orders.successError === 'success' ? `${syncResult.orders.orders} ` + i18n.t('sales-receipts-updated') : `${syncResult.orders.successMessage.message} Please Synchronise Before making any changes`}`
+        }
+
+
+        if (syncResult.debt.debt > 0) {
+          final5 = `\n${syncResult.debt.successError === 'success' ? `${syncResult.debt.debt} ` + i18n.t('debt-updated') : `${syncResult.debt.successMessage.message} Please Synchronise Before making any changes`}`
+
+        }
+
+
+
+        if (
+          syncResult.meterReading.meterReading > 0
+        ) {
+          final6 = `\n${syncResult.meterReading.successError === 'success' ? `${syncResult.meterReading.meterReading} ` + i18n.t('meterReading-updated') : `${syncResult.meterReading.successMessage.message} Please Synchronise Before making any changes`}`
+
+
+        }
+
+
+        if (
+          syncResult.recieptPayments.recieptPayments > 0
+        ) {
+
+          final7 = `\n${syncResult.recieptPayments.successError === 'success' ? `${syncResult.recieptPayments.recieptPayments} ` + i18n.t('recieptPayments-updated') : `${syncResult.recieptPayments.successMessage.message} Please Synchronise Before making any changes`}`
+
+        }
+
+
+        if (
+          syncResult.customerReminder.customerReminder > 0
+        ) {
+          final8 = `\n${syncResult.customerReminder.successError === 'success' ? `${syncResult.customerReminder.customerReminder} ` + i18n.t('customer-reminder-updated') : `${syncResult.customerReminder.successMessage.message} Please Synchronise Before making any changes`}`
+
+
+        }
+
+
+        if (
+          syncResult.productMrps.productMrps > 0
+        ) {
+          final9 = `\n${syncResult.productMrps.successError === 'success' ? `${syncResult.productMrps.productMrps} ` + i18n.t('pricing-sheme-updated') : `${syncResult.productMrps.successMessage.message} Please Synchronise Before making any changes`}`
+
+
+        }
+
+
+        if (
+          syncResult.salesChannels.salesChannels > 0
+        ) {
+          final10 = `\n${syncResult.salesChannels.successError === 'success' ? `${syncResult.salesChannels.salesChannels} ` + i18n.t('salechannel-updated') : `${syncResult.salesChannels.successMessage.message} Please Synchronise Before making any changes`}`
+
+
+
+        }
+
+
+
+        if (
+          syncResult.topups.topups > 0
+        ) {
+
+          final10 = `\n${syncResult.topups.successError === 'success' ? `${syncResult.topups.topups} ` + i18n.t('topups-updated') : `${syncResult.topups.successMessage.message} Please Synchronise Before making any changes`}`
+
+
+        }
+
+        return final1 + final2 + final3 + final4 + final5 + final6 + final7 + final8 + final9 + final10 + final11
+      }
+
+    } catch (error) { }
+  }
+
+
+
 
 function DrawerContainer({ route, navigation }) {
 	return (
 		<Drawer.Navigator
 			initialRouteName="ListCustomerStack"
-			//drawerContent={props => <CustomSidebarMenu {...props} />}
-			drawerContent={(props, navigation) => <CustomDrawerContent {...props} navigation={navigation} />}
+			drawerContent={props => <CustomSidebarMenu {...props} />}
+			//drawerContent={(props, navigation) => <CustomDrawerContent {...props} navigation={navigation} />}
 			drawerContentOptions={{
 				activeTintColor: '#e91e63',
 				itemStyle: { marginVertical: 5 },
