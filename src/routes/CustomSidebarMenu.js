@@ -39,33 +39,33 @@ class CustomSidebarMenu extends React.PureComponent {
       password: "",
       selectedLanguage: {},
       isLoading: false
-    };
+	};
 
     this.items = [
       {
         navOptionThumb: 'md-contact',
         navOptionName: 'Customers',
-		screenToNavigate: 'ListCustomers',
+		screenToNavigate: 'ListCustomerStack',
       },
       {
         navOptionThumb: 'md-pricetag',
         navOptionName: 'Transactions',
-        screenToNavigate: 'Transactions',
+        screenToNavigate: 'TransactionStack',
       },
       {
         navOptionThumb: 'ios-stats',
         navOptionName: 'Sales Report',
-        screenToNavigate: 'SalesReport',
+        screenToNavigate: 'SalesReportStack',
       },
       {
         navOptionThumb: 'md-list-box',
         navOptionName: 'Wastage Report',
-        screenToNavigate: 'Inventory',
+        screenToNavigate: 'InventoryStack',
       },
       {
         navOptionThumb: 'md-alarm',
         navOptionName: 'Reminders',
-        screenToNavigate: 'Reminders',
+        screenToNavigate: 'ReminderStack',
       },
       {
         navOptionThumb: 'md-sync',

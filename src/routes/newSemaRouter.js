@@ -472,19 +472,6 @@ function onSynchronize() {
 
 function DrawerContainer({ route, navigation }) {
 	return (
-	// 	{
-	// 		contentOptions: {
-	// 			activeTintColor: '#ABC1DE',
-	// 		},
-	// 		initialRouteName: 'ListCustomers',
-	// 		contentComponent: CustomSidebarMenu,
-	// 		drawerBackgroundColor: {
-	// 			light: '#eee',
-	// 			dark: 'rgba(40,40,40,1)',
-	// 		},
-	// 		drawerType: 'slide',
-	// 		drawerWidth: Dimensions.get('window').width * .3,
-	//  });
 		<Drawer.Navigator
 			initialRouteName="ListCustomerStack"
 			drawerContent={props => <CustomSidebarMenu {...props} />}
