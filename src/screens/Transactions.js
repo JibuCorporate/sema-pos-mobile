@@ -32,7 +32,7 @@ import CreditRealm from '../database/credit/credit.operations';
 import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
 
 import i18n from '../app/i18n';
-import { format, parseISO, isBefore } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 class ReceiptLineItem extends React.Component {
 	constructor(props) {

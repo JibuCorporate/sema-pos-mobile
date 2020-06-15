@@ -1318,8 +1318,6 @@ class OrderSummaryScreen extends React.PureComponent {
 		}
 	}
 
-
-
 	orderCheckOutElement = () => {
 		let filterProducts = this.props.orderItems
 		let isRefill = filterProducts.filter(element => {
@@ -1924,7 +1922,6 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	invoiceid = () => {
 		var d = new Date().getTime();
-		//   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
 		var uuid = 'xxxx'.replace(/[xy]/g, (c) => {
 			var r = (d + Math.random() * 16) % 16 | 0;
 			d = Math.floor(d / 16);
@@ -2012,7 +2009,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 			receipt.customer_account = this.props.selectedCustomer;
 			if (this.props.selectedPaymentTypes.length > 0) {
-				ReceiptPaymentTypeRealm.createManyReceiptPaymentType(this.props.selectedPaymentTypes, receipt.id );
+				ReceiptPaymentTypeRealm.createManyReceiptPaymentType(this.props.selectedPaymentTypes, receipt.id, receiptDate );
 				this.props.paymentTypesActions.setRecieptPaymentTypes(
 					ReceiptPaymentTypeRealm.getReceiptPaymentTypes()
 				);

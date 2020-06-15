@@ -101,7 +101,7 @@ class CustomerItem extends React.PureComponent {
                     this.getRowBackground(), styles.listStyles
                 ]}>
                 <View style={styles.OneHalf}>
-                    <Text style={[styles.baseItem, styles.leftMargin]}>
+                    <Text style={styles.baseItem, styles.leftMargin}>
                         {this.props.item.name}
                     </Text>
                 </View>
@@ -112,7 +112,7 @@ class CustomerItem extends React.PureComponent {
                 </View>
 
                 <View style={styles.OneHalf}>
-                    <Text style={[styles.baseItem]}>{this.props.item.address}</Text>
+                    <Text style={styles.baseItem}>{this.props.item.address}</Text>
                 </View>
                 <View style={styles.flexOne}>
                     <Text style={styles.baseItem}>
@@ -440,7 +440,7 @@ class CustomerList extends React.PureComponent {
                     extraData={this.state.refresh}
                     renderItem={this._renderItem}
                     keyExtractor={(item, idx) => item.customerId + idx}
-					// legacyImplementation={false}
+					legacyImplementation={true}
 					maxToRenderPerBatch = {1}
 					initialNumToRender={50}
                 />

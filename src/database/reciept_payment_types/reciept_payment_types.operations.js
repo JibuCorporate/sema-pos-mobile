@@ -170,7 +170,7 @@ class ReceiptPaymentTypeRealm {
         }
     }
 
-    createManyReceiptPaymentType(receiptPaymentTypes, receiptId) {
+    createManyReceiptPaymentType(receiptPaymentTypes, receiptId, receiptDate) {
         try {
             realm.write(() => {
                 if (receiptId) {
@@ -182,7 +182,7 @@ class ReceiptPaymentTypeRealm {
                             amount: Number(obj.amount),
                             active: false,
                             syncAction: obj.syncAction ? obj.syncAction : 'create',
-                            created_at: obj.created_at ? obj.created_at : null,
+                            created_at: receiptDate ? receiptDate : obj.created_at,
                             updated_at: obj.updated_at ? obj.updated_at : null,
                         });
                     });
