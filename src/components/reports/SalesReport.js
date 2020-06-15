@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text, View, StyleSheet, FlatList, ScrollView, RefreshControl } from 'react-native';
+import { Text, View, StyleSheet, FlatList, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as reportActions from "../../actions/ReportActions";
@@ -42,6 +42,7 @@ class SalesReport extends React.PureComponent {
 							onRefresh={this._onRefresh}
 						/>
 					}>
+						<TouchableOpacity>
 					<View style={styles.saleTotals}>
 						<View style={styles.salesubconttotals}>
 							<DateFilter />
@@ -97,6 +98,7 @@ class SalesReport extends React.PureComponent {
 						</View>
 
 					</View>
+					</TouchableOpacity>
 				</ScrollView>
 			</View>
 		);

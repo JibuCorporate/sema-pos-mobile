@@ -65,6 +65,7 @@ class Login extends React.PureComponent {
 
 		this.onShowLanguages = this.onShowLanguages.bind(this);
 		this.onLanguageSelected = this.onLanguageSelected.bind(this);
+		this.onConnection = this.onConnection.bind(this);
 	}
 
 
@@ -88,13 +89,13 @@ class Login extends React.PureComponent {
 							<Input
 								label={i18n.t('username-or-email-placeholder')}
 								onChangeText={this.onChangeEmail.bind(this)}
-								inputContainerStyle={[styles.inputText]}
+								inputContainerStyle={styles.inputText}
 							/>
 							<Input
 								label={i18n.t('password-placeholder')}
 								secureTextEntry={true}
 								onChangeText={this.onChangePassword.bind(this)}
-								inputContainerStyle={[styles.inputText]}
+								inputContainerStyle={styles.inputText}
 							/>
 							<Picker
 								style={styles.pickerstyle}
@@ -107,7 +108,7 @@ class Login extends React.PureComponent {
 								{serviceItems}
 							</Picker>
 							<Button
-								onPress={this.onConnection.bind(this)}
+								onPress={this.onConnection}
 								buttonStyle={styles.btnstyle}
 								title={i18n.t('connect')} />
 
@@ -242,7 +243,7 @@ class Login extends React.PureComponent {
 						if (!this.isSiteIdDifferent(result.response.data.kiosk.id, oldSettings.siteId)) {
 							this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 							this.setState({ isLoading: false });
-							this.props.navigation.navigate('CustomerList');
+							this.props.navigation.navigate('ListCustomerStack');
 						}
 
 					} else {
@@ -408,6 +409,7 @@ function mapStateToProps(state) {
 		products: state.productReducer.products,
 	};
 }
+
 function mapDispatchToProps(dispatch) {
 	return {
 		networkActions: bindActionCreators(NetworkActions, dispatch),

@@ -37,22 +37,6 @@ import slowlog from 'react-native-slowlog';
 
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
-const initialNumToRender = 50;
-
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-    },
-];
 class CustomerList extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -73,7 +57,7 @@ class CustomerList extends React.PureComponent {
         this.removeClippedSubviews = true;
         this.isSelected = false;
 
-       
+
 
         this.props.customerActions.CustomerSelected({});
         this.props.customerActions.setCustomerEditStatus(false);
@@ -356,12 +340,12 @@ class CustomerList extends React.PureComponent {
 
     handleOnPress = (item) => {
         if (this.props.products.length > 0) {
-            // this.props.customerActions.SetCustomerAndProp(item, {
-            //     isDueAmount: item.dueAmount,
-            //     isCustomerSelected: false,
-            //     customerName: '',
-            //     'title': item.name + "'s Order"
-            // })
+            this.props.customerActions.SetCustomerAndProp(item, {
+                isDueAmount: item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': item.name + "'s Order"
+            })
             this.props.navigation.navigate('ListCustomerStack', { screen: 'OrderView' });
         }
 

@@ -1291,7 +1291,7 @@ class OrderView extends React.PureComponent {
 
 				<View style={{ flex: 1, padding: 0, margin: 0 }}>
 					<ScrollView>
-
+					<TouchableOpacity>
 
 						<View
 							style={{
@@ -1442,6 +1442,7 @@ class OrderView extends React.PureComponent {
 								</View>
 							</View>
 						</View>
+						</TouchableOpacity>
 
 					</ScrollView>
 					<View style={orderCheckOutStyles.completeOrderBtn}>

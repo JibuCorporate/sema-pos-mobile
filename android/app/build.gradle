@@ -117,10 +117,12 @@ android {
 
     signingConfigs {
         release {
-         storeFile file('ogenzo-bar-pos.keystore')
-                storePassword 'ogenzo@bar123'
-                keyAlias 'ogenzo-bar-pos'
-                keyPassword 'ogenzo@bar123'
+         if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
+                storeFile file(MYAPP_RELEASE_STORE_FILE)
+                storePassword MYAPP_RELEASE_STORE_PASSWORD
+                keyAlias MYAPP_RELEASE_KEY_ALIAS
+                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+            }
         }
     }
     splits {

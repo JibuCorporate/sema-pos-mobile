@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text, Dimensions, Picker, Alert, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Communications from '../services/Communications';
@@ -21,7 +21,6 @@ import CustomerEdit from '../screens/CustomerEdit';
 import CustomerDetails from '../screens/CustomerDetails';
 import CreditHistory from '../screens/CreditHistory';
 import Login from '../screens/Login';
-import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import Transactions from '../screens/Transactions';
 import SettingRealm from '../database/settings/settings.operations';
 import * as SettingsActions from '../actions/SettingsActions';
@@ -40,7 +39,6 @@ import NewNavigationDrawerStructure from './NewNavigationDrawerStructure';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
-import { useNavigation } from '@react-navigation/native';
 
 function CreditHistoryStack() {
 	return (

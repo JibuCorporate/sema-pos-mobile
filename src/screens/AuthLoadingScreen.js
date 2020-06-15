@@ -21,18 +21,7 @@ import * as receiptActions from '../actions/ReceiptActions';
 import * as discountActions from '../actions/DiscountActions';
 import * as paymentTypesActions from '../actions/PaymentTypesActions';
 import * as CustomerReminderActions from '../actions/CustomerReminderActions';
-import CreditRealm from '../database/credit/credit.operations';
-import CustomerRealm from '../database/customers/customer.operations'
-import InventroyRealm from '../database/inventory/inventory.operations';
 import SettingRealm from '../database/settings/settings.operations';
-
-import OrderRealm from '../database/orders/orders.operations';
-
-
-import ProductsRealm from '../database/products/product.operations';
-import DiscountRealm from '../database/discount/discount.operations';
-
-
 import Synchronization from '../services/Synchronization';
 import Communications from '../services/Communications';
 import NetInfo from "@react-native-community/netinfo";
@@ -89,12 +78,7 @@ class AuthLoadingScreen extends React.PureComponent {
     };
 
     loadSyncedData() {
-         
-       
 
-        
-    
-        
         Synchronization.setConnected(this.props.network.isNWConnected);
     };
 
