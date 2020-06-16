@@ -82,7 +82,6 @@ class CustomSidebarMenu extends React.PureComponent {
   }
 
   componentDidMount() {
-
   }
 
   handleOnPress(item, key) {

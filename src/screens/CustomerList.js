@@ -17,7 +17,8 @@ import {
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
-
+import memoizeOne from 'memoize-one';
+import isDeepEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Modal from 'react-native-modalbox';
@@ -39,20 +40,151 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const initialNumToRender = 50;
 
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-    },
-];
+const identity = x => x;
+const deepMemoized  = memoizeOne(identity,isDeepEqual);
+
+class CustomerItem extends React.PureComponent {
+	constructor(props) {
+        super(props);
+		slowlog(this, /.*/);
+		this.handleOnPress = this.handleOnPress.bind(this);
+		this.onLongPressItem = this.onLongPressItem.bind(this);
+	}
+
+	static whyDidYouRender = true;
+
+
+	onLongPressItem = () => {
+        this.props.customerActions.CustomerSelected(this.props.item);
+        this.props.customerActions.SetCustomerProp({
+                isCustomerSelected: true,
+                isDueAmount: this.props.item.dueAmount,
+                customerName: this.props.item.name,
+                'title': this.props.item.name
+            }
+        );
+
+		this.props.customerActions.setCustomerEditStatus(true);
+	}
+
+    handleOnPress = () => {
+		// InteractionManager.runAfterInteractions(() => {
+        // this.props.customerActions.CustomerSelected(this.props.item);
+        // this.props.customerActions.SetCustomerProp({
+        //         isDueAmount: this.props.item.dueAmount,
+        //         isCustomerSelected: false,
+        //         customerName: '',
+        //         'title': this.props.item.name + "'s Order"
+        //     }
+		// );
+
+		// this.props.navigation.navigate('OrderView');
+        // // });
+        
+        if (this.props.products.length > 0) {
+            this.props.customerActions.SetCustomerAndProp(item, {
+                isDueAmount: item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': item.name + "'s Order"
+            })
+            this.props.navigation.navigate('ListCustomerStack', { screen: 'OrderView' });
+        }
+
+        if (this.props.products.length === 0) {
+            Alert.alert(
+                'Products Not Found',
+                'Please Synchronise !',
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => { },
+                        style: 'cancel'
+                    },
+                    {
+                        text: 'OK',
+                        onPress: () => {
+
+                        }
+                    }
+                ],
+                { cancelable: false }
+            );
+        }
+
+    }
+
+	getRowBackground() {
+		let isSelected = false;
+        if (isSelected) {
+            return styles.selectedBackground;
+        } else {
+            return this.props.index % 2 === 0
+                ? styles.lightBackground
+                : styles.darkBackground;
+        }
+	}
+
+	getCustomerTypes() {
+        const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
+        try {
+            for (let i = 0; i < customerTypeIts.length; i++) {
+                if (customerTypeIts[i].id === this.props.item.customerTypeId) {
+                    return customerTypeIts[i].name;
+                }
+            }
+        } catch (error) {
+            return 'Walk-up';
+        }
+    }
+
+    render() {
+
+        return (
+		<TouchableHighlight
+            onLongPress={this.onLongPressItem}
+            onPress={this.handleOnPress}
+            onShowUnderlay={this.props.separators.highlight}
+            onHideUnderlay={this.props.separators.unhighlight}>
+            <View
+                style={[
+                    this.getRowBackground(), styles.listStyles
+                ]}>
+                <View style={styles.OneHalf}>
+                    <Text style={[styles.baseItem, styles.leftMargin]}>
+                        {this.props.item.name}
+                    </Text>
+                </View>
+                <View style={styles.flexOne}>
+                    <Text style={styles.baseItem}>
+                        {this.props.item.phoneNumber}
+                    </Text>
+                </View>
+
+                <View style={styles.OneHalf}>
+                    <Text style={[styles.baseItem]}>{this.props.item.address}</Text>
+                </View>
+                <View style={styles.flexOne}>
+                    <Text style={styles.baseItem}>
+                        {this.getCustomerTypes()}
+                    </Text>
+                </View>
+                <View style={styles.flexOne}>
+                    <Text style={styles.baseItem}>
+                        {this.props.item.dueAmount ? this.props.item.dueAmount.toFixed(2) : 0}
+                    </Text>
+                </View>
+                <View style={styles.flexOne}>
+                    <Text style={styles.baseItem}>
+                        {this.props.item.walletBalance.toFixed(2)}
+                    </Text>
+                </View>
+            </View>
+			</TouchableHighlight>
+
+        );
+    }
+}
 class CustomerList extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -72,17 +204,17 @@ class CustomerList extends React.PureComponent {
         this.stickyHeaderIndices = [0];
         this.removeClippedSubviews = true;
         this.isSelected = false;
-
-       
-
-        this.props.customerActions.CustomerSelected({});
-        this.props.customerActions.setCustomerEditStatus(false);
+      
+        this.filteredList = deepMemoized(this.props.customers);
+    
 
     }
 
     componentDidMount() {
         // console.log('this.props.route-customer',this.props.route)
         // console.log('this.props.navigation-cust',this.props.navigation)
+        this.props.customerActions.CustomerSelected({});
+        this.props.customerActions.setCustomerEditStatus(false);
         this.props.navigation.setParams({
             isCustomerSelected: false,
             customerTypeValue: 'all',
@@ -356,12 +488,12 @@ class CustomerList extends React.PureComponent {
 
     handleOnPress = (item) => {
         if (this.props.products.length > 0) {
-            // this.props.customerActions.SetCustomerAndProp(item, {
-            //     isDueAmount: item.dueAmount,
-            //     isCustomerSelected: false,
-            //     customerName: '',
-            //     'title': item.name + "'s Order"
-            // })
+            this.props.customerActions.SetCustomerAndProp(item, {
+                isDueAmount: item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': item.name + "'s Order"
+            })
             this.props.navigation.navigate('ListCustomerStack', { screen: 'OrderView' });
         }
 
@@ -397,24 +529,29 @@ class CustomerList extends React.PureComponent {
         }
     };
 
-    _renderItem2 = ({ item, index, separators }) => {
-        return (
-            <View style={styles.item}>
-                <Text style={styles.title}>{item.name}</Text>
-            </View>
-        );
-    }
-
     _renderItem = ({ item, index, separators }) => {
         return (
             <TouchableHighlight
-                onLongPress={this.onLongPressItem(item)}
-                onPress={this.handleOnPress(item)}
+            onLongPress={this.onLongPressItem.bind(this,item)}
+            onPress={this.handleOnPress.bind(this,item)}
+            onShowUnderlay={separators.highlight}
+            onHideUnderlay={separators.unhighlight}>
+            <View style={styles.item}>
+                <Text style={styles.title}>{item.name}</Text>
+            </View>
+            </TouchableHighlight>
+        );
+    }
+
+    _renderItem3 = ({ item, index, separators }) => {
+        return (
+            <TouchableHighlight
+                onLongPress={this.onLongPressItem.bind(this,item)}
+                onPress={this.handleOnPress.bind(this,item)}
                 onShowUnderlay={separators.highlight}
                 onHideUnderlay={separators.unhighlight}>
                 <View
-                    style={[
-                        this.getRowBackground(index, this.isSelected), styles.listStyles
+                    style={[ styles.listStyles
                     ]}>
                     <View style={styles.OneHalf}>
                         <Text style={[styles.baseItem, styles.leftMargin]}>
@@ -450,50 +587,20 @@ class CustomerList extends React.PureComponent {
         )
     };
 
-
-    _renderItem3 = ({ item, index, separators }) => {
+    _renderItem323 = ({ item, index, separators }) => {
         return (
-            <TouchableHighlight
-                onLongPress={this.onLongPressItem.bind(this, item)}
-                onPress={this.handleOnPress.bind(this, item)}
-                onShowUnderlay={separators.highlight}
-                onHideUnderlay={separators.unhighlight}>
-                <View
-                    style={[this.getRowBackground(index, this.isSelected), styles.listStyles]}>
-                    <View style={styles.OneHalf}>
-                        <Text style={[styles.baseItem, styles.leftMargin]}>
-                            {item.name}
-                        </Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {item.phoneNumber}
-                        </Text>
-                    </View>
-
-                    <View style={styles.OneHalf}>
-                        <Text style={[styles.baseItem]}>{item.address}</Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {this.getCustomerTypes(item)}
-                        </Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {item.dueAmount}
-                        </Text>
-                    </View>
-                    <View style={styles.flexOne}>
-                        <Text style={styles.baseItem}>
-                            {item.walletBalance}
-                        </Text>
-                    </View>
-                </View>
-            </TouchableHighlight>
+				<CustomerItem
+					item={item}
+                    index={index}
+                    products={this.props.products}
+					separators={separators}
+					customerActions={this.props.customerActions}
+					navigation={this.props.navigation}
+				/>
         )
     };
 
+    
 
     floatAction = () => {
         console.log('floating');
@@ -513,6 +620,7 @@ class CustomerList extends React.PureComponent {
 
 
     render() {
+       
         return (
             <View style={styles.list}>
                 {/* <FlatList
@@ -528,13 +636,13 @@ class CustomerList extends React.PureComponent {
                    removeClippedSubviews={this.removeClippedSubviews}
                 /> */}
                 <FlatList
-                    data={this.props.customers}
+                    data={this.filteredList}
                     stickyHeaderIndices={this.stickyHeaderIndices}
                     ListHeaderComponent={this.showHeader}
                     renderItem={this._renderItem3}
                     keyExtractor={item => item.customerId}
                 />
-                <FloatingAction
+                {/* <FloatingAction
                     onOpen={this.floatAction}
                 />
 
@@ -550,7 +658,7 @@ class CustomerList extends React.PureComponent {
                 </View>
                 <SearchWatcher parent={this}>
                     {this.props.searchString}
-                </SearchWatcher>
+                </SearchWatcher> */}
             </View>
         );
     };
