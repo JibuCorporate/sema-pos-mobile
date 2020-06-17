@@ -70,12 +70,12 @@ class ReceiptLineItem extends React.Component {
 
 
 	getImage = item => {
-		const productImage = this.props.products.find(e => e.productId === item.product_id);
+		const productImage = this.props.products.find(e => e.productId === item.productId);
 		return productImage.base64encodedImage;
 	};
 
 	getDescription = item => {
-		const productImage = this.props.products.find(e => e.productId === item.product_id);
+		const productImage = this.props.products.find(e => e.productId === item.productId);
 		return productImage.description;
 	};
 
