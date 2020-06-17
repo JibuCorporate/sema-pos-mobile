@@ -303,6 +303,10 @@ class CustomerRealm {
         return this.getAllCustomer().filter(e => SyncUtils.isSimilarDay(e.created_at, date) && e.customerId === customerId)
     }
 
+    findCustomerById(id){
+        return realm.objects('Customer').filtered(`customerId = "${id}"`);
+    }
+
 }
 
 export default new CustomerRealm();
