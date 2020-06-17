@@ -44,12 +44,12 @@ class ReceiptLineItem extends React.Component {
 			<View
 				style={styles.receiptlinecont}>
 				<Image
-					source={{ uri: this.getImage(this.props.item.product) }}
+					source={{ uri: this.getImage(this.props.item) }}
 					style={styles.productImage}
 				/>
 				<View style={styles.receipttext}>
 					<View style={styles.itemData}>
-						<Text style={styles.label, styles.font15}>{this.props.item.product.description}</Text>
+						<Text style={styles.label, styles.font15}>{this.getDescription(this.props.item)}</Text>
 					</View>
 					<View style={styles.itemData}>
 						<Text style={styles.label, styles.font16}>{this.props.item.quantity} </Text>
@@ -70,21 +70,31 @@ class ReceiptLineItem extends React.Component {
 
 
 	getImage = item => {
-		const productImage =
-			item.base64encodedImage || item.base64encoded_image ||
-			this.props.products.reduce((image, product) => {
-				if (product.productId === item.product_id)
-					return product.base64encodedImage;
-				return image;
-			}, '');
-
-		if (productImage.startsWith('data:image')) {
-			return productImage;
-
-		} else {
-			return 'data:image/png;base64,' + productImage;
-		}
+		const productImage = this.props.products.find(e => e.productId === item.product_id);
+		return productImage.base64encodedImage;
 	};
+
+	getDescription = item => {
+		const productImage = this.props.products.find(e => e.productId === item.product_id);
+		return productImage.description;
+	};
+
+	// getImage = item => {
+	// 	const productImage =
+	// 		item.base64encodedImage || item.base64encoded_image ||
+	// 		this.props.products.reduce((image, product) => {
+	// 			if (product.productId === item.product_id)
+	// 				return product.base64encodedImage;
+	// 			return image;
+	// 		}, '');
+
+	// 	if (productImage.startsWith('data:image')) {
+	// 		return productImage;
+
+	// 	} else {
+	// 		return 'data:image/png;base64,' + productImage;
+	// 	}
+	// };
 }
 
 class PaymentTypeItem extends React.Component {
@@ -146,7 +156,7 @@ class TransactionDetail extends React.Component {
 				[
 					{
 						text: i18n.t('no'),
-						onPress: () => {},
+						onPress: () => { },
 						style: 'cancel'
 					},
 					{
@@ -179,7 +189,7 @@ class TransactionDetail extends React.Component {
 				[
 					{
 						text: i18n.t('no'),
-						onPress: () => {},
+						onPress: () => { },
 						style: 'cancel'
 					},
 					{
@@ -371,7 +381,7 @@ class TransactionDetail extends React.Component {
 								<View style={styles.deleteButtonContainer}>
 									<TouchableOpacity
 										onPress={this.onDeleteReceipt(this.props.item)}
-										style={ ostyle(this.props.item.active).touchstyle }>
+										style={ostyle(this.props.item.active).touchstyle}>
 										<Text style={styles.receiptDeleteButtonText}>X</Text>
 									</TouchableOpacity>
 								</View>
@@ -454,7 +464,7 @@ class TransactionDetail extends React.Component {
 								<View style={styles.deleteButtonContainer}>
 									<TouchableOpacity
 										onPress={this.onTopupCreditDelete(this.props.item)}
-										style={ ostyle(this.props.item.active).touchstyle }>
+										style={ostyle(this.props.item.active).touchstyle}>
 										<Text style={styles.receiptDeleteButtonText}>X</Text>
 									</TouchableOpacity>
 								</View>
@@ -837,7 +847,7 @@ export default connect(
 
 const ostyle = (actives) => StyleSheet.create({
 	touchstyle: {
-	    width: '100%',
+		width: '100%',
 		height: '100%',
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -856,7 +866,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 
-	flex1:{
+	flex1: {
 		flex: 1
 	},
 
@@ -868,7 +878,7 @@ const styles = StyleSheet.create({
 		flex: 2
 	},
 
-	flex15:{
+	flex15: {
 		flex: 1.5
 	},
 
@@ -888,10 +898,10 @@ const styles = StyleSheet.create({
 		flex: 1, backgroundColor: '#fff', borderRightWidth: 1, borderRightColor: '#CCC'
 	},
 
-	font15:{
+	font15: {
 		fontSize: 15
 	},
-	font16:{
+	font16: {
 		fontSize: 16
 	},
 
@@ -904,7 +914,7 @@ const styles = StyleSheet.create({
 
 	itemsPurchasedValue: {
 		flex: 1, fontWeight: 'bold',
-		 paddingRight: 20, alignSelf: 'flex-end'
+		paddingRight: 20, alignSelf: 'flex-end'
 	},
 	sectionTitle: {
 		fontSize: 16,
@@ -1011,7 +1021,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 
-	rowFlex:{
+	rowFlex: {
 		flexDirection: 'row'
 	},
 
@@ -1122,7 +1132,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-around', flex: .65
 	},
 
-	rlidata:{
+	rlidata: {
 		flex: .25, alignSelf: 'flex-end'
 	},
 
