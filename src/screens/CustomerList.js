@@ -128,7 +128,11 @@ class CustomerList extends React.PureComponent {
 
 	}
 
-	static whyDidYouRender = true;
+    static whyDidYouRender = true;
+    
+    shouldComponentUpdate(){
+        return true;
+    }
 
     componentDidMount() {
         this.props.navigation.setParams({
@@ -394,6 +398,7 @@ class CustomerList extends React.PureComponent {
 
 	onLongPressItem = (item) => {
         CustomerRealm.selectedCustomer(item.customerId)
+        this.shouldComponentUpdate();
         // this.props.customerActions.CustomerSelected(item);
         // this.props.customerActions.SetCustomerProp({
         //         isCustomerSelected: true,
@@ -411,6 +416,7 @@ class CustomerList extends React.PureComponent {
 		requestAnimationFrame(() => {
             //this.props.customerActions.CustomerSelected(item);
             CustomerRealm.selectedCustomer(item.customerId)
+            this.shouldComponentUpdate();
             // this.props.customerActions.SetCustomerProp({
             //         isDueAmount: item.dueAmount,
             //         isCustomerSelected: false,
