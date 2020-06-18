@@ -393,30 +393,31 @@ class CustomerList extends React.PureComponent {
 	}
 
 	onLongPressItem = (item) => {
-        this.props.customerActions.CustomerSelected(item);
-        this.props.customerActions.SetCustomerProp({
-                isCustomerSelected: true,
-                isDueAmount: item.dueAmount,
-                customerName: item.name,
-                'title': item.name
-            }
-        );
+        CustomerRealm.selectedCustomer(item.customerId)
+        // this.props.customerActions.CustomerSelected(item);
+        // this.props.customerActions.SetCustomerProp({
+        //         isCustomerSelected: true,
+        //         isDueAmount: item.dueAmount,
+        //         customerName: item.name,
+        //         'title': item.name
+        //     }
+        // );
 
-		this.props.customerActions.setCustomerEditStatus(true);
+		//this.props.customerActions.setCustomerEditStatus(true);
 	}
 
     handleOnPress = (item) => {
 		// InteractionManager.runAfterInteractions(() => {
 		requestAnimationFrame(() => {
-            this.props.customerActions.CustomerSelected(item);
-            CustomerRealm.getAllCustomer()
-            this.props.customerActions.SetCustomerProp({
-                    isDueAmount: item.dueAmount,
-                    isCustomerSelected: false,
-                    customerName: '',
-                    'title': item.name + "'s Order"
-                }
-			);
+            //this.props.customerActions.CustomerSelected(item);
+            CustomerRealm.selectedCustomer(item.customerId)
+            // this.props.customerActions.SetCustomerProp({
+            //         isDueAmount: item.dueAmount,
+            //         isCustomerSelected: false,
+            //         customerName: '',
+            //         'title': item.name + "'s Order"
+            //     }
+			// );
 
             this.props.navigation.navigate('OrderView');
 		});
