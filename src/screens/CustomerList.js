@@ -33,15 +33,7 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 import PaymentModal from './paymentModal';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-import ListView from "deprecated-react-native-listview";
-
 class CustomerItem extends React.PureComponent {
-	// constructor() {
-	// 	super();
-	// 	this.handleOnPress = this.handleOnPress.bind(this);
-	//   }
-
-	// static whyDidYouRender = true;
 
 	getRowBackground() {
 		let isSelected = false;
@@ -54,20 +46,11 @@ class CustomerItem extends React.PureComponent {
         }
 	}
 
-	// handleOnPress() {
-	// 	const { handlePress } = this.props;
-	// 	handlePress();
-	//   }
-
-	// onLongPressItem(){
-
-	// }
-
     render() {
         return (
 		// <TouchableHighlight
         //     onLongPress={this.props.onLongPressItem}
-        //     onPress={this.handleOnPress}
+        //     onPress={this.props.handlePress}
         //     onShowUnderlay={this.props.separators.highlight}
         //     onHideUnderlay={this.props.separators.unhighlight}>
             <View
@@ -201,19 +184,11 @@ class CustomerList extends React.PureComponent {
         return filteredItems;
     };
 
-    prepareData2 = () => {
+    prepareData = () => {
         let data = [];
         if (CustomerRealm.getAllCustomer().length > 0) {
 			// data = this.filterItems(this.props.customers);
 			data = this.filterItems(CustomerRealm.getAllCustomer());
-        }
-        return data;
-    };
-
-    prepareData = () => {
-        let data = [];
-        if (CustomerRealm.getAllCustomer().length > 0) {
-            data = [...this.filterItems(CustomerRealm.getAllCustomer())];
         }
         return data;
     };
@@ -394,24 +369,22 @@ class CustomerList extends React.PureComponent {
 	}
 
 	onLongPressItem = (item) => {
-        CustomerRealm.selectedCustomer(item.customerId)
-        // this.props.customerActions.CustomerSelected(item);
-        // this.props.customerActions.SetCustomerProp({
-        //         isCustomerSelected: true,
-        //         isDueAmount: item.dueAmount,
-        //         customerName: item.name,
-        //         'title': item.name
-        //     }
-        // );
+        this.props.customerActions.CustomerSelected(item);
+        this.props.customerActions.SetCustomerProp({
+                isCustomerSelected: true,
+                isDueAmount: item.dueAmount,
+                customerName: item.name,
+                'title': item.name
+            }
+        );
 
-		//this.props.customerActions.setCustomerEditStatus(true);
+		this.props.customerActions.setCustomerEditStatus(true);
 	}
 
     handleOnPress = (item) => {
 		// InteractionManager.runAfterInteractions(() => {
 		requestAnimationFrame(() => {
-            //this.props.customerActions.CustomerSelected(item);
-            CustomerRealm.selectedCustomer(item.customerId)
+            // this.props.customerActions.CustomerSelected(item);
             // this.props.customerActions.SetCustomerProp({
             //         isDueAmount: item.dueAmount,
             //         isCustomerSelected: false,
@@ -420,7 +393,11 @@ class CustomerList extends React.PureComponent {
             //     }
 			// );
 
-            this.props.navigation.navigate('OrderView');
+			// alert("Clicked");
+
+            this.props.navigation.navigate('OrderView',{
+				itemCustomer: item
+			});
 		});
 
 	}
@@ -441,8 +418,11 @@ class CustomerList extends React.PureComponent {
 					dueAmount={item.dueAmount}
 					walletBalance={item.walletBalance}
 					address={item.address}
+					separators={separators}
+					// onLongPressItem={this.onLongPressItem(item)}
+			    	// onHandlePress={this.handleOnPress(item)}
 			/>
-			</TouchableHighlight>
+			 </TouchableHighlight>
         )
 	};
 
@@ -477,6 +457,7 @@ class CustomerList extends React.PureComponent {
 					// maxToRenderPerBatch = {1}
 					initialNumToRender={20}
 					windowSize={10}
+					removeClippedSubviews={false}
                 />
                 <FloatingAction
                     onOpen={name => this.floatActionOpen()}
