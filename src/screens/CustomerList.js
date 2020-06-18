@@ -43,8 +43,8 @@ class CustomerItem extends React.PureComponent {
 
 	// static whyDidYouRender = true;
 
-	getRowBackground() {
-		let isSelected = false;
+	getRowBackground(isSelected) {
+		let isSelected = isSelected;
         if (isSelected) {
             return styles.selectedBackground;
         } else {
@@ -72,7 +72,7 @@ class CustomerItem extends React.PureComponent {
         //     onHideUnderlay={this.props.separators.unhighlight}>
             <View
                 style={[
-                    this.getRowBackground(), styles.listStyles
+                    this.getRowBackground(this.props.isSelected), styles.listStyles
                 ]}>
                 <View style={styles.OneHalf}>
                     <Text style={styles.baseItem, styles.leftMargin}>
@@ -438,7 +438,8 @@ class CustomerList extends React.PureComponent {
 				onShowUnderlay={separators.highlight}
 				onHideUnderlay={separators.unhighlight}>
 				<CustomerItem
-					index={index}
+                    index={index}
+                    isSelected={item.isSelected}
 					customertype={this.getCustomerTypes(item)}
 					customername={item.name}
 					phoneNumber={item.phoneNumber}
