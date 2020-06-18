@@ -44,14 +44,16 @@ class CustomerRealm {
         })
     }
     selectedCustomer(customerId) {
-        let customers = realm.objects('Customer').filtered(`customerId = "${customerId}"`);
-        customers[0].isSelected = true
+        realm.write(() => {
+            let customers = realm.objects('Customer').filtered(`customerId = "${customerId}"`);
+            customers[0].isSelected = true
+        })
     }
 
 
     getSelectedCustomer(customerId) {
         return Object.values(JSON.parse(realm.objects('Customer').filtered(`customerId = "${customerId}"`)));
-        
+
     }
 
 
@@ -124,7 +126,7 @@ class CustomerRealm {
                 realm.create('Customer', newCustomer);
             });
         } catch (e) {
-		}
+        }
 
     }
 
@@ -141,34 +143,34 @@ class CustomerRealm {
 
         return new Promise((resolve, reject) => {
 
-        try {
-            realm.write(() => {
-                let customerObj = realm.objects('Customer').filtered(`customerId = "${customer.customerId}"`);
+            try {
+                realm.write(() => {
+                    let customerObj = realm.objects('Customer').filtered(`customerId = "${customer.customerId}"`);
 
-                customerObj[0].name = name;
-                customerObj[0].phoneNumber = phone;
-                customerObj[0].address = address;
-                customerObj[0].salesChannelId = salesChannelId;
-                customerObj[0].customerTypeId = customerTypeId;
-                customerObj[0].updated_at = new Date();
-                customerObj[0].syncAction = 'update';
-                customerObj[0].frequency = frequency.toString();
-                customerObj[0].secondPhoneNumber = secondPhoneNumber;
-                customerObj[0].dueAmount = customer.dueAmount;
-                customerObj[0].walletBalance = customer.walletBalance;
+                    customerObj[0].name = name;
+                    customerObj[0].phoneNumber = phone;
+                    customerObj[0].address = address;
+                    customerObj[0].salesChannelId = salesChannelId;
+                    customerObj[0].customerTypeId = customerTypeId;
+                    customerObj[0].updated_at = new Date();
+                    customerObj[0].syncAction = 'update';
+                    customerObj[0].frequency = frequency.toString();
+                    customerObj[0].secondPhoneNumber = secondPhoneNumber;
+                    customerObj[0].dueAmount = customer.dueAmount;
+                    customerObj[0].walletBalance = customer.walletBalance;
 
 
-                if (customer.reminder_date) {
-                    customerObj[0].reminder_date = format(parseISO(customer.reminder_date), 'yyyy-MM-dd')
-                }
+                    if (customer.reminder_date) {
+                        customerObj[0].reminder_date = format(parseISO(customer.reminder_date), 'yyyy-MM-dd')
+                    }
 
-                resolve(true)
+                    resolve(true)
 
-            })
+                })
 
-        } catch (e) {
-        }
-    })
+            } catch (e) {
+            }
+        })
     }
 
     updateCustomerDueAmount(
@@ -313,7 +315,7 @@ class CustomerRealm {
         return this.getAllCustomer().filter(e => SyncUtils.isSimilarDay(e.created_at, date) && e.customerId === customerId)
     }
 
-    findCustomerById(id){
+    findCustomerById(id) {
         return realm.objects('Customer').filtered(`customerId = "${id}"`);
     }
 
