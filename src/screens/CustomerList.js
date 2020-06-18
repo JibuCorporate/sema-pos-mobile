@@ -1,5 +1,10 @@
 import React from 'react';
-
+if (process.env.NODE_ENV === 'development') {
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React, {
+	  trackAllPureComponents: true,
+	});
+  }
 import {
     View,
     Text,
@@ -26,43 +31,15 @@ import * as PaymentTypesActions from "../actions/PaymentTypesActions";
 import Icons from 'react-native-vector-icons/FontAwesome';
 
 import PaymentModal from './paymentModal';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 class CustomerItem extends React.PureComponent {
-	constructor(props) {
-        super(props);
-		this.handleOnPress = this.handleOnPress.bind(this);
-		this.onLongPressItem = this.onLongPressItem.bind(this);
-	}
+	// constructor() {
+	// 	super();
+	// 	this.handleOnPress = this.handleOnPress.bind(this);
+	//   }
 
-	onLongPressItem = () => {
-        this.props.customerActions.CustomerSelected(this.props.item);
-        this.props.customerActions.SetCustomerProp({
-                isCustomerSelected: true,
-                isDueAmount: this.props.item.dueAmount,
-                customerName: this.props.item.name,
-                'title': this.props.item.name
-            }
-        );
-
-		this.props.customerActions.setCustomerEditStatus(true);
-	}
-
-    handleOnPress = () => {
-		// InteractionManager.runAfterInteractions(() => {
-			requestAnimationFrame(() => {
-        this.props.customerActions.CustomerSelected(this.props.item);
-        this.props.customerActions.SetCustomerProp({
-                isDueAmount: this.props.item.dueAmount,
-                isCustomerSelected: false,
-                customerName: '',
-                'title': this.props.item.name + "'s Order"
-            }
-		);
-
-		this.props.navigation.navigate('OrderView');
-		});
-
-    }
+	// static whyDidYouRender = true;
 
 	getRowBackground() {
 		let isSelected = false;
@@ -75,62 +52,57 @@ class CustomerItem extends React.PureComponent {
         }
 	}
 
-	getCustomerTypes() {
-        const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
-        try {
-            for (let i = 0; i < customerTypeIts.length; i++) {
-                if (customerTypeIts[i].id === this.props.item.customerTypeId) {
-                    return customerTypeIts[i].name;
-                }
-            }
-        } catch (error) {
-            return 'Walk-up';
-        }
-    }
+	// handleOnPress() {
+	// 	const { handlePress } = this.props;
+	// 	handlePress();
+	//   }
+
+	// onLongPressItem(){
+
+	// }
 
     render() {
-
         return (
-		<TouchableHighlight
-            onLongPress={this.onLongPressItem}
-            onPress={this.handleOnPress}
-            onShowUnderlay={this.props.separators.highlight}
-            onHideUnderlay={this.props.separators.unhighlight}>
+		// <TouchableHighlight
+        //     onLongPress={this.props.onLongPressItem}
+        //     onPress={this.handleOnPress}
+        //     onShowUnderlay={this.props.separators.highlight}
+        //     onHideUnderlay={this.props.separators.unhighlight}>
             <View
                 style={[
                     this.getRowBackground(), styles.listStyles
                 ]}>
                 <View style={styles.OneHalf}>
                     <Text style={styles.baseItem, styles.leftMargin}>
-                        {this.props.item.name}
+                        {this.props.customername}
                     </Text>
                 </View>
                 <View style={styles.flexOne}>
                     <Text style={styles.baseItem}>
-                        {this.props.item.phoneNumber}
+                        {this.props.phoneNumber}
                     </Text>
                 </View>
 
                 <View style={styles.OneHalf}>
-                    <Text style={styles.baseItem}>{this.props.item.address}</Text>
+                    <Text style={styles.baseItem}>{this.props.address}</Text>
                 </View>
                 <View style={styles.flexOne}>
                     <Text style={styles.baseItem}>
-                        {this.getCustomerTypes()}
+                        {this.props.customertype}
                     </Text>
                 </View>
                 <View style={styles.flexOne}>
                     <Text style={styles.baseItem}>
-                        {this.props.item.dueAmount ? this.props.item.dueAmount.toFixed(2) : 0}
+                        {this.props.dueAmount ? this.props.dueAmount.toFixed(2) : 0}
                     </Text>
                 </View>
                 <View style={styles.flexOne}>
                     <Text style={styles.baseItem}>
-                        {this.props.item.walletBalance.toFixed(2)}
+                        {this.props.walletBalance.toFixed(2)}
                     </Text>
                 </View>
             </View>
-			</TouchableHighlight>
+		// </TouchableHighlight>
 
         );
     }
@@ -149,10 +121,12 @@ class CustomerList extends React.PureComponent {
             customerTypeFilter: '',
             customerTypeValue: '',
             hasScrolled: false,
-            isPaymentModal: true,
+			isPaymentModal: true,
         };
 
 	}
+
+	static whyDidYouRender = true;
 
     componentDidMount() {
         this.props.navigation.setParams({
@@ -181,7 +155,6 @@ class CustomerList extends React.PureComponent {
             return 'Walk-up';
         }
     }
-
 
     filterItems = data => {
         let filter = {
@@ -244,11 +217,9 @@ class CustomerList extends React.PureComponent {
         this.props.customerActions.SearchCustomers(searchText);
     };
 
-
     checkCustomerTypefilter = (searchText) => {
         this.props.customerActions.SearchCustomerTypes(searchText);
     };
-
 
     modalOnClose() {
         PaymentTypeRealm.resetSelected();
@@ -267,7 +238,6 @@ class CustomerList extends React.PureComponent {
         this.setState({ isPaymentModal: false });
         this.refs.modal6.close();
     };
-
 
     clearLoan = () => {
         this.setState({ isPaymentModal: true });
@@ -343,12 +313,11 @@ class CustomerList extends React.PureComponent {
         }
     };
 
-
     showHeader = () => {
         return (
             <View
                 style={styles.headerBackground}>
-                <View style={[styles.OneHalf]}>
+                <View style={styles.OneHalf}>
                     <Text style={[styles.headerItem, styles.leftMargin]}>
                         {i18n.t('account-name')}
                     </Text>
@@ -358,7 +327,7 @@ class CustomerList extends React.PureComponent {
                         {i18n.t('telephone-number')}
                     </Text>
                 </View>
-                <View style={[styles.OneHalf]}>
+                <View style={styles.OneHalf}>
                     <Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
                 </View>
                 <View style={[styles.flexOne]}>
@@ -398,17 +367,68 @@ class CustomerList extends React.PureComponent {
 
             </View>
         );
-    };
+	};
 
-    _renderItem = ({ item, index, separators }) => {
+	getCustomerTypes = (item) => {
+        const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
+        try {
+            for (let i = 0; i < customerTypeIts.length; i++) {
+                if (customerTypeIts[i].id === item.customerTypeId) {
+                    return customerTypeIts[i].name;
+                }
+            }
+        } catch (error) {
+            return 'Walk-up';
+        }
+	}
+
+	onLongPressItem = (item) => {
+        this.props.customerActions.CustomerSelected(item);
+        this.props.customerActions.SetCustomerProp({
+                isCustomerSelected: true,
+                isDueAmount: item.dueAmount,
+                customerName: item.name,
+                'title': item.name
+            }
+        );
+
+		this.props.customerActions.setCustomerEditStatus(true);
+	}
+
+    handleOnPress = (item) => {
+		// InteractionManager.runAfterInteractions(() => {
+		requestAnimationFrame(() => {
+            this.props.customerActions.CustomerSelected(item);
+            this.props.customerActions.SetCustomerProp({
+                    isDueAmount: item.dueAmount,
+                    isCustomerSelected: false,
+                    customerName: '',
+                    'title': item.name + "'s Order"
+                }
+			);
+
+            this.props.navigation.navigate('OrderView');
+		});
+
+	}
+
+    renderItem = ({ item, index, separators }) => {
         return (
+			<TouchableHighlight
+				onLongPress={() => this.onLongPressItem(item)}
+				onPress={() => this.handleOnPress(item)}
+				onShowUnderlay={separators.highlight}
+				onHideUnderlay={separators.unhighlight}>
 				<CustomerItem
-					item={item}
 					index={index}
-					separators={separators}
-					customerActions={this.props.customerActions}
-					navigation={this.props.navigation}
-				/>
+					customertype={this.getCustomerTypes(item)}
+					customername={item.name}
+					phoneNumber={item.phoneNumber}
+					dueAmount={item.dueAmount}
+					walletBalance={item.walletBalance}
+					address={item.address}
+			/>
+			</TouchableHighlight>
         )
 	};
 
@@ -438,11 +458,11 @@ class CustomerList extends React.PureComponent {
                     ListHeaderComponent={this.showHeader}
                     stickyHeaderIndices={[0]}
                     extraData={this.state.refresh}
-                    renderItem={this._renderItem}
+                    renderItem={this.renderItem}
                     keyExtractor={(item, idx) => item.customerId + idx}
-					legacyImplementation={true}
-					maxToRenderPerBatch = {1}
-					initialNumToRender={50}
+					// maxToRenderPerBatch = {1}
+					initialNumToRender={20}
+					windowSize={10}
                 />
                 <FloatingAction
                     onOpen={name => this.floatActionOpen()}
@@ -458,7 +478,6 @@ class CustomerList extends React.PureComponent {
                         isDisabled={this.state.isDisabled}>
 
                         {this.openModal()}
-
 
                     </Modal>
                 </View>
@@ -494,11 +513,9 @@ class SearchWatcher extends React.PureComponent {
 
         setTimeout(() => {
             if (
-                that.props.parent.props.searchString !==
-                that.props.parent.state.searchString
+                that.props.parent.props.searchString !== that.props.parent.state.searchString
             ) {
-                that.props.parent.state.searchString =
-                    that.props.parent.props.searchString;
+                that.props.parent.state.searchString = that.props.parent.props.searchString;
                 that.props.parent.setState({
                     refresh: !that.props.parent.state.refresh
                 });
@@ -508,13 +525,10 @@ class SearchWatcher extends React.PureComponent {
     }
 }
 
-
 function mapStateToProps(state) {
     return {
         selectedCustomer: state.customerReducer.selectedCustomer,
         customers: state.customerReducer.customers,
-        isUpdate: state.customerReducer.isUpdate,
-        products: state.productReducer.products,
         searchString: state.customerReducer.searchString,
         customerTypeFilter: state.customerReducer.customerTypeFilter,
         paymentTypes: state.paymentTypesReducer.paymentTypes,
@@ -542,7 +556,8 @@ const styles = StyleSheet.create({
     leftMargin: {
         left: 10
     },
-    balance: { flex: 1, flexDirection: 'row' },
+	balance: { flex: 1, flexDirection: 'row' },
+
     headerItem: {
         fontWeight: 'bold',
         fontSize: 18
@@ -561,7 +576,7 @@ const styles = StyleSheet.create({
     },
     modal3: {
         justifyContent: 'center',
-        width: '70%',
+        width: wp('70%'),
         height: 500,
     },
     modal: {

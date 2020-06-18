@@ -109,11 +109,14 @@ class Synchronization {
 	}
 
 	synchronize() {
+		console.log("Start synching ...");
 		let syncResult = { status: 'success', error: '' };
 		return new Promise(resolve => {
 			try {
+				console.log("Start synching for real ...");
 				this._refreshToken()
 					.then(() => {
+						console.log("Start synching for real now ...");
 						let settings = SettingRealm.getAllSetting();
 						const promiseSalesChannels = SalesChannelSync.synchronizeSalesChannels();
 						const promiseCustomerTypes = CustomerTypeSync.synchronizeCustomerTypes();
@@ -135,6 +138,8 @@ class Synchronization {
 						const promiseRecieptPaymentTypes = RecieptPaymentTypesSync.synchronizeRecieptPaymentTypes(settings.siteId);
 						const promiseOrders = OrderSync.synchronizeSales(settings.siteId);
 
+						console.log("Start synching end 1 ...");
+
 						Promise.all([
 							promiseSalesChannels,
 							promiseCustomerTypes,
@@ -153,33 +158,39 @@ class Synchronization {
 
 						])
 							.then(values => {
+								console.log("Mayday values " + JSON.stringify(values));
 								syncResult.salesChannels = values[0];
 								syncResult.customerTypes = values[1];
 								syncResult.paymentTypes = values[2];
 								syncResult.discounts = values[3];
-								syncResult.productMrps = values[4];
-								syncResult.products = values[5];
-								syncResult.meterReading = values[6];
-								syncResult.wastageReport = values[7];
-								syncResult.debt = values[8];
-								syncResult.recieptPayments = values[9];
-								syncResult.topups = values[10];
-								syncResult.customers = values[11];
-								syncResult.orders = values[12];
-								syncResult.customerReminder = values[13];
+								syncResult.productMrps = values[3];
+								syncResult.products = values[4];
+								syncResult.meterReading = values[4];
+								syncResult.wastageReport = values[0];
+								syncResult.debt = values[1];
+								syncResult.recieptPayments = values[2];
+								syncResult.topups = values[3];
+								syncResult.customers = values[4];
+								syncResult.orders = values[5];
+								syncResult.customerReminder = values[6];
 
 								resolve(syncResult);
+							}).
+							catch(error => {
+								console.log("Mayday end final error " + JSON.stringify(error));
 							});
 					})
 					.catch(error => {
 						syncResult.error = error;
 						syncResult.status = 'failure';
+						console.log("Mayday error " + JSON.stringify(syncResult));
 						resolve(syncResult);
 					});
 			} catch (error) {
 				syncResult.error = error;
 				syncResult.status = 'failure';
 				resolve(syncResult);
+				console.log("Mayday error2 " + JSON.stringify(syncResult));
 			}
 		});
 	}

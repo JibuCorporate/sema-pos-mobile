@@ -118,7 +118,7 @@ class CreditSync {
                     resolve({ status: 'success', message: 'synched to remote', data: localCredit });
                 })
                 .catch(error => {
-
+                   console.log(error);
                     resolve({ status: 'fail', message: 'error', data: localCredit });
                 });
         }

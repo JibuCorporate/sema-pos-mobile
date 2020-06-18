@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { withNavigation } from "react-navigation";
 import Icon from 'react-native-vector-icons/Ionicons';
 
 class NavigationDrawerStructure extends React.PureComponent {
     toggleDrawer = () => {
-        this.props.navigation.toggleDrawer();
+        this.props.navigationProps.toggleDrawer();
     };
 
     render() {
@@ -24,7 +23,7 @@ class NavigationDrawerStructure extends React.PureComponent {
     }
 }
 
-export default withNavigation(NavigationDrawerStructure);
+export default NavigationDrawerStructure;
 
 const styles = StyleSheet.create({
 	cont: {

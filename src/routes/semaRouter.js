@@ -80,17 +80,23 @@ const TabNavigator = createBottomTabNavigator({
         }
 	});
 
+const CustomerListHeaderComponent = ({ navigation }) => {
+		// Don't pass all the props so we don't trigger re-render
+		// Only pass required props
+		return <CustomerListHeader navigation={navigation} />
+}
+
 const ListCustomerStack = createStackNavigator({
     CustomerList: {
         screen: CustomerList,
-        navigationOptions: () => ({
+        navigationOptions: ({ navigation }) => ({
             headerTitle: () => <CustomerTitle title={`Customers`} />,
-            headerLeft: () => <NavigationDrawerStructure />,
+            headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
             headerStyle: {
                 backgroundColor: '#00549C'
             },
             headerTintColor: '#fff',
-            headerRight: () => <CustomerListHeader />
+            headerRight: () => <CustomerListHeaderComponent />
         }),
 	},
 
@@ -139,7 +145,7 @@ const TransactionStack = createStackNavigator({
         screen: Transactions,
         navigationOptions: ({navigation}) => ({
             title: 'Transactions',
-            headerLeft: () => <NavigationDrawerStructure />,
+            headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
             headerStyle: {
                 backgroundColor: '#00549C',
             },
@@ -169,12 +175,13 @@ const TransactionStack = createStackNavigator({
     },
 });
 
+
 const SalesReportStack = createStackNavigator({
     SalesReport: {
         screen: SalesReport,
-        navigationOptions: () => ({
+        navigationOptions: ({ navigation }) => ({
             title: 'Sales Report',
-            headerLeft: () => <NavigationDrawerStructure />,
+            headerLeft: () => <NavigationDrawerStructure  navigationProps={navigation}/>,
             headerStyle: {
                 backgroundColor: '#00549C',
             },
@@ -186,9 +193,9 @@ const SalesReportStack = createStackNavigator({
 const InventoryStack = createStackNavigator({
     Inventory: {
         screen: InventoryReport,
-        navigationOptions: () => ({
+        navigationOptions: ({ navigation }) => ({
             title: 'Wastage Report',
-            headerLeft: () => <NavigationDrawerStructure />,
+            headerLeft: () => <NavigationDrawerStructure navigationProps={navigation}/>,
             headerStyle: {
                 backgroundColor: '#00549C',
             },
@@ -200,9 +207,9 @@ const InventoryStack = createStackNavigator({
 const ReminderStack = createStackNavigator({
     Reminders: {
         screen: RemindersReport,
-        navigationOptions: () => ({
+        navigationOptions: ({ navigation }) => ({
             title: 'Reminders',
-            headerLeft: () => <NavigationDrawerStructure />,
+            headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
             headerStyle: {
                 backgroundColor: '#00549C',
             },
@@ -220,7 +227,13 @@ const LoginStack = createStackNavigator({
     {
         initialRouteName: 'Login',
         headerMode: 'none',
-    });
+	});
+
+ const SidebarComponent = ({ navigation }) => {
+		// Don't pass all the props so we don't trigger re-render
+		// Only pass required props
+		return <CustomSidebarMenu navigation={navigation} />
+}
 
 
 const JibuDrawerNavigation = createDrawerNavigator({
@@ -261,7 +274,7 @@ const JibuDrawerNavigation = createDrawerNavigator({
             activeTintColor: '#ABC1DE',
         },
         initialRouteName: 'ListCustomers',
-        contentComponent: CustomSidebarMenu,
+        contentComponent: SidebarComponent,
         drawerBackgroundColor: {
             light: '#eee',
             dark: 'rgba(40,40,40,1)',

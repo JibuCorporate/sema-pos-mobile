@@ -40,6 +40,7 @@ import Events from 'react-native-simple-events';
 
 import Communications from '../services/Communications';
 import i18n from '../app/i18n';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const { height, width } = Dimensions.get('window');
 const inputFontHeight = Math.round((24 * height) / 752);
@@ -51,7 +52,6 @@ const supportedUILanguages = [
 
 class Login extends React.PureComponent {
 	constructor(props) {
-
 		super(props);
 
 		this.supportedLanguages = React.createRef();
@@ -66,10 +66,6 @@ class Login extends React.PureComponent {
 
 		this.onShowLanguages = this.onShowLanguages.bind(this);
 		this.onLanguageSelected = this.onLanguageSelected.bind(this);
-	}
-
-	componentDidMount() {
-
 	}
 
 	render() {
@@ -106,8 +102,7 @@ class Login extends React.PureComponent {
 								onValueChange={(itemValue, itemIndex) => {
 									this.onLanguageSelected(itemIndex);
 								}
-								}
-							>
+								}>
 								{serviceItems}
 							</Picker>
 							<Button
@@ -341,8 +336,6 @@ class Login extends React.PureComponent {
 					DiscountRealm.getDiscounts()
 				);
 
-
-
 				Synchronization.initialize(
 					CustomerRealm.getLastCustomerSync(),
 					ProductsRealm.getLastProductsync(),
@@ -403,7 +396,6 @@ class Login extends React.PureComponent {
 	}
 }
 
-
 function mapStateToProps(state, props) {
 	return {
 		settings: state.settingsReducer.settings,
@@ -413,6 +405,7 @@ function mapStateToProps(state, props) {
 		products: state.productReducer.products,
 	};
 }
+
 function mapDispatchToProps(dispatch) {
 	return {
 		networkActions: bindActionCreators(NetworkActions, dispatch),
@@ -446,20 +439,20 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	imgBackground: {
-		width: '100%',
-		height: '100%',
+		width: wp('100%'),
+		height: hp('100%'),
 		flex: 1,
 	},
 	cardstyle: {
-		width: '50%',
+		width: wp('50%'),
 		 marginTop: 30,
 		  borderRadius: 5,
 		   elevation: 10,
 	},
 	container: {
 		flex: 1,
-		width: '100%',
-		height: '100%',
+		width: wp('100%'),
+		height: hp('100%'),
 		backgroundColor: 'transparent'
 	},
 	btnstyle: {
@@ -514,8 +507,8 @@ const styles = StyleSheet.create({
 	},
 
 	imgBackground: {
-		width: '100%',
-		height: '100%',
+		width: wp('100%'),
+		height: hp('100%'),
 		flex: 1
 	},
 

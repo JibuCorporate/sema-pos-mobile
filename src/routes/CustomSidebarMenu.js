@@ -39,7 +39,9 @@ class CustomSidebarMenu extends React.PureComponent {
       password: "",
       selectedLanguage: {},
       isLoading: false
-    };
+	};
+
+	this.headerImage= "";
 
     this.items = [
       {
@@ -96,7 +98,6 @@ class CustomSidebarMenu extends React.PureComponent {
       }
     });
   }
-
 
   render() {
     return (
@@ -220,7 +221,9 @@ class CustomSidebarMenu extends React.PureComponent {
           { cancelable: true }
         );
       });
-    } catch (error) { }
+    } catch (error) {
+		console.log("Sidebarsynch" + error);
+	}
   };
 
   _getSyncResults(syncResult) {
