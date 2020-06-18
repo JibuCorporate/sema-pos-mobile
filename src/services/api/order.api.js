@@ -2,7 +2,6 @@ import { format, sub } from 'date-fns';
 class OrderApi {
 	constructor() {
 		this._url = 'http://142.93.115.206:3002/';
-	//	this._url = 'http://192.168.43.153:3002/';
 		this._site = '';
 		this._user = '';
 		this._password = '';
@@ -43,7 +42,7 @@ class OrderApi {
 			body: JSON.stringify(receipt)
 		};
 		return new Promise((resolve, reject) => {
-			fetch(this._url + 'sema/site/receipts', options)
+			fetch(this._url + 'sema/site/newreceipts', options)
 				.then(response => {
 					if (response.status === 200) {
 						response
@@ -79,7 +78,7 @@ class OrderApi {
 			body: JSON.stringify({ ...receipt, kiosk_id: siteId })
 		};
 		return new Promise((resolve, reject) => {
-			fetch(this._url + `sema/site/receipts/${siteId}`, options)
+			fetch(this._url + `sema/site/newreceipts/${siteId}`, options)
 				.then(response => {
 					if (response.status === 200) {
 						response
@@ -112,7 +111,7 @@ class OrderApi {
 				Authorization: 'Bearer ' + this._token
 			}
 		};
-		let url = `sema/site/receipts/${siteId}?date=${lastSyncDate}`;
+		let url = `sema/site/newreceipts/${siteId}?date=${lastSyncDate}`;
 
 		return fetch(this._url + url, options)
 		.then(response => response.json())
@@ -134,7 +133,7 @@ class OrderApi {
 			}
 		};
 
-		let url = `sema/site/receipts/${siteId}?date=${date}`;
+		let url = `sema/site/newreceipts/${siteId}?date=${date}`;
 
 
 		return fetch(this._url + url, options)

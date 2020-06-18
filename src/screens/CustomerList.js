@@ -33,6 +33,8 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 import PaymentModal from './paymentModal';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
+import ListView from "deprecated-react-native-listview";
+
 class CustomerItem extends React.PureComponent {
 	// constructor() {
 	// 	super();
