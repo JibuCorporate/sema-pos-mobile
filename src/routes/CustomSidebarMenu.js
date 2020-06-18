@@ -202,6 +202,7 @@ class CustomSidebarMenu extends React.PureComponent {
     try {
       this.setState({ isLoading: true });
       Synchronization.synchronize().then(syncResult => {
+		console.log("Homer " + JSON.stringify(syncResult));
         this.setState({ isLoading: false });
 
         this.props.customerActions.setCustomers(
@@ -228,7 +229,7 @@ class CustomSidebarMenu extends React.PureComponent {
 
   _getSyncResults(syncResult) {
     try {
-
+		console.log("Homer " + JSON.stringify(syncResult));
       if (
         syncResult.customers.customers == 0 &&
         syncResult.products.products == 0 &&

@@ -163,16 +163,16 @@ class Synchronization {
 								syncResult.customerTypes = values[1];
 								syncResult.paymentTypes = values[2];
 								syncResult.discounts = values[3];
-								syncResult.productMrps = values[3];
-								syncResult.products = values[4];
-								syncResult.meterReading = values[4];
-								syncResult.wastageReport = values[0];
-								syncResult.debt = values[1];
-								syncResult.recieptPayments = values[2];
-								syncResult.topups = values[3];
-								syncResult.customers = values[4];
-								syncResult.orders = values[5];
-								syncResult.customerReminder = values[6];
+								syncResult.productMrps = values[4];
+								syncResult.products = values[5];
+								syncResult.meterReading = values[6];
+								syncResult.wastageReport = values[7];
+								syncResult.debt = values[8];
+								syncResult.recieptPayments = values[9];
+								syncResult.topups = values[10];
+								syncResult.customers = values[11];
+								syncResult.orders = values[12];
+								syncResult.customerReminder = values[13];
 
 								resolve(syncResult);
 							}).

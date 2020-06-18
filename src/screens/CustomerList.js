@@ -194,8 +194,9 @@ class CustomerList extends React.PureComponent {
 
     prepareData = () => {
         let data = [];
-        if (this.props.customers.length > 0) {
-            data = this.filterItems(this.props.customers);
+        if (CustomerRealm.getAllCustomer().length > 0) {
+			// data = this.filterItems(this.props.customers);
+			data = this.filterItems(CustomerRealm.getAllCustomer());
         }
         return data;
     };
@@ -415,7 +416,8 @@ class CustomerList extends React.PureComponent {
 				onLongPress={() => this.onLongPressItem(item)}
 				onPress={() => this.handleOnPress(item)}
 				onShowUnderlay={separators.highlight}
-				onHideUnderlay={separators.unhighlight}>
+				onHideUnderlay={separators.unhighlight}
+				>
 				<CustomerItem
 					index={index}
 					customertype={this.getCustomerTypes(item)}
