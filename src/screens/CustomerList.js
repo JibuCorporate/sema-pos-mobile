@@ -111,7 +111,11 @@ class CustomerList extends React.PureComponent {
 
 	}
 
-	static whyDidYouRender = true;
+    static whyDidYouRender = true;
+
+    shouldComponentUpdate(){
+        return true;
+    }
 
     componentDidMount() {
         this.props.navigation.setParams({
@@ -314,12 +318,12 @@ class CustomerList extends React.PureComponent {
                     </Text>
                 </View>
                 <View style={styles.OneHalf}>
-                    <Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
+                    <Text style={styles.headerItem}>{i18n.t('address')}</Text>
                 </View>
-                <View style={[styles.flexOne]}>
+                <View style={styles.flexOne}>
                     <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
                 </View>
-                <View style={[styles.balance]}>
+                <View style={styles.balance}>
                     <TouchableWithoutFeedback onPress={() => {
                         this.setState({ debtcustomers: !this.state.debtcustomers });
                         this.setState({ refresh: !this.state.refresh });
@@ -369,22 +373,26 @@ class CustomerList extends React.PureComponent {
 	}
 
 	onLongPressItem = (item) => {
-        this.props.customerActions.CustomerSelected(item);
-        this.props.customerActions.SetCustomerProp({
-                isCustomerSelected: true,
-                isDueAmount: item.dueAmount,
-                customerName: item.name,
-                'title': item.name
-            }
-        );
+        CustomerRealm.selectedCustomer(item.customerId)
+        this.shouldComponentUpdate();
+        // this.props.customerActions.CustomerSelected(item);
+        // this.props.customerActions.SetCustomerProp({
+        //         isCustomerSelected: true,
+        //         isDueAmount: item.dueAmount,
+        //         customerName: item.name,
+        //         'title': item.name
+        //     }
+        // );
 
-		this.props.customerActions.setCustomerEditStatus(true);
+		//this.props.customerActions.setCustomerEditStatus(true);
 	}
 
     handleOnPress = (item) => {
 		// InteractionManager.runAfterInteractions(() => {
 		requestAnimationFrame(() => {
-            // this.props.customerActions.CustomerSelected(item);
+            //this.props.customerActions.CustomerSelected(item);
+            CustomerRealm.selectedCustomer(item.customerId)
+            this.shouldComponentUpdate();
             // this.props.customerActions.SetCustomerProp({
             //         isDueAmount: item.dueAmount,
             //         isCustomerSelected: false,
