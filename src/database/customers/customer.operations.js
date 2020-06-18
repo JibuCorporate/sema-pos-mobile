@@ -47,7 +47,7 @@ class CustomerRealm {
 
     selectedCustomer(customerId) {
         let customers = realm.objects('Customer').filtered(`customerId = "${customerId}"`);
-        syncDate[0].isSelected = true
+        customers[0].isSelected = true
     }
 
 
