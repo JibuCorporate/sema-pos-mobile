@@ -43,6 +43,16 @@ class CustomerRealm {
             return r.is_delete === null || r.is_delete === 1;
         })
     }
+    selectedCustomer(customerId) {
+        let customers = realm.objects('Customer').filtered(`customerId = "${customerId}"`);
+        customers[0].isSelected = true
+    }
+
+
+    getSelectedCustomer(customerId) {
+        return Object.values(JSON.parse(realm.objects('Customer').filtered(`customerId = "${customerId}"`)));
+        
+    }
 
 
     getCustomerById(customerId) {
