@@ -38,16 +38,20 @@ class CustomerRealm {
     }
 
     getAllCustomer() {
-        
-        realm.write(() => {
-            let syncDate = realm.objects('CustomerSyncDate');
-            syncDate[0].lastCustomerSync = new Date()
+        let customers = Object.values(JSON.parse(JSON.stringify(realm.objects('Customer'))));
+        return customers.filter(r => {
+            return r.is_delete === null || r.is_delete === 1;
         })
     }
-
     selectedCustomer(customerId) {
         let customers = realm.objects('Customer').filtered(`customerId = "${customerId}"`);
         customers[0].isSelected = true
+    }
+
+
+    getSelectedCustomer(customerId) {
+        return Object.values(JSON.parse(realm.objects('Customer').filtered(`customerId = "${customerId}"`)));
+        
     }
 
 
