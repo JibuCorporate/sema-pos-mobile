@@ -54,20 +54,11 @@ class CustomerItem extends React.PureComponent {
         }
 	}
 
-	// handleOnPress() {
-	// 	const { handlePress } = this.props;
-	// 	handlePress();
-	//   }
-
-	// onLongPressItem(){
-
-	// }
-
     render() {
         return (
 		// <TouchableHighlight
         //     onLongPress={this.props.onLongPressItem}
-        //     onPress={this.handleOnPress}
+        //     onPress={this.props.handlePress}
         //     onShowUnderlay={this.props.separators.highlight}
         //     onHideUnderlay={this.props.separators.unhighlight}>
             <View
@@ -400,16 +391,20 @@ class CustomerList extends React.PureComponent {
     handleOnPress = (item) => {
 		// InteractionManager.runAfterInteractions(() => {
 		requestAnimationFrame(() => {
-            this.props.customerActions.CustomerSelected(item);
-            this.props.customerActions.SetCustomerProp({
-                    isDueAmount: item.dueAmount,
-                    isCustomerSelected: false,
-                    customerName: '',
-                    'title': item.name + "'s Order"
-                }
-			);
+            // this.props.customerActions.CustomerSelected(item);
+            // this.props.customerActions.SetCustomerProp({
+            //         isDueAmount: item.dueAmount,
+            //         isCustomerSelected: false,
+            //         customerName: '',
+            //         'title': item.name + "'s Order"
+            //     }
+			// );
 
-            this.props.navigation.navigate('OrderView');
+			// alert("Clicked");
+
+            this.props.navigation.navigate('OrderView',{
+				itemCustomer: item
+			});
 		});
 
 	}
@@ -429,8 +424,11 @@ class CustomerList extends React.PureComponent {
 					dueAmount={item.dueAmount}
 					walletBalance={item.walletBalance}
 					address={item.address}
+					separators={separators}
+					// onLongPressItem={this.onLongPressItem(item)}
+			    	// onHandlePress={this.handleOnPress(item)}
 			/>
-			</TouchableHighlight>
+			 </TouchableHighlight>
         )
 	};
 
@@ -465,6 +463,7 @@ class CustomerList extends React.PureComponent {
 					// maxToRenderPerBatch = {1}
 					initialNumToRender={20}
 					windowSize={10}
+					removeClippedSubviews={false}
                 />
                 <FloatingAction
                     onOpen={name => this.floatActionOpen()}

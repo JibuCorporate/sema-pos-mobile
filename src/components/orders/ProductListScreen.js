@@ -15,6 +15,7 @@ import ProductMRPRealm from '../../database/productmrp/productmrp.operations';
 import SalesChannelRealm from '../../database/sales-channels/sales-channels.operations';
 import * as ProductActions from '../../actions/ProductActions';
 import * as OrderActions from '../../actions/OrderActions';
+import { withNavigation } from 'react-navigation';
 class ProductListScreen extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -27,7 +28,7 @@ class ProductListScreen extends React.PureComponent {
 		this.viewWidth = 1 / 1.6 * width;
 		// this.salesChannel;
 		this.state = {
-			salesChannel: SalesChannelRealm.getSalesChannelFromId(this.props.selectedCustomer.salesChannelId)
+			salesChannel: SalesChannelRealm.getSalesChannelFromId(this.props.navigation.state.params.itemCustomer.salesChannelId)
 		}
 	};
 
@@ -145,7 +146,7 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductListScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(ProductListScreen));
 
 
 const newStyle = (viewWidth) => StyleSheet.create({

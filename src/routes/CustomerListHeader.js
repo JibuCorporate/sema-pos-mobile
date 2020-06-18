@@ -7,6 +7,7 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import i18n from '../app/i18n';
+import { withNavigation } from 'react-navigation';
 class CustomerListHeader extends React.PureComponent {
 
     render() {
@@ -151,7 +152,7 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(
     mapStateToProps, mapDispatchToProps
-)(CustomerListHeader);
+)(withNavigation(CustomerListHeader));
 
 const styles = StyleSheet.create({
 	iconStyle: {
