@@ -54,11 +54,20 @@ class CustomerItem extends React.PureComponent {
         }
 	}
 
+	// handleOnPress() {
+	// 	const { handlePress } = this.props;
+	// 	handlePress();
+	//   }
+
+	// onLongPressItem(){
+
+	// }
+
     render() {
         return (
 		// <TouchableHighlight
         //     onLongPress={this.props.onLongPressItem}
-        //     onPress={this.props.handlePress}
+        //     onPress={this.handleOnPress}
         //     onShowUnderlay={this.props.separators.highlight}
         //     onHideUnderlay={this.props.separators.unhighlight}>
             <View
@@ -192,10 +201,18 @@ class CustomerList extends React.PureComponent {
         return filteredItems;
     };
 
-    prepareData = () => {
+    prepareData2 = () => {
         let data = [];
         if (this.props.customers.length > 0) {
             data = this.filterItems(this.props.customers);
+        }
+        return data;
+    };
+
+    prepareData = () => {
+        let data = [];
+        if (CustomerRealm.getAllCustomer().length > 0) {
+            data = [...this.filterItems(CustomerRealm.getAllCustomer())];
         }
         return data;
     };
@@ -376,22 +393,24 @@ class CustomerList extends React.PureComponent {
 	}
 
 	onLongPressItem = (item) => {
-        this.props.customerActions.CustomerSelected(item);
-        this.props.customerActions.SetCustomerProp({
-                isCustomerSelected: true,
-                isDueAmount: item.dueAmount,
-                customerName: item.name,
-                'title': item.name
-            }
-        );
+        CustomerRealm.selectedCustomer(item.customerId)
+        // this.props.customerActions.CustomerSelected(item);
+        // this.props.customerActions.SetCustomerProp({
+        //         isCustomerSelected: true,
+        //         isDueAmount: item.dueAmount,
+        //         customerName: item.name,
+        //         'title': item.name
+        //     }
+        // );
 
-		this.props.customerActions.setCustomerEditStatus(true);
+		//this.props.customerActions.setCustomerEditStatus(true);
 	}
 
     handleOnPress = (item) => {
 		// InteractionManager.runAfterInteractions(() => {
 		requestAnimationFrame(() => {
-            // this.props.customerActions.CustomerSelected(item);
+            //this.props.customerActions.CustomerSelected(item);
+            CustomerRealm.selectedCustomer(item.customerId)
             // this.props.customerActions.SetCustomerProp({
             //         isDueAmount: item.dueAmount,
             //         isCustomerSelected: false,
@@ -400,11 +419,7 @@ class CustomerList extends React.PureComponent {
             //     }
 			// );
 
-			// alert("Clicked");
-
-            this.props.navigation.navigate('OrderView',{
-				itemCustomer: item
-			});
+            this.props.navigation.navigate('OrderView');
 		});
 
 	}
@@ -424,11 +439,8 @@ class CustomerList extends React.PureComponent {
 					dueAmount={item.dueAmount}
 					walletBalance={item.walletBalance}
 					address={item.address}
-					separators={separators}
-					// onLongPressItem={this.onLongPressItem(item)}
-			    	// onHandlePress={this.handleOnPress(item)}
 			/>
-			 </TouchableHighlight>
+			</TouchableHighlight>
         )
 	};
 
@@ -463,7 +475,6 @@ class CustomerList extends React.PureComponent {
 					// maxToRenderPerBatch = {1}
 					initialNumToRender={20}
 					windowSize={10}
-					removeClippedSubviews={false}
                 />
                 <FloatingAction
                     onOpen={name => this.floatActionOpen()}
