@@ -93,9 +93,7 @@ class AuthLoadingScreen extends React.PureComponent {
     };
 
     loadSyncedData() {
-        this.props.customerActions.setCustomers(
-            CustomerRealm.getAllCustomer()
-        );
+     
         this.props.topUpActions.setTopups(
             CreditRealm.getAllCredit()
         );
@@ -106,14 +104,8 @@ class AuthLoadingScreen extends React.PureComponent {
         this.props.inventoryActions.setInventory(
             InventroyRealm.getAllInventory()
         );
-        this.props.productActions.setProducts(
-            ProductsRealm.getProducts()
-        );
-
-        this.props.receiptActions.setReceipts(
-            OrderRealm.getAllOrder()
-        );
-
+       
+       
         this.props.paymentTypesActions.setPaymentTypes(
             PaymentTypeRealm.getPaymentTypes()
         );

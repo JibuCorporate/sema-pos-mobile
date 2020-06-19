@@ -155,47 +155,6 @@ class CustomSidebarMenu extends React.PureComponent {
     this.props.navigation.navigate('Login');
   };
 
-  loadSyncedData() {
-    this.props.customerActions.setCustomers(
-      CustomerRealm.getAllCustomer()
-    );
-    this.props.topUpActions.setTopups(
-      CreditRealm.getAllCredit()
-    );
-
-    this.props.wastageActions.GetInventoryReportData(this.subtractDays(new Date(), 1), new Date(), ProductsRealm.getProducts());
-    this.props.inventoryActions.setInventory(
-      InventroyRealm.getAllInventory()
-    );
-    this.props.productActions.setProducts(
-      ProductsRealm.getProducts()
-    );
-
-    this.props.receiptActions.setReceipts(
-      OrderRealm.getAllOrder()
-    );
-
-    this.props.paymentTypesActions.setPaymentTypes(
-      PaymentTypeRealm.getPaymentTypes()
-    );
-
-    this.props.paymentTypesActions.setRecieptPaymentTypes(
-      ReceiptPaymentTypeRealm.getReceiptPaymentTypes()
-    );
-
-    this.props.customerReminderActions.setCustomerReminders(
-      CustomerReminderRealm.getCustomerReminders()
-    );
-
-    this.props.paymentTypesActions.setCustomerPaidDebt(
-      CustomerDebtRealm.getCustomerDebts()
-    );
-
-    this.props.discountActions.setDiscounts(
-      DiscountRealm.getDiscounts()
-    );
-
-  };
 
   onSynchronize() {
     try {
@@ -203,17 +162,6 @@ class CustomSidebarMenu extends React.PureComponent {
       Synchronization.synchronize().then(syncResult => {
 		console.log("Homer " + JSON.stringify(syncResult));
         this.setState({ isLoading: false });
-
-        this.props.customerActions.setCustomers(
-          CustomerRealm.getAllCustomer()
-        );
-
-        this.props.receiptActions.setReceipts(
-          OrderRealm.getAllOrder()
-        );
-
-        this.props.receiptActions.setTransaction();
-
         Alert.alert(
           i18n.t('sync-results'),
           this._getSyncResults(syncResult),

@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from "react-redux";
 import randomMC from 'random-material-color';
 import ProductMRPRealm from '../../database/productmrp/productmrp.operations';
+import ProductsRealm from '../../database/products/product.operations';
 import SalesChannelRealm from '../../database/sales-channels/sales-channels.operations';
 import * as ProductActions from '../../actions/ProductActions';
 import * as OrderActions from '../../actions/OrderActions';
@@ -111,7 +112,7 @@ class ProductListScreen extends React.PureComponent {
 	prepareData = () => {
 		let productMrp = ProductMRPRealm.getFilteredProductMRP();
 		let ids = Object.keys(productMrp).map(key => productMrp[key].productId);
-		return this.props.products.filter(prod => ids.includes(prod.productId));
+		return ProductsRealm.getProducts().filter(prod => ids.includes(prod.productId));
 	};
 
 	getImage = item => {
