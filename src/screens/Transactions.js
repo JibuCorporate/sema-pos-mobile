@@ -30,7 +30,7 @@ import * as paymentTypesActions from '../actions/PaymentTypesActions';
 import * as TopUpActions from '../actions/TopUpActions';
 import CreditRealm from '../database/credit/credit.operations';
 import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
-
+import { prepareSectionedData } from "../reducers/ReceiptReducer";
 import i18n from '../app/i18n';
 import { format, parseISO } from 'date-fns';
 
@@ -562,7 +562,7 @@ class Transactions extends React.Component {
 			searchString: '',
 			hasScrolled: false,
 			paymentTypeValue: '',
-			selected: this.props.transactions.length > 0 ? this.props.transactions[0].data[0] : {},
+			selected: prepareSectionedData().length > 0 ? prepareSectionedData()[0].data[0] : {},
 		};
 	}
 
@@ -620,7 +620,7 @@ class Transactions extends React.Component {
 								<SectionList
 									extraData={this.state.refreshing}
 									ItemSeparatorComponent={this.renderSeparator}
-									sections={this.props.transactions}
+									sections={prepareSectionedData()}
 									keyExtractor={(item, index) => item + index}
 									renderItem={this.renderReceipt.bind(this)}
 									renderSectionHeader={({ section: { title } }) => (

@@ -5,7 +5,7 @@ import productReducer from "./ProductReducer";
 import orderReducer from "./OrderReducer";
 import reportReducer from "./ReportReducer";
 import settingsReducer from "./SettingsReducer";
-import receiptReducer from "./ReceiptReducer";
+import { receiptReducer } from "./ReceiptReducer";
 import authReducer from "./AuthReducers";
 import reminderReducer from "./ReminderReducer.js";
 import topupReducer from "./TopUpReducer";

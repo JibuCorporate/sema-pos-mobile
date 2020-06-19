@@ -22,7 +22,7 @@ import CustomerRealm from '../database/customers/customer.operations';
 import { format, parseISO, isBefore } from 'date-fns';
 
 
-const receiptReducer = (state = initialState, action) => {
+export function receiptReducer (state = initialState, action)  {
     let newState;
     switch (action.type) {
         case SET_RECEIPTS:
@@ -310,7 +310,7 @@ groupBySectionTitle = (objectArray, property) => {
     }, {});
 }
 
-prepareSectionedData = () => {
+export function prepareSectionedData(){
     // Used for enumerating receipts
     let receipts = this.prepareData();
     let topups = this.prepareTopUpData();
@@ -343,6 +343,6 @@ let initialState = {
     recieptSearchString: "",
     isUpdate: false,
 };
-export default receiptReducer;
+ 
 
 
