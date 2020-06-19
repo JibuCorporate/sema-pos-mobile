@@ -67,9 +67,6 @@ class AuthLoadingScreen extends React.PureComponent {
         }
 
         if (settings.site != "" && settings.siteId > 0) {
-			// InteractionManager.runAfterInteractions(() => {
-			//   this.loadSyncedData();
-			// });
 
             if (settings.token.length > 1) {
                 this.props.settingsActions.setSettings({ ...settings, loginSync: false });
@@ -93,7 +90,7 @@ class AuthLoadingScreen extends React.PureComponent {
     };
 
     loadSyncedData() {
-     
+
         this.props.topUpActions.setTopups(
             CreditRealm.getAllCredit()
         );
@@ -104,8 +101,8 @@ class AuthLoadingScreen extends React.PureComponent {
         this.props.inventoryActions.setInventory(
             InventroyRealm.getAllInventory()
         );
-       
-       
+
+
         this.props.paymentTypesActions.setPaymentTypes(
             PaymentTypeRealm.getPaymentTypes()
         );
