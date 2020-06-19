@@ -36,7 +36,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 class CustomerItem extends React.PureComponent {
 
 	getRowBackground(isSelected) {
-		let isSelected = isSelected;
+		// let isSelected = isSelected;
         if (isSelected) {
             return styles.selectedBackground;
         } else {
@@ -113,9 +113,9 @@ class CustomerList extends React.PureComponent {
 
     static whyDidYouRender = true;
 
-    shouldComponentUpdate(){
-        return true;
-    }
+    // shouldComponentUpdate(){
+    //     return true;
+    // }
 
     componentDidMount() {
         this.props.navigation.setParams({
