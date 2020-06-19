@@ -1,10 +1,10 @@
 import React from 'react';
 if (process.env.NODE_ENV === 'development') {
-	const whyDidYouRender = require('@welldone-software/why-did-you-render');
-	whyDidYouRender(React, {
-	  trackAllPureComponents: true,
-	});
-  }
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import {
     View,
     Text,
@@ -12,7 +12,7 @@ import {
     Alert,
     FlatList,
     TouchableWithoutFeedback,
-	TouchableHighlight
+    TouchableHighlight
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
@@ -31,20 +31,19 @@ import * as PaymentTypesActions from "../actions/PaymentTypesActions";
 import Icons from 'react-native-vector-icons/FontAwesome';
 
 import PaymentModal from './paymentModal';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 import ListView from "deprecated-react-native-listview";
 
 class CustomerItem extends React.PureComponent {
-	// constructor() {
-	// 	super();
-	// 	this.handleOnPress = this.handleOnPress.bind(this);
-	//   }
+    // constructor() {
+    // 	super();
+    // 	this.handleOnPress = this.handleOnPress.bind(this);
+    //   }
 
-	// static whyDidYouRender = true;
+    // static whyDidYouRender = true;
 
-	getRowBackground(isSelected) {
-		let isSelected = isSelected;
+    getRowBackground(isSelected) {
         if (isSelected) {
             return styles.selectedBackground;
         } else {
@@ -52,24 +51,11 @@ class CustomerItem extends React.PureComponent {
                 ? styles.lightBackground
                 : styles.darkBackground;
         }
-	}
+    }
 
-	// handleOnPress() {
-	// 	const { handlePress } = this.props;
-	// 	handlePress();
-	//   }
-
-	// onLongPressItem(){
-
-	// }
 
     render() {
         return (
-		// <TouchableHighlight
-        //     onLongPress={this.props.onLongPressItem}
-        //     onPress={this.handleOnPress}
-        //     onShowUnderlay={this.props.separators.highlight}
-        //     onHideUnderlay={this.props.separators.unhighlight}>
             <View
                 style={[
                     this.getRowBackground(this.props.isSelected), styles.listStyles
@@ -104,8 +90,6 @@ class CustomerItem extends React.PureComponent {
                     </Text>
                 </View>
             </View>
-		// </TouchableHighlight>
-
         );
     }
 }
@@ -123,14 +107,14 @@ class CustomerList extends React.PureComponent {
             customerTypeFilter: '',
             customerTypeValue: '',
             hasScrolled: false,
-			isPaymentModal: true,
+            isPaymentModal: true,
         };
 
-	}
+    }
 
     static whyDidYouRender = true;
-    
-    shouldComponentUpdate(){
+
+    shouldComponentUpdate() {
         return true;
     }
 
@@ -147,9 +131,9 @@ class CustomerList extends React.PureComponent {
 
         this.props.customerActions.CustomerSelected({});
         this.props.customerActions.setCustomerEditStatus(false);
-	}
+    }
 
-	getCustomerTypes = (item) => {
+    getCustomerTypes = (item) => {
         const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
         try {
             for (let i = 0; i < customerTypeIts.length; i++) {
@@ -381,9 +365,9 @@ class CustomerList extends React.PureComponent {
 
             </View>
         );
-	};
+    };
 
-	getCustomerTypes = (item) => {
+    getCustomerTypes = (item) => {
         const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
         try {
             for (let i = 0; i < customerTypeIts.length; i++) {
@@ -394,11 +378,18 @@ class CustomerList extends React.PureComponent {
         } catch (error) {
             return 'Walk-up';
         }
-	}
+    }
 
-	onLongPressItem = (item) => {
+    onLongPressItem = (item) => {
         CustomerRealm.selectedCustomer(item.customerId)
         this.shouldComponentUpdate();
+
+        this.props.navigation.setParams({
+            isCustomerSelected: true,
+            isDueAmount: item.dueAmount,
+            customerName: item.name,
+            'title': item.name
+        });
         // this.props.customerActions.CustomerSelected(item);
         // this.props.customerActions.SetCustomerProp({
         //         isCustomerSelected: true,
@@ -408,12 +399,12 @@ class CustomerList extends React.PureComponent {
         //     }
         // );
 
-		//this.props.customerActions.setCustomerEditStatus(true);
-	}
+        //this.props.customerActions.setCustomerEditStatus(true);
+    }
 
     handleOnPress = (item) => {
-		// InteractionManager.runAfterInteractions(() => {
-		requestAnimationFrame(() => {
+        // InteractionManager.runAfterInteractions(() => {
+        requestAnimationFrame(() => {
             //this.props.customerActions.CustomerSelected(item);
             CustomerRealm.selectedCustomer(item.customerId)
             this.shouldComponentUpdate();
@@ -423,47 +414,47 @@ class CustomerList extends React.PureComponent {
             //         customerName: '',
             //         'title': item.name + "'s Order"
             //     }
-			// );
+            // );
 
             this.props.navigation.navigate('OrderView');
-		});
+        });
 
-	}
+    }
 
     renderItem = ({ item, index, separators }) => {
         return (
-			<TouchableHighlight
-				onLongPress={() => this.onLongPressItem(item)}
-				onPress={() => this.handleOnPress(item)}
-				onShowUnderlay={separators.highlight}
-				onHideUnderlay={separators.unhighlight}>
-				<CustomerItem
+            <TouchableHighlight
+                onLongPress={() => this.onLongPressItem(item)}
+                onPress={() => this.handleOnPress(item)}
+                onShowUnderlay={separators.highlight}
+                onHideUnderlay={separators.unhighlight}>
+                <CustomerItem
                     index={index}
                     isSelected={item.isSelected}
-					customertype={this.getCustomerTypes(item)}
-					customername={item.name}
-					phoneNumber={item.phoneNumber}
-					dueAmount={item.dueAmount}
-					walletBalance={item.walletBalance}
-					address={item.address}
-			/>
-			</TouchableHighlight>
+                    customertype={this.getCustomerTypes(item)}
+                    customername={item.name}
+                    phoneNumber={item.phoneNumber}
+                    dueAmount={item.dueAmount}
+                    walletBalance={item.walletBalance}
+                    address={item.address}
+                />
+            </TouchableHighlight>
         )
-	};
+    };
 
-	floatActionOpen = () => {
-							this.props.customerActions.CustomerSelected({});
-							this.props.customerActions.setCustomerEditStatus(false);
-							this.props.customerActions.SetCustomerProp(
-							    {
-							        isCustomerSelected: false,
-							        isDueAmount: 0,
-							        customerName: '',
-							        'title': '',
-							    }
-							);
-							this.props.navigation.navigate('EditCustomer');
-	}
+    floatActionOpen = () => {
+        this.props.customerActions.CustomerSelected({});
+        this.props.customerActions.setCustomerEditStatus(false);
+        this.props.customerActions.SetCustomerProp(
+            {
+                isCustomerSelected: false,
+                isDueAmount: 0,
+                customerName: '',
+                'title': '',
+            }
+        );
+        this.props.navigation.navigate('EditCustomer');
+    }
 
     render() {
         return (
@@ -479,9 +470,9 @@ class CustomerList extends React.PureComponent {
                     extraData={this.state.refresh}
                     renderItem={this.renderItem}
                     keyExtractor={(item, idx) => item.customerId + idx}
-					// maxToRenderPerBatch = {1}
-					initialNumToRender={20}
-					windowSize={10}
+                    // maxToRenderPerBatch = {1}
+                    initialNumToRender={20}
+                    windowSize={10}
                 />
                 <FloatingAction
                     onOpen={name => this.floatActionOpen()}
@@ -491,8 +482,8 @@ class CustomerList extends React.PureComponent {
                     <Modal
                         style={styles.modal3}
                         coverScreen={true}
-						position={"center"}
-						ref={"modal6"}
+                        position={"center"}
+                        ref={"modal6"}
                         onClosed={() => this.modalOnClose()}
                         isDisabled={this.state.isDisabled}>
 
@@ -575,7 +566,7 @@ const styles = StyleSheet.create({
     leftMargin: {
         left: 10
     },
-	balance: { flex: 1, flexDirection: 'row' },
+    balance: { flex: 1, flexDirection: 'row' },
 
     headerItem: {
         fontWeight: 'bold',

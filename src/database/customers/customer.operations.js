@@ -260,7 +260,7 @@ class CustomerRealm {
                                 ...customers[i],
                                 customerId: customers[i].id,
                                 name: customers[i].name,
-                                isSelected: false;
+                                isSelected: false,
                                 customerTypeId: customers[i].customer_type_id,
                                 salesChannelId: customers[i].sales_channel_id,
                                 siteId: customers[i].kiosk_id,
