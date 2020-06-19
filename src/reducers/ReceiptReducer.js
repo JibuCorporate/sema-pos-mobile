@@ -45,7 +45,7 @@ export function receiptReducer (state = initialState, action)  {
             return newState;
         case SET_TRANSACTION:
             newState = { ...state };
-            newState.transactions = this.prepareSectionedData();
+            newState.transactions = prepareSectionedData();
             return newState;
         case UPDATE_TRANSACTION:
             newState = { ...state };
@@ -338,7 +338,7 @@ let initialState = {
     remoteReceipts: [],
     receipts: [],
     //transactions: [],
-    transactions: this.prepareSectionedData(),
+    transactions: prepareSectionedData(),
     updatedRemoteReceipts: [],
     recieptSearchString: "",
     isUpdate: false,

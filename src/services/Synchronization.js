@@ -40,39 +40,6 @@ class Synchronization {
 		this.isConnected = isConnected;
 	}
 
-	scheduleSync() {
-		let timeoutX = 10000; // Sync after 10 seconds
-		if (this.firstSyncId != null) {
-			clearTimeout(this.firstSyncId);
-		}
-
-		if (this.intervalId != null) {
-			clearInterval(this.intervalId);
-		}
-
-		if (
-			CreditRealm.getAllCredit().length == 0 ||
-			InventroyRealm.getAllInventory().length == 0
-		) {
-			// No local customers or products, sync now
-			timeoutX = 1000;
-		}
-
-		let that = this;
-		this.firstSyncId = setTimeout(() => {
-			//that.doSynchronize();
-			that.synchronize();
-		}, timeoutX);
-
-		//Sync sales separately every two minutes
-		setInterval(() => {
-			//this.synchronizeSales();
-		}, 120000);
-
-		this.intervalId = setInterval(() => {
-			that.doSynchronize();
-		}, syncInterval);
-	}
 
 	updateLastCustomerSync() {
 		this.lastCustomerSync = new Date();
@@ -108,7 +75,79 @@ class Synchronization {
 		}
 	}
 
+
 	synchronize() {
+		console.log("Start synching ...");
+		let syncResult = { status: 'success', error: '' };
+		return this._refreshToken()
+			.then(async result => {
+				try {
+					console.log("Start synching for real now ...", result);
+					let settings = SettingRealm.getAllSetting();
+					const promiseSalesChannels = await SalesChannelSync.synchronizeSalesChannels();
+					console.log("promiseSalesChannels ...", promiseSalesChannels);
+					const promiseCustomerTypes = await CustomerTypeSync.synchronizeCustomerTypes();
+					console.log("promiseCustomerTypes ...", promiseCustomerTypes);
+					const promisePaymentTypes = await PaymentTypeSync.synchronizePaymentTypes();
+					console.log("promisePaymentTypes ...", promisePaymentTypes);
+					const promiseDiscounts = await DiscountSync.synchronizeDiscount(settings.siteId);
+					console.log("promiseDiscounts ...", promiseDiscounts);
+					const promiseProductMrps = await ProductMRPSync.synchronizeProductMrps(settings.regionId);
+					console.log("promiseProductMrps ...", promiseProductMrps);
+					const promiseProducts = await ProductSync.synchronizeProducts();
+					console.log("promiseProducts ...", promiseProducts);
+					const promiseMeterReading = await MeterReadingSync.synchronizeMeterReading(settings.siteId);
+					console.log("promiseMeterReading ...", promiseMeterReading);
+					const promiseReminder = await ReminderSync.synchronizeCustomerReminders(settings.siteId);
+					console.log("promiseReminder ...", promiseReminder);
+					const promiseInventory = await InventorySync.synchronizeInventory(settings.siteId);
+					console.log("promiseInventory ...", promiseInventory);
+
+					const promiseCustomers = await CustomerSync.synchronizeCustomers(settings.siteId);
+					console.log("promiseCustomers ...", promiseCustomers);
+					const promiseTopUps = await CreditSync.synchronizeCredits(settings.siteId);
+					console.log("promiseTopUps ...", promiseTopUps);
+					const promiseCustomerDebts = await CustomerDebtsSync.synchronizeCustomerDebts(settings.siteId);
+					console.log("promiseCustomerDebts ...", promiseCustomerDebts);
+					const promiseRecieptPaymentTypes = await RecieptPaymentTypesSync.synchronizeRecieptPaymentTypes(settings.siteId);
+					console.log("promiseRecieptPaymentTypes ...", promiseRecieptPaymentTypes);
+					const promiseOrders = await OrderSync.synchronizeSales(settings.siteId);
+					console.log("promiseOrders ...", promiseOrders);
+
+					syncResult.salesChannels = promiseSalesChannels;
+					syncResult.customerTypes = promiseCustomerTypes;
+					syncResult.paymentTypes = promisePaymentTypes;
+					syncResult.discounts = promiseDiscounts;
+					syncResult.productMrps = promiseProductMrps;
+					syncResult.products = promiseProducts;
+					syncResult.meterReading = promiseMeterReading;
+					syncResult.wastageReport = promiseInventory;
+					syncResult.debt = promiseCustomerDebts;
+					syncResult.recieptPayments = promiseRecieptPaymentTypes;
+					syncResult.topups = promiseTopUps;
+					syncResult.customers = promiseCustomers;
+					syncResult.orders = promiseOrders;
+					syncResult.customerReminder = promiseReminder;
+
+					console.log("Start synching end 1 ...", syncResult);
+					return syncResult;
+				} catch (error) {
+					console.log("Mayday  " + JSON.stringify(error));
+					return error;
+				}
+			})
+			.catch(error => {
+				syncResult.error = error;
+				syncResult.status = 'failure';
+				console.log("Mayday error " + JSON.stringify(syncResult));
+				resolve(syncResult);
+			});
+
+	}
+
+
+
+	synchronize2() {
 		console.log("Start synching ...");
 		let syncResult = { status: 'success', error: '' };
 		return new Promise(resolve => {
@@ -229,7 +268,7 @@ class Synchronization {
 						reject(result.response);
 					});
 			} else {
-				resolve();
+				resolve('Token still available');
 			}
 		});
 	}

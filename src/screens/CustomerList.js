@@ -405,16 +405,16 @@ class CustomerList extends React.PureComponent {
     handleOnPress = (item) => {
         // InteractionManager.runAfterInteractions(() => {
         requestAnimationFrame(() => {
-            //this.props.customerActions.CustomerSelected(item);
+             this.props.customerActions.CustomerSelected(item);
             CustomerRealm.selectedCustomer(item.customerId)
             this.shouldComponentUpdate();
-            // this.props.customerActions.SetCustomerProp({
-            //         isDueAmount: item.dueAmount,
-            //         isCustomerSelected: false,
-            //         customerName: '',
-            //         'title': item.name + "'s Order"
-            //     }
-            // );
+            this.props.customerActions.SetCustomerProp({
+                    isDueAmount: item.dueAmount,
+                    isCustomerSelected: false,
+                    customerName: '',
+                    'title': item.name + "'s Order"
+                }
+            );
 
             this.props.navigation.navigate('OrderView');
         });
