@@ -2,7 +2,7 @@ export const ProductMRPSchema = {
     name: 'ProductMRP',
     properties: {
         id: { type: 'int', optional: true },
-        currencyCode: 'string',
+        currencyCode:  { type: 'string', optional: true },
         priceAmount: { type: 'double' },
         cogsAmount: 'double',
         productId: { type: 'int' },

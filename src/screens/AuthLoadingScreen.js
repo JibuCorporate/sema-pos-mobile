@@ -67,10 +67,7 @@ class AuthLoadingScreen extends React.PureComponent {
         }
 
         if (settings.site != "" && settings.siteId > 0) {
-			InteractionManager.runAfterInteractions(() => {
-			  this.loadSyncedData();
-			});
-
+			 
             if (settings.token.length > 1) {
                 this.props.settingsActions.setSettings({ ...settings, loginSync: false });
                 this.props.navigation.navigate('App');

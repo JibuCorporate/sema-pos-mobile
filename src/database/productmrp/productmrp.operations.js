@@ -214,6 +214,8 @@ class ProductMRPRealm {
                 });
                 resolve(result);
             } catch (e) {
+                console.log('eeee', e)
+                return e
             }
         });
     }
