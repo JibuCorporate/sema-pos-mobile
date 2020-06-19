@@ -70,8 +70,6 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	componentDidMount() {
-
-
 		if (this.props.isEdit) {
 			this.props.navigation.setParams({ isEdit: true });
 		} else {

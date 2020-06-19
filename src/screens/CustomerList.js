@@ -541,7 +541,6 @@ function mapStateToProps(state) {
         customers: state.customerReducer.customers,
         searchString: state.customerReducer.searchString,
         customerTypeFilter: state.customerReducer.customerTypeFilter,
-        paymentTypes: state.paymentTypesReducer.paymentTypes,
     };
 }
 

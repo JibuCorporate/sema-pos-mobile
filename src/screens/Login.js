@@ -131,11 +131,11 @@ class Login extends React.PureComponent {
 		try {
 			this.setState({ isLoading: true });
 			Synchronization.synchronize().then(syncResult => {
-				this.loadSyncedData().then(results => {
+				 console.log('syncResult', syncResult);
 					this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 					this.setState({ isLoading: false });
 					this.props.navigation.navigate('App');
-				});
+		 
 
 			});
 

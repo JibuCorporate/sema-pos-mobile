@@ -9,11 +9,10 @@ class CustomerTitle extends React.PureComponent {
         return (
             <View
                 style={styles.container}>
-                {this.props.navigation.getParam('isCustomerSelected') && (
-                    // <Text style={styles.tooltitle}>{this.props.customerProps.customerName}</Text>
-                    <Text style={styles.tooltitle}>selected customer</Text>
+                {this.props.customerProps.isCustomerSelected && (
+                    <Text style={styles.tooltitle}>{this.props.customerProps.customerName}</Text>
                 )}
-                {!this.props.navigation.getParam('isCustomerSelected') && (
+                {!this.props.customerProps.isCustomerSelected && (
                     <Text style={styles.tooltitle}>{this.props.title ? this.props.title : this.props.customerProps.title}</Text>
 				)}
             </View>
