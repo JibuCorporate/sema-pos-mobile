@@ -106,8 +106,7 @@ class CustomSidebarMenu extends React.PureComponent {
           <Image source={require('../images/jibulogo.png')} resizeMode={'stretch'} style={styles.imageStyle} />
           {/*Divider between Top Image and Sidebar Option*/}
           <View
-            style={styles.viewCont}
-          />
+            style={styles.viewCont} />
           {/*Setting up Navigation Options from option array using loop*/}
           <View style={styles.viewFlex}>
             {this.items.map((item, key) => (

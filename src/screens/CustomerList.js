@@ -407,17 +407,10 @@ class CustomerList extends React.PureComponent {
             //     }
             // );
 
-<<<<<<< HEAD
-			// alert("Clicked");
-
-            this.props.navigation.navigate('OrderView',{
+            this.props.navigation.navigate('OrderView', {
 				itemCustomer: item
 			});
-		});
-=======
-            this.props.navigation.navigate('OrderView');
         });
->>>>>>> b7793740e79508c47d7c4817ce2320dd542cb679
 
     }
 
