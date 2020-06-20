@@ -34,12 +34,8 @@ import PaymentModal from './paymentModal';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 class CustomerItem extends React.PureComponent {
-    // constructor() {
-    // 	super();
-    // 	this.handleOnPress = this.handleOnPress.bind(this);
-    //   }
 
-    // static whyDidYouRender = true;
+    static whyDidYouRender = true;
 
     getRowBackground(isSelected) {
         if (isSelected) {
@@ -381,22 +377,14 @@ class CustomerList extends React.PureComponent {
             customerName: item.name,
             'title': item.name
         });
-        // this.props.customerActions.CustomerSelected(item);
-        // this.props.customerActions.SetCustomerProp({
-        //         isCustomerSelected: true,
-        //         isDueAmount: item.dueAmount,
-        //         customerName: item.name,
-        //         'title': item.name
-        //     }
-        // );
 
-        //this.props.customerActions.setCustomerEditStatus(true);
+        this.props.customerActions.setCustomerEditStatus(true);
     }
 
     handleOnPress = (item) => {
         // InteractionManager.runAfterInteractions(() => {
         requestAnimationFrame(() => {
-             this.props.customerActions.CustomerSelected(item);
+            this.props.customerActions.CustomerSelected(item);
             CustomerRealm.selectedCustomer(item.customerId)
             this.shouldComponentUpdate();
             this.props.customerActions.SetCustomerProp({

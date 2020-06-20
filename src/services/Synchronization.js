@@ -6,8 +6,8 @@ import Communications from '../services/Communications';
 import * as _ from 'lodash';
 import InventorySync from './sync/inventory.sync';
 import CreditSync from './sync/credit.sync';
-import MeterReadingSync from './sync/meter-reading.sync'
-import ReminderSync from './sync/reminders.sync'
+import MeterReadingSync from './sync/meter-reading.sync';
+import ReminderSync from './sync/reminders.sync';
 import CustomerSync from './sync/customer.sync';
 import ProductSync from './sync/product.sync';
 import ProductMRPSync from './sync/productmrp.sync';
