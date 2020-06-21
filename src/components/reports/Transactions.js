@@ -21,17 +21,17 @@ import Events from 'react-native-simple-events';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import CustomerRealm from '../database/customers/customer.operations';
-import OrderRealm from '../database/orders/orders.operations';
-import SettingRealm from '../database/settings/settings.operations';
-import * as CustomerActions from '../actions/CustomerActions';
-import * as receiptActions from '../actions/ReceiptActions';
-import * as paymentTypesActions from '../actions/PaymentTypesActions';
-import * as TopUpActions from '../actions/TopUpActions';
-import CreditRealm from '../database/credit/credit.operations';
-import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
-import { prepareSectionedData } from "../reducers/ReceiptReducer";
-import i18n from '../app/i18n';
+import CustomerRealm from '../../database/customers/customer.operations';
+import OrderRealm from '../../database/orders/orders.operations';
+import SettingRealm from '../../database/settings/settings.operations';
+import * as CustomerActions from '../../actions/CustomerActions';
+import * as receiptActions from '../../actions/ReceiptActions';
+import * as paymentTypesActions from '../../actions/PaymentTypesActions';
+import * as TopUpActions from '../../actions/TopUpActions';
+import CreditRealm from '../../database/credit/credit.operations';
+import CustomerDebtRealm from '../../database/customer_debt/customer_debt.operations';
+import { prepareSectionedData } from "../../reducers/ReceiptReducer";
+import i18n from '../../app/i18n';
 import { format, parseISO } from 'date-fns';
 
 class ReceiptLineItem extends React.Component {
@@ -70,12 +70,12 @@ class ReceiptLineItem extends React.Component {
 
 
 	getImage = item => {
-		const productImage = this.props.products.find(e => e.productId === item.product_id);
+		const productImage = this.props.products.find(e => e.productId === item.productId);
 		return productImage.base64encodedImage;
 	};
 
 	getDescription = item => {
-		const productImage = this.props.products.find(e => e.productId === item.product_id);
+		const productImage = this.props.products.find(e => e.productId === item.productId);
 		return productImage.description;
 	};
 
