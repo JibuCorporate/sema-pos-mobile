@@ -40,6 +40,10 @@ class CustomerTypeRealm {
         return this.customerTypes = Object.values(JSON.parse(JSON.stringify(realm.objects('CustomerType'))));
     }
 
+    getCustomerTypesById(id) {
+        return this.customerTypes = Object.values(JSON.parse(JSON.stringify(realm.objects('CustomerType').filtered(`id = "${id}"`))));
+    }
+
 
     getCustomerTypesByDate(date) {
         let customerTypes = Object.values(JSON.parse(JSON.stringify(realm.objects('CustomerType'))));

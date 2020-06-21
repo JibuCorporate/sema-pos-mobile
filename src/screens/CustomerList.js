@@ -267,7 +267,7 @@ class CustomerList extends React.Component {
                     </View>
                     <View style={{ flex: 1 }}>
                         <Text style={styles.baseItem}>
-                            {this.getCustomerTypes(data.item)}
+                            {data.item.customerType}
                         </Text>
                     </View>
                     <View style={{ flex: 1 }}>
@@ -417,7 +417,7 @@ class CustomerList extends React.Component {
                 ...item,
                 walletBalance: item.walletBalance ? item.walletBalance : 0,
                 searchString: item.name + ' ' + item.phoneNumber + ' ' + item.address,
-                customerType: this.getCustomerTypes(item) !== undefined ? this.getCustomerTypes(item).toLowerCase() : "",
+                customerType: item.customerType !== undefined ? item.customerType.toLowerCase() : "",
             }
         });
         data.sort((a, b) => {
