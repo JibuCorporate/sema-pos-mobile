@@ -10,7 +10,7 @@ import CustomerDetails from '../screens/CustomerDetails';
 import CreditHistory from '../screens/CreditHistory';
 import Login from '../screens/Login';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
-import Transactions from '../screens/Transactions';
+import Transactions from '../components/reports/Transactions';
 
 import OrderView from '../components/orders/OrderView';
 
@@ -102,8 +102,8 @@ const ListCustomerStack = createStackNavigator({
 
 	OrderView: {
 		screen: OrderView,
-		navigationOptions: () => ({
-			headerTitle: () => <CustomerTitle />,
+		navigationOptions: ({ navigation }) => ({
+			headerTitle: () => <CustomerTitle navigation={navigation} />,
 			headerStyle: {
 				backgroundColor: '#00549C',
 			},

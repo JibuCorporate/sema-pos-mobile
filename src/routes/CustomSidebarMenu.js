@@ -3,30 +3,10 @@ import { View, StyleSheet, Image, Text, Alert, ActivityIndicator, ScrollView, To
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import CreditRealm from '../database/credit/credit.operations';
-import OrderRealm from '../database/orders/orders.operations';
-import ProductsRealm from '../database/products/product.operations';
-import DiscountRealm from '../database/discount/discount.operations';
-import CustomerReminderRealm from '../database/customer-reminder/customer-reminder.operations';
 import Synchronization from '../services/Synchronization';
-import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
-import PaymentTypeRealm from '../database/payment_types/payment_types.operations';
-import ReceiptPaymentTypeRealm from '../database/reciept_payment_types/reciept_payment_types.operations';
-import CustomerRealm from '../database/customers/customer.operations';
 import SettingRealm from '../database/settings/settings.operations';
 import Communications from '../services/Communications';
-import * as CustomerActions from '../actions/CustomerActions';
-import * as NetworkActions from '../actions/NetworkActions';
 import * as SettingsActions from '../actions/SettingsActions';
-import * as ProductActions from '../actions/ProductActions';
-import * as receiptActions from '../actions/ReceiptActions';
-import * as TopUpActions from '../actions/TopUpActions';
-import * as InventoryActions from '../actions/InventoryActions';
-import * as AuthActions from '../actions/AuthActions';
-import * as WastageActions from "../actions/WastageActions";
-import * as discountActions from '../actions/DiscountActions';
-import * as paymentTypesActions from '../actions/PaymentTypesActions';
-import * as CustomerReminderActions from '../actions/CustomerReminderActions';
 import i18n from '../app/i18n';
 
 class CustomSidebarMenu extends React.PureComponent {
@@ -106,8 +86,7 @@ class CustomSidebarMenu extends React.PureComponent {
           <Image source={require('../images/jibulogo.png')} resizeMode={'stretch'} style={styles.imageStyle} />
           {/*Divider between Top Image and Sidebar Option*/}
           <View
-            style={styles.viewCont}
-          />
+            style={styles.viewCont} />
           {/*Setting up Navigation Options from option array using loop*/}
           <View style={styles.viewFlex}>
             {this.items.map((item, key) => (
@@ -176,7 +155,6 @@ class CustomSidebarMenu extends React.PureComponent {
 
   _getSyncResults(syncResult) {
     try {
-
       if (
         syncResult.customers.customers == 0 &&
         syncResult.products.products == 0 &&
@@ -298,29 +276,14 @@ function mapStateToProps(state, props) {
   return {
     selectedCustomer: state.customerReducer.selectedCustomer,
     customers: state.customerReducer.customers,
-    network: state.networkReducer.network,
     settings: state.settingsReducer.settings,
-    receipts: state.receiptReducer.receipts,
-    remoteReceipts: state.receiptReducer.remoteReceipts,
     products: state.productReducer.products,
-    auth: state.authReducer
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    customerActions: bindActionCreators(CustomerActions, dispatch),
-    productActions: bindActionCreators(ProductActions, dispatch),
-    networkActions: bindActionCreators(NetworkActions, dispatch),
     settingsActions: bindActionCreators(SettingsActions, dispatch),
-    receiptActions: bindActionCreators(receiptActions, dispatch),
-    authActions: bindActionCreators(AuthActions, dispatch),
-    wastageActions: bindActionCreators(WastageActions, dispatch),
-    topUpActions: bindActionCreators(TopUpActions, dispatch),
-    inventoryActions: bindActionCreators(InventoryActions, dispatch),
-    discountActions: bindActionCreators(discountActions, dispatch),
-    paymentTypesActions: bindActionCreators(paymentTypesActions, dispatch),
-    customerReminderActions: bindActionCreators(CustomerReminderActions, dispatch),
   };
 }
 

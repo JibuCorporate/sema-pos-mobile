@@ -33,15 +33,9 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 import PaymentModal from './paymentModal';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-import ListView from "deprecated-react-native-listview";
-
 class CustomerItem extends React.PureComponent {
-    // constructor() {
-    // 	super();
-    // 	this.handleOnPress = this.handleOnPress.bind(this);
-    //   }
 
-    // static whyDidYouRender = true;
+    static whyDidYouRender = true;
 
     getRowBackground(isSelected) {
         if (isSelected) {
@@ -189,18 +183,11 @@ class CustomerList extends React.PureComponent {
         return filteredItems;
     };
 
-    prepareData2 = () => {
-        let data = [];
-        if (this.props.customers.length > 0) {
-            data = this.filterItems(this.props.customers);
-        }
-        return data;
-    };
-
     prepareData = () => {
         let data = [];
         if (CustomerRealm.getAllCustomer().length > 0) {
-            data = [...this.filterItems(CustomerRealm.getAllCustomer())];
+			// data = this.filterItems(this.props.customers);
+			data = this.filterItems(CustomerRealm.getAllCustomer());
         }
         return data;
     };
@@ -326,12 +313,12 @@ class CustomerList extends React.PureComponent {
                     </Text>
                 </View>
                 <View style={styles.OneHalf}>
-                    <Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
+                    <Text style={styles.headerItem}>{i18n.t('address')}</Text>
                 </View>
-                <View style={[styles.flexOne]}>
+                <View style={styles.flexOne}>
                     <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
                 </View>
-                <View style={[styles.balance]}>
+                <View style={styles.balance}>
                     <TouchableWithoutFeedback onPress={() => {
                         this.setState({ debtcustomers: !this.state.debtcustomers });
                         this.setState({ refresh: !this.state.refresh });
@@ -405,7 +392,7 @@ class CustomerList extends React.PureComponent {
     handleOnPress = (item) => {
         // InteractionManager.runAfterInteractions(() => {
         requestAnimationFrame(() => {
-             this.props.customerActions.CustomerSelected(item);
+            this.props.customerActions.CustomerSelected(item);
             CustomerRealm.selectedCustomer(item.customerId)
            // this.shouldComponentUpdate();
             this.props.customerActions.SetCustomerProp({
@@ -416,7 +403,9 @@ class CustomerList extends React.PureComponent {
                 }
             );
 
-            this.props.navigation.navigate('OrderView');
+            this.props.navigation.navigate('OrderView', {
+				itemCustomer: item
+			});
         });
 
     }
@@ -470,9 +459,10 @@ class CustomerList extends React.PureComponent {
                     extraData={this.state.refresh}
                     renderItem={this.renderItem}
                     keyExtractor={(item, idx) => item.customerId + idx}
-                    // maxToRenderPerBatch = {1}
-                    initialNumToRender={20}
-                    windowSize={10}
+					// maxToRenderPerBatch = {1}
+					initialNumToRender={20}
+					windowSize={10}
+					removeClippedSubviews={false}
                 />
                 <FloatingAction
                     onOpen={name => this.floatActionOpen()}
@@ -566,7 +556,6 @@ const styles = StyleSheet.create({
         left: 10
     },
     balance: { flex: 1, flexDirection: 'row' },
-
     headerItem: {
         fontWeight: 'bold',
         fontSize: 18

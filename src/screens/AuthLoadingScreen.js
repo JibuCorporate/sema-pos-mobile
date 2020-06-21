@@ -23,7 +23,7 @@ import * as discountActions from '../actions/DiscountActions';
 import * as paymentTypesActions from '../actions/PaymentTypesActions';
 import * as CustomerReminderActions from '../actions/CustomerReminderActions';
 import CreditRealm from '../database/credit/credit.operations';
-import CustomerRealm from '../database/customers/customer.operations'
+import CustomerRealm from '../database/customers/customer.operations';
 import InventroyRealm from '../database/inventory/inventory.operations';
 import SettingRealm from '../database/settings/settings.operations';
 import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
@@ -67,7 +67,7 @@ class AuthLoadingScreen extends React.PureComponent {
         }
 
         if (settings.site != "" && settings.siteId > 0) {
-			 
+
             if (settings.token.length > 1) {
                 this.props.settingsActions.setSettings({ ...settings, loginSync: false });
                 this.props.navigation.navigate('App');
@@ -90,7 +90,7 @@ class AuthLoadingScreen extends React.PureComponent {
     };
 
     loadSyncedData() {
-     
+
         this.props.topUpActions.setTopups(
             CreditRealm.getAllCredit()
         );
@@ -101,8 +101,8 @@ class AuthLoadingScreen extends React.PureComponent {
         this.props.inventoryActions.setInventory(
             InventroyRealm.getAllInventory()
         );
-       
-       
+
+
         this.props.paymentTypesActions.setPaymentTypes(
             PaymentTypeRealm.getPaymentTypes()
         );

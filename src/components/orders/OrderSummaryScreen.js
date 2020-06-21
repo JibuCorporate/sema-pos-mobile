@@ -985,7 +985,6 @@ class OrderSummaryScreen extends React.PureComponent {
 	// End Order Items  //
 
 	render() {
-		console.log("Walter " + JSON.stringify(this.props.selectedCustomer));
 		return (
 			<View style={orderItemStyles.orderSideBar}>
 				{this.orderSummaryElement()}
