@@ -2,6 +2,7 @@ import realm from '../init';
 const uuidv1 = require('uuid/v1');
 import SyncUtils from '../../services/sync/syncUtils';
 import { parseISO, format, compareAsc } from 'date-fns';
+import { CustomerTypeRealm } from '../customer-types/customer-types.operations';
 
 class CustomerRealm {
     constructor() {
@@ -39,10 +40,17 @@ class CustomerRealm {
 
     getAllCustomer() {
         let customers = Object.values(JSON.parse(JSON.stringify(realm.objects('Customer'))));
+        customers = customers.map(e => {
+            return { ...e, 
+                customerType: Object.values(JSON.parse(JSON.stringify(realm.objects('CustomerType').filtered(`id = "${e.customerTypeId}"`))))[0].name
+             }
+        })
+        console.log('customers', customers[0])
         return customers.filter(r => {
             return r.is_delete === null || r.is_delete === 1;
         })
     }
+
     selectedCustomer(customerId) {
         realm.write(() => {
             let customers = realm.objects('Customer').filtered(`customerId = "${customerId}"`);

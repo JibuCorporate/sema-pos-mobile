@@ -150,7 +150,7 @@ class CustomerList extends React.PureComponent {
                 ...item,
                 walletBalance: item.walletBalance ? item.walletBalance : 0,
                 searchString: item.name + ' ' + item.phoneNumber + ' ' + item.address,
-                customerType: this.getCustomerTypes(item) !== undefined ? this.getCustomerTypes(item).toLowerCase() : "",
+                customerType: item.customerType !== undefined ? item.customerType.toLowerCase() : "",
             }
         });
         data.sort((a, b) => {
@@ -420,7 +420,7 @@ class CustomerList extends React.PureComponent {
                 <CustomerItem
                     index={index}
                     isSelected={item.isSelected}
-                    customertype={this.getCustomerTypes(item)}
+                    customertype={item.customerType}
                     customername={item.name}
                     phoneNumber={item.phoneNumber}
                     dueAmount={item.dueAmount}
