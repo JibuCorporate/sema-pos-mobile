@@ -14,7 +14,7 @@ import {
 	SafeAreaView,
 	RefreshControl
 } from 'react-native';
-
+import ProductsRealm from '../../database/products/product.operations';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Events from 'react-native-simple-events';
@@ -70,19 +70,20 @@ class ReceiptLineItem extends React.Component {
 
 
 	getImage = item => {
-		const productImage = this.props.products.find(e => e.productId === item.productId);
+		const productImage = ProductsRealm.getProducts().find(e => e.productId === item.productId);
+		console.log('productImage', productImage)
 		return productImage.base64encodedImage;
 	};
 
 	getDescription = item => {
-		const productImage = this.props.products.find(e => e.productId === item.productId);
+		const productImage = ProductsRealm.getProducts().find(e => e.productId === item.productId);
 		return productImage.description;
 	};
 
 	// getImage = item => {
 	// 	const productImage =
 	// 		item.base64encodedImage || item.base64encoded_image ||
-	// 		this.props.products.reduce((image, product) => {
+	// 		ProductsRealm.getProducts().reduce((image, product) => {
 	// 			if (product.productId === item.product_id)
 	// 				return product.base64encodedImage;
 	// 			return image;
@@ -350,7 +351,7 @@ class TransactionDetail extends React.Component {
 								item={lineItem}
 								key={lineItem.receiptId + idx}
 								lineItemIndex={idx}
-								products={this.props.products}
+								products={ProductsRealm.getProducts()}
 								handleUpdate={this.handleUpdate.bind(this)}
 								receiptIndex={this.props.item.index}
 							/>
@@ -634,7 +635,7 @@ class Transactions extends React.Component {
 					<View style={styles.transdetcont}>
 						<TransactionDetail
 							item={this.state.selected}
-							products={this.props.products}
+							products={ProductsRealm.getProducts()}
 							customerActions={this.props.customerActions}
 							paymentTypesActions={this.props.paymentTypesActions}
 							topUpActions={this.props.topUpActions}
