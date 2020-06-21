@@ -291,15 +291,62 @@ class CustomerList extends React.Component {
 	  }
 
    _overrideRowRenderer = (type, data, index) => {
-        const view = this._rowRenderer(type, data, index);
+        const view = this.rowRenderer(type, data, index);
         switch(index) {
             case 0: // Only overriding sticky index 7, sticky indices 3 and 10 will remain as they are.
-                const color = "cyan";
                 return (
-                    <View style={{height: 100, backgroundColor: color, alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontSize: 32}}>Overridden sticky</Text>
-                    </View>
-                );
+                    <View
+						style={[
+							{
+								flex: 1,
+								flexDirection: 'row',
+								height: 50,
+								alignItems: 'center'
+							},
+							styles.headerBackground
+						]}>
+						<View style={[{ flex: 1.5 }]}>
+							<Text style={[styles.headerItem, styles.leftMargin]}>
+								{i18n.t('account-name')}
+							</Text>
+						</View>
+						<View style={[{ flex: 1 }]}>
+							<Text style={[styles.headerItem]}>
+								{i18n.t('telephone-number')}
+							</Text>
+						</View>
+						<View style={[{ flex: 1.5 }]}>
+							<Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
+						</View>
+						<View style={[{ flex: 1 }]}>
+							<Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
+						</View>
+						<View style={[{ flex: 1, flexDirection: 'row' }]}>
+							<TouchableWithoutFeedback onPress={() => {
+								// this.setState({ debtcustomers: !this.state.debtcustomers });
+								// this.setState({ refresh: !this.state.refresh });
+							}}>
+								<Text style={[styles.headerItem]}>{i18n.t('balance')}
+									<Icons
+										name='sort'
+										size={18}
+										color="white"
+										style={{
+											marginLeft: 10,
+											marginRight: 5,
+										}}
+									/>
+								</Text>
+
+							</TouchableWithoutFeedback>
+						</View>
+						<View style={[{ flex: 1 }]}>
+							<Text style={[styles.headerItem]}>Wallet</Text>
+						</View>
+
+					</View>
+				);
+
                 break;
         }
         return view;
@@ -309,7 +356,7 @@ class CustomerList extends React.Component {
         return (
             <View style={{ backgroundColor: '#fff', flex: 1 }}>
 
-			<StickyContainer stickyHeaderIndices={[3, 7, 10]}
+			<StickyContainer stickyHeaderIndices={[0]}
                              overrideRowRenderer={this._overrideRowRenderer}>
                <RecyclerListView
 					style={{flex: 1}}
