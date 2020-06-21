@@ -193,7 +193,7 @@ class CustomerList extends React.Component {
     };
 
     handleOnPress(item) {
-		// requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
 			this.props.customerActions.CustomerSelected(item);
 			this.props.customerActions.SetCustomerProp(
 			    {
@@ -204,10 +204,8 @@ class CustomerList extends React.Component {
 			    }
 			);
 
-			// alert("Kimi Raikonnen" + JSON.stringify(item));
 			this.props.navigation.navigate('OrderView');
-		// });
-
+		});
     };
 
     onLongPressItem(item) {
