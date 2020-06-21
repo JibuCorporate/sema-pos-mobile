@@ -1,18 +1,19 @@
 import React from 'react';
 if (process.env.NODE_ENV === 'development') {
-    const whyDidYouRender = require('@welldone-software/why-did-you-render');
-    whyDidYouRender(React, {
-        trackAllPureComponents: true,
-    });
-}
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React, {
+	  trackAllPureComponents: true,
+	});
+  }
 import {
     View,
     Text,
     StyleSheet,
-    Alert,
-    FlatList,
-    TouchableWithoutFeedback,
-    TouchableHighlight
+	Alert,
+	FlatList,
+	Dimensions,
+	TouchableWithoutFeedback,
+	TouchableHighlight
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
@@ -31,69 +32,27 @@ import * as PaymentTypesActions from "../actions/PaymentTypesActions";
 import Icons from 'react-native-vector-icons/FontAwesome';
 
 import PaymentModal from './paymentModal';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
+import StickyContainer from 'recyclerlistview/sticky';
 
-class CustomerItem extends React.PureComponent {
-
-    static whyDidYouRender = true;
-
-    getRowBackground(isSelected) {
-        if (isSelected) {
-            return styles.selectedBackground;
-        } else {
-            return this.props.index % 2 === 0
-                ? styles.lightBackground
-                : styles.darkBackground;
-        }
-    }
-
-
-    render() {
-        return (
-            <View
-                style={[
-                    this.getRowBackground(this.props.isSelected), styles.listStyles
-                ]}>
-                <View style={styles.OneHalf}>
-                    <Text style={styles.baseItem, styles.leftMargin}>
-                        {this.props.customername}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.props.phoneNumber}
-                    </Text>
-                </View>
-
-                <View style={styles.OneHalf}>
-                    <Text style={styles.baseItem}>{this.props.address}</Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.props.customertype}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.props.dueAmount ? this.props.dueAmount.toFixed(2) : 0}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.baseItem}>
-                        {this.props.walletBalance.toFixed(2)}
-                    </Text>
-                </View>
-            </View>
-        );
-    }
-}
-
-
-class CustomerList extends React.PureComponent {
+class CustomerList extends React.Component {
     constructor(props) {
         super(props);
+		// slowlog(this, /.*/);
+		let { width } = Dimensions.get("window");
 
-        this.state = {
+		const customerData = [];
+
+		let mydata = this.prepareData();
+
+		  for(let i in mydata) {
+			  customerData.push({
+				  type: 'NORMAL',
+				  item: mydata[i],
+			  });
+		  }
+
+		this.state = {
             refresh: false,
             searchString: '',
             debtcustomers: false,
@@ -101,19 +60,32 @@ class CustomerList extends React.PureComponent {
             customerTypeFilter: '',
             customerTypeValue: '',
             hasScrolled: false,
-            isPaymentModal: true,
-        };
+			isPaymentModal: true,
+			list: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(customerData)
+		  };
 
-    }
+		this.layoutProvider = new LayoutProvider((i) => {
+		return this.state.list.getDataForIndex(i).type;
+		}, (type, dim) => {
+		switch (type) {
+			case 'NORMAL':
+			dim.width = width;
+			dim.height = 50;
+			break;
+			default:
+			dim.width = 0;
+			dim.height = 0;
+			break;
+		};
+		});
 
-    static whyDidYouRender = true;
+        this.rowRenderer = this.rowRenderer.bind(this);
+	}
 
-    shouldComponentUpdate() {
-        return true;
-    }
+	static whyDidYouRender = true;
 
-    componentDidMount() {
-        this.props.navigation.setParams({
+	componentDidMount(){
+		this.props.navigation.setParams({
             isCustomerSelected: false,
             customerTypeValue: 'all',
             customerName: '',
@@ -125,82 +97,12 @@ class CustomerList extends React.PureComponent {
 
         this.props.customerActions.CustomerSelected({});
         this.props.customerActions.setCustomerEditStatus(false);
-    }
-
-    getCustomerTypes = (item) => {
-        const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
-        try {
-            for (let i = 0; i < customerTypeIts.length; i++) {
-                if (customerTypeIts[i].id === item.customerTypeId) {
-                    return customerTypeIts[i].name;
-                }
-            }
-        } catch (error) {
-            return 'Walk-up';
-        }
-    }
-
-    filterItems = data => {
-        let filter = {
-            searchString: this.props.searchString.length > 0 ? this.props.searchString : "",
-            customerType: this.props.customerTypeFilter.length > 0 ? this.props.customerTypeFilter === 'all' ? "" : this.props.customerTypeFilter : "",
-        };
-        data = data.map(item => {
-            return {
-                ...item,
-                walletBalance: item.walletBalance ? item.walletBalance : 0,
-                searchString: item.name + ' ' + item.phoneNumber + ' ' + item.address,
-                customerType: this.getCustomerTypes(item) !== undefined ? this.getCustomerTypes(item).toLowerCase() : "",
-            }
-        });
-        data.sort((a, b) => {
-            return a.name.toLowerCase() > b.name.toLowerCase();
-        });
-
-        if (this.state.debtcustomers) {
-            data.sort((a, b) => {
-                return Number(b.dueAmount) - Number(a.dueAmount);
-            });
-        }
-
-        if (this.state.walletcustomers) {
-            data.sort((a, b) => {
-                return Number(b.walletBalance) - Number(a.walletBalance);
-            });
-        }
-
-        let filteredItems = data.filter(function (item) {
-            for (var key in filter) {
-                if (
-                    item[key].toString() === undefined ||
-                    item[key].toString().toLowerCase().includes(filter[key].toString().toLowerCase()) !=
-                    filter[key].toString().toLowerCase().includes(filter[key].toString().toLowerCase())
-                )
-                    return false;
-            }
-            return true;
-        });
-        return filteredItems;
-    };
-
-    prepareData = () => {
-        let data = [];
-        if (CustomerRealm.getAllCustomer().length > 0) {
-			// data = this.filterItems(this.props.customers);
-			data = this.filterItems(CustomerRealm.getAllCustomer());
-        }
-        return data;
-    };
-
-    getItemLayout = (data, index) => ({
-        length: 50,
-        offset: 50 * index,
-        index
-    });
+	}
 
     searchCustomer = (searchText) => {
         this.props.customerActions.SearchCustomers(searchText);
     };
+
 
     checkCustomerTypefilter = (searchText) => {
         this.props.customerActions.SearchCustomerTypes(searchText);
@@ -209,23 +111,15 @@ class CustomerList extends React.PureComponent {
     modalOnClose() {
         PaymentTypeRealm.resetSelected();
         this.props.paymentTypesActions.resetSelectedDebt();
-        this.props.paymentTypesActions.resetSelectedPayment();
         this.props.paymentTypesActions.setPaymentTypes(
             PaymentTypeRealm.getPaymentTypes());
     }
 
     closePaymentModal = () => {
-        PaymentTypeRealm.resetSelected();
-        this.props.paymentTypesActions.resetSelectedPayment();
-        this.props.paymentTypesActions.resetSelectedDebt();
-        this.props.paymentTypesActions.setPaymentTypes(
-            PaymentTypeRealm.getPaymentTypes());
-        this.setState({ isPaymentModal: false });
         this.refs.modal6.close();
     };
 
     clearLoan = () => {
-        this.setState({ isPaymentModal: true });
         this.refs.modal6.open();
     }
 
@@ -298,187 +192,159 @@ class CustomerList extends React.PureComponent {
         }
     };
 
-    showHeader = () => {
-        return (
-            <View
-                style={styles.headerBackground}>
-                <View style={styles.OneHalf}>
-                    <Text style={[styles.headerItem, styles.leftMargin]}>
-                        {i18n.t('account-name')}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.headerItem}>
-                        {i18n.t('telephone-number')}
-                    </Text>
-                </View>
-                <View style={styles.OneHalf}>
-                    <Text style={styles.headerItem}>{i18n.t('address')}</Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
-                </View>
-                <View style={styles.balance}>
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.setState({ debtcustomers: !this.state.debtcustomers });
-                        this.setState({ refresh: !this.state.refresh });
-                    }}>
-                        <Text style={styles.headerItem}>{i18n.t('balance')}
-                            <Icons
-                                name='sort'
-                                size={18}
-                                color="white"
-                                style={styles.iconStyle}
-                            />
-                        </Text>
+    handleOnPress(item) {
+		// requestAnimationFrame(() => {
+			this.props.customerActions.CustomerSelected(item);
+			this.props.customerActions.SetCustomerProp(
+			    {
+			        isDueAmount: item.dueAmount,
+			        isCustomerSelected: false,
+					customerName: '',
+					'title': item.name + "'s Order"
+			    }
+			);
 
-                    </TouchableWithoutFeedback>
-                </View>
-                <View style={styles.flexOne}>
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.setState({ walletcustomers: !this.state.walletcustomers });
-                        this.setState({ refresh: !this.state.refresh });
-                    }}>
-                        <Text style={[styles.headerItem]}>Wallet
-                            <Icons
-                                name='sort'
-                                size={18}
-                                color="white"
-                                style={styles.iconStyle}
-                            />
-                        </Text>
-                    </TouchableWithoutFeedback>
-                </View>
+			// alert("Kimi Raikonnen" + JSON.stringify(item));
+			this.props.navigation.navigate('OrderView');
+		// });
 
-            </View>
-        );
     };
 
-    getCustomerTypes = (item) => {
-        const customerTypeIts = CustomerTypeRealm.getCustomerTypes();
-        try {
-            for (let i = 0; i < customerTypeIts.length; i++) {
-                if (customerTypeIts[i].id === item.customerTypeId) {
-                    return customerTypeIts[i].name;
-                }
-            }
-        } catch (error) {
-            return 'Walk-up';
-        }
-    }
+    onLongPressItem(item) {
 
-    onLongPressItem = (item) => {
-        // CustomerRealm.selectedCustomer(item.customerId)
-        // this.shouldComponentUpdate();
+			this.props.customerActions.CustomerSelected(item);
 
-        // this.props.navigation.setParams({
-        //     isCustomerSelected: true,
-        //     isDueAmount: item.dueAmount,
-        //     customerName: item.name,
-        //     'title': item.name
-        // });
-        this.props.customerActions.CustomerSelected(item);
-        this.props.customerActions.SetCustomerProp({
-                isCustomerSelected: true,
-                isDueAmount: item.dueAmount,
-                customerName: item.name,
-                'title': item.name
-            }
-        );
+			this.props.customerActions.SetCustomerProp(
+				{
+					isCustomerSelected: true,
+					isDueAmount: item.dueAmount,
+					customerName: item.name,
+					'title': item.name
+				}
+			);
 
-        this.props.customerActions.setCustomerEditStatus(true);
-    }
+			this.props.customerActions.setCustomerEditStatus(true);
 
-    handleOnPress = (item) => {
-        // InteractionManager.runAfterInteractions(() => {
-        requestAnimationFrame(() => {
-            this.props.customerActions.CustomerSelected(item);
-            CustomerRealm.selectedCustomer(item.customerId)
-           // this.shouldComponentUpdate();
-            this.props.customerActions.SetCustomerProp({
-                    isDueAmount: item.dueAmount,
-                    isCustomerSelected: false,
-                    customerName: '',
-                    'title': item.name + "'s Order"
-                }
+	};
+
+	rowRenderer = (type, data, index) => {
+		let isSelected = false;
+        // if (
+        //     this.props.selectedCustomer &&
+        //     this.props.selectedCustomer.customerId === data.item.customerId
+        // ) {
+        //     isSelected = true;
+        // }
+        if (type == 'NORMAL') {
+            return (
+				<TouchableHighlight
+                            onLongPress={() => this.onLongPressItem(data.item)}
+                            onPress={() => this.handleOnPress(data.item)}>
+                <View
+					style={[
+						this.getRowBackground(1, isSelected),
+						{
+							flex: 1,
+							flexDirection: 'row',
+							paddingTop: 15,
+							paddingBottom: 15,
+							alignItems: 'center'
+						}
+					]}>
+                    <View style={{ flex: 1.5 }}>
+                        <Text style={[styles.baseItem, styles.leftMargin]}>
+                            {data.item.name}
+                        </Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.baseItem}>
+                            {data.item.phoneNumber}
+                        </Text>
+                    </View>
+
+                    <View style={{ flex: 1.5 }}>
+                        <Text style={[styles.baseItem]}>{data.item.address}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.baseItem}>
+                            {this.getCustomerTypes(data.item)}
+                        </Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.baseItem}>
+                            {data.item.dueAmount.toFixed(2)}
+                        </Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.baseItem}>
+                            {data.item.walletBalance.toFixed(2)}
+                        </Text>
+                    </View>
+
+
+                </View>
+				</TouchableHighlight>
             );
+        } else {
+            return <View />;
+        }
+	  }
 
-            this.props.navigation.navigate('OrderView', {
-				itemCustomer: item
-			});
-        });
-
-    }
-
-    renderItem = ({ item, index, separators }) => {
-        return (
-            <TouchableHighlight
-                onLongPress={() => this.onLongPressItem(item)}
-                onPress={() => this.handleOnPress(item)}
-                onShowUnderlay={separators.highlight}
-                onHideUnderlay={separators.unhighlight}>
-                <CustomerItem
-                    index={index}
-                    isSelected={item.isSelected}
-                    customertype={this.getCustomerTypes(item)}
-                    customername={item.name}
-                    phoneNumber={item.phoneNumber}
-                    dueAmount={item.dueAmount}
-                    walletBalance={item.walletBalance}
-                    address={item.address}
-                />
-            </TouchableHighlight>
-        )
+   _overrideRowRenderer = (type, data, index) => {
+        const view = this._rowRenderer(type, data, index);
+        switch(index) {
+            case 0: // Only overriding sticky index 7, sticky indices 3 and 10 will remain as they are.
+                const color = "cyan";
+                return (
+                    <View style={{height: 100, backgroundColor: color, alignItems: 'center', justifyContent: 'center'}}>
+                        <Text style={{fontSize: 32}}>Overridden sticky</Text>
+                    </View>
+                );
+                break;
+        }
+        return view;
     };
-
-    floatActionOpen = () => {
-        this.props.customerActions.CustomerSelected({});
-        this.props.customerActions.setCustomerEditStatus(false);
-        this.props.customerActions.SetCustomerProp(
-            {
-                isCustomerSelected: false,
-                isDueAmount: 0,
-                customerName: '',
-                'title': '',
-            }
-        );
-        this.props.navigation.navigate('EditCustomer');
-    }
 
     render() {
         return (
-            <View style={styles.list}>
-                <FlatList
-                    ref={ref => {
-                        this.flatListRef = ref;
-                    }}
-                    getItemLayout={this.getItemLayout}
-                    data={this.prepareData()}
-                    ListHeaderComponent={this.showHeader}
-                    stickyHeaderIndices={[0]}
-                    extraData={this.state.refresh}
-                    renderItem={this.renderItem}
-                    keyExtractor={(item, idx) => item.customerId + idx}
-					// maxToRenderPerBatch = {1}
-					initialNumToRender={20}
-					windowSize={10}
-					removeClippedSubviews={false}
-                />
+            <View style={{ backgroundColor: '#fff', flex: 1 }}>
+
+			<StickyContainer stickyHeaderIndices={[3, 7, 10]}
+                             overrideRowRenderer={this._overrideRowRenderer}>
+               <RecyclerListView
+					style={{flex: 1}}
+					rowRenderer={this.rowRenderer}
+					dataProvider={this.state.list}
+					layoutProvider={this.layoutProvider}
+					/>
+		 </StickyContainer>
+
                 <FloatingAction
-                    onOpen={name => this.floatActionOpen()}
+                    onOpen={name => {
+                        this.props.customerActions.CustomerSelected({});
+                        this.props.customerActions.setCustomerEditStatus(false);
+						this.props.customerActions.SetCustomerProp(
+							{
+								isCustomerSelected: false,
+								isDueAmount: 0,
+								customerName: '',
+								'title': '',
+							}
+						);
+                        this.props.navigation.navigate('EditCustomer');
+                    }}
                 />
 
                 <View style={styles.modalPayment}>
                     <Modal
-                        style={styles.modal3}
+                        style={[styles.modal, styles.modal3]}
                         coverScreen={true}
-                        position={"center"}
-                        ref={"modal6"}
+                        position={"center"} ref={"modal6"}
                         onClosed={() => this.modalOnClose()}
                         isDisabled={this.state.isDisabled}>
-
-                        {this.openModal()}
-
+                        <PaymentModal
+                            modalOnClose={this.modalOnClose}
+                            closePaymentModal={this.closePaymentModal} />
                     </Modal>
                 </View>
                 <SearchWatcher parent={this}>
@@ -486,19 +352,197 @@ class CustomerList extends React.PureComponent {
                 </SearchWatcher>
             </View>
         );
+	};
+
+	getItemLayout = (data, index) => ({
+		length: 50,
+		offset: 50 * index,
+		index
+	});
+
+	filterItems = data => {
+        let filter = {
+            searchString: this.props.searchString.length > 0 ? this.props.searchString : "",
+            customerType: this.props.customerTypeFilter.length > 0 ? this.props.customerTypeFilter === 'all' ? "" : this.props.customerTypeFilter : "",
+        };
+        data = data.map(item => {
+            return {
+                ...item,
+                walletBalance: item.walletBalance ? item.walletBalance : 0,
+                searchString: item.name + ' ' + item.phoneNumber + ' ' + item.address,
+                customerType: this.getCustomerTypes(item) !== undefined ? this.getCustomerTypes(item).toLowerCase() : "",
+            }
+        });
+        data.sort((a, b) => {
+            return a.name.toLowerCase() > b.name.toLowerCase();
+        });
+
+        // if (this.state.debtcustomers) {
+        //     data.sort((a, b) => {
+        //         return Number(b.dueAmount) - Number(a.dueAmount);
+        //     });
+        // }
+
+        // if (this.state.walletcustomers) {
+        //     data.sort((a, b) => {
+        //         return Number(b.walletBalance) - Number(a.walletBalance);
+        //     });
+        // }
+
+        let filteredItems = data.filter(function (item) {
+            for (var key in filter) {
+                if (
+                    item[key].toString() === undefined ||
+                    item[key].toString().toLowerCase().includes(filter[key].toString().toLowerCase()) !=
+                    filter[key].toString().toLowerCase().includes(filter[key].toString().toLowerCase())
+                )
+                    return false;
+            }
+            return true;
+        });
+        return filteredItems;
     };
 
-    openModal() {
-        if (this.state.isPaymentModal) {
-            return (<PaymentModal
-                modalOnClose={this.modalOnClose}
-                closePaymentModal={this.closePaymentModal} />)
-        } else {
-            return null;
+    prepareData = () => {
+        let data = [];
+        if (CustomerRealm.getAllCustomer().length > 0) {
+			// data = this.filterItems(this.props.customers);
+			data = this.filterItems(CustomerRealm.getAllCustomer());
+        }
+        return data;
+    };
+
+    getCustomerTypes(item) {
+        try {
+            for (let i = 0; i < this.customerTypes.length; i++) {
+                if (this.customerTypes[i].id === item.customerTypeId) {
+                    return this.customerTypes[i].name;
+                }
+            }
+        } catch (error) {
+            return 'Walk-up';
         }
     }
 
+    _isAnonymousCustomer(customer) {
+        return CustomerTypeRealm.getCustomerTypeByName('anonymous').id ==
+            customer.customerTypeId
+            ? true
+            : false;
+    }
 
+    deleteCustomer() {
+        let alertMessage = i18n.t('delete-specific-customer', {
+            customerName: this.props.selectedCustomer.name
+        });
+        if (this.props.selectedCustomer.dueAmount === 0) {
+            Alert.alert(
+                alertMessage,
+                i18n.t('are-you-sure', {
+                    doThat: i18n.t('delete-this-customer')
+                }),
+                [
+                    {
+                        text: i18n.t('cancel'),
+                        onPress: () => { },
+                        style: 'cancel'
+                    },
+                    {
+                        text: i18n.t('ok'),
+                        onPress: () => {
+                            CustomerRealm.softDeleteCustomer(
+                                this.props.selectedCustomer
+                            ); // Delete from storage
+                            this.props.customerActions.CustomerSelected({}); // Clear selected customer
+                            this.props.customerActions.setCustomers(
+                                CustomerRealm.getAllCustomer()
+                            );
+                        }
+                    }
+                ],
+                { cancelable: false }
+            );
+        } else {
+            Alert.alert(
+                i18n.t('credit-customer-no-delete', {
+                    customerName: this.props.selectedCustomer.name
+                }),
+                '',
+                [
+                    {
+                        text: i18n.t('ok'),
+                        onPress: () => { }
+                    }
+                ],
+                { cancelable: true }
+            );
+        }
+    }
+
+    showHeader = () => {
+        return (
+            <View
+                style={[
+                    {
+                        flex: 1,
+                        flexDirection: 'row',
+                        height: 50,
+                        alignItems: 'center'
+                    },
+                    styles.headerBackground
+                ]}>
+                <View style={[{ flex: 1.5 }]}>
+                    <Text style={[styles.headerItem, styles.leftMargin]}>
+                        {i18n.t('account-name')}
+                    </Text>
+                </View>
+                <View style={[{ flex: 1 }]}>
+                    <Text style={[styles.headerItem]}>
+                        {i18n.t('telephone-number')}
+                    </Text>
+                </View>
+                <View style={[{ flex: 1.5 }]}>
+                    <Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
+                </View>
+                <View style={[{ flex: 1 }]}>
+                    <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
+                </View>
+                <View style={[{ flex: 1, flexDirection: 'row' }]}>
+                    <TouchableWithoutFeedback onPress={() => {
+                        this.setState({ debtcustomers: !this.state.debtcustomers });
+                        this.setState({ refresh: !this.state.refresh });
+                    }}>
+                        <Text style={[styles.headerItem]}>{i18n.t('balance')}
+                            <Icons
+                                name='sort'
+                                size={18}
+                                color="white"
+                                style={{
+                                    marginLeft: 10,
+                                    marginRight: 5,
+                                }}
+                            />
+                        </Text>
+
+                    </TouchableWithoutFeedback>
+                </View>
+                <View style={[{ flex: 1 }]}>
+                    <Text style={[styles.headerItem]}>Wallet</Text>
+                </View>
+
+            </View>
+        );
+    };
+
+    getRowBackground = (index, isSelected) => {
+        if (isSelected) {
+            return styles.selectedBackground;
+        } else {
+            return index % 2 === 0
+                ? styles.lightBackground
+                : styles.darkBackground;
+        }
+    };
 }
 
 class SearchWatcher extends React.PureComponent {
@@ -513,9 +557,11 @@ class SearchWatcher extends React.PureComponent {
 
         setTimeout(() => {
             if (
-                that.props.parent.props.searchString !== that.props.parent.state.searchString
+                that.props.parent.props.searchString !==
+                that.props.parent.state.searchString
             ) {
-                that.props.parent.state.searchString = that.props.parent.props.searchString;
+                that.props.parent.state.searchString =
+                    that.props.parent.props.searchString;
                 that.props.parent.setState({
                     refresh: !that.props.parent.state.refresh
                 });
@@ -525,12 +571,13 @@ class SearchWatcher extends React.PureComponent {
     }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
     return {
         selectedCustomer: state.customerReducer.selectedCustomer,
         customers: state.customerReducer.customers,
         searchString: state.customerReducer.searchString,
         customerTypeFilter: state.customerReducer.customerTypeFilter,
+        paymentTypes: state.paymentTypesReducer.paymentTypes,
     };
 }
 
@@ -551,31 +598,22 @@ const styles = StyleSheet.create({
     baseItem: {
         fontSize: 17
     },
-    flexOne: { flex: 1 },
     leftMargin: {
         left: 10
     },
-    balance: { flex: 1, flexDirection: 'row' },
     headerItem: {
         fontWeight: 'bold',
         fontSize: 18
     },
-    OneHalf: { flex: 1.5 },
     headerBackground: {
-        flex: 1,
-        flexDirection: 'row',
-        height: 50,
-        alignItems: 'center',
         backgroundColor: '#ABC1DE'
     },
-    list: { backgroundColor: '#fff', flex: 1 },
     modalPayment: {
         backgroundColor: 'white',
     },
     modal3: {
-        justifyContent: 'center',
-        width: wp('70%'),
-        height: 500,
+        width: '70%',
+        height: 400,
     },
     modal: {
         justifyContent: 'center',
@@ -588,22 +626,12 @@ const styles = StyleSheet.create({
     },
     selectedBackground: {
         backgroundColor: '#9AADC8'
-    },
-    listSty: {
-        flex: 1,
-        flexDirection: 'row',
-        paddingTop: 15,
-        paddingBottom: 15,
-        alignItems: 'center'
-    },
-    iconStyle: {
-        marginLeft: 10, marginRight: 5
-    },
-    listStyles: {
-        flex: 1,
-        flexDirection: 'row',
-        paddingTop: 15,
-        paddingBottom: 15,
-        alignItems: 'center'
-    }
+	},
+	listSty:  {
+		flex: 1,
+		flexDirection: 'row',
+		paddingTop: 15,
+		paddingBottom: 15,
+		alignItems: 'center'
+	}
 });
