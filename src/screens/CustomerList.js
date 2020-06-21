@@ -70,7 +70,7 @@ class CustomerList extends React.Component {
 		switch (type) {
 			case 'NORMAL':
 			dim.width = width;
-			dim.height = 50;
+			dim.height = 40;
 			break;
 			default:
 			dim.width = 0;
@@ -229,12 +229,12 @@ class CustomerList extends React.Component {
 
 	rowRenderer = (type, data, index) => {
 		let isSelected = false;
-        // if (
-        //     this.props.selectedCustomer &&
-        //     this.props.selectedCustomer.customerId === data.item.customerId
-        // ) {
-        //     isSelected = true;
-        // }
+        if (
+            this.props.selectedCustomer &&
+            this.props.selectedCustomer.customerId === data.item.customerId
+        ) {
+            isSelected = true;
+        }
         if (type == 'NORMAL') {
             return (
 				<TouchableHighlight
