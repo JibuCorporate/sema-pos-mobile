@@ -71,7 +71,6 @@ class ReceiptLineItem extends React.Component {
 
 	getImage = item => {
 		const productImage = ProductsRealm.getProducts().find(e => e.productId === item.product_id);
-		console.log('productImage', productImage)
 		return productImage.base64encodedImage;
 	};
 
