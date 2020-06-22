@@ -77,12 +77,9 @@ class CustomerList extends React.Component {
 
     static whyDidYouRender = true;
     static contextType = AppContext;
-    componentDidMount() {
-		console.log('this.context', this.context);
-	}
-
 
 	componentDidMount(){
+		console.log('this.context', this.context);
 
 		this.prepareData();
 
@@ -95,19 +92,17 @@ class CustomerList extends React.Component {
             onDelete: this.onDelete,
             clearLoan: this.clearLoan,
         });
-
-        this.props.customerActions.CustomerSelected({});
-        this.props.customerActions.setCustomerEditStatus(false);
-
     }
 
     searchCustomer = (searchText) => {
-        this.props.customerActions.SearchCustomers(searchText);
+		this.props.customerActions.SearchCustomers(searchText);
+		this.prepareData();
     };
 
 
     checkCustomerTypefilter = (searchText) => {
-        this.props.customerActions.SearchCustomerTypes(searchText);
+		this.props.customerActions.SearchCustomerTypes(searchText);
+		this.prepareData();
     };
 
     modalOnClose() {
@@ -205,8 +200,6 @@ class CustomerList extends React.Component {
             }
         );
          this.props.navigation.navigate('OrderView');
-
-
     };
 
     onLongPressItem(item) {
@@ -313,7 +306,8 @@ class CustomerList extends React.Component {
                 <View style={styles.balance}>
                     <TouchableWithoutFeedback onPress={() => {
                         this.setState({ debtcustomers: !this.state.debtcustomers });
-						this.setState({ refresh: !this.state.refresh });
+						// this.setState({ refresh: !this.state.refresh });
+						this.prepareData();
                     }}>
                         <Text style={styles.headerItem}>{i18n.t('balance')}
                             <Icons
@@ -329,7 +323,8 @@ class CustomerList extends React.Component {
                 <View style={styles.flexOne}>
                     <TouchableWithoutFeedback onPress={() => {
                         this.setState({ walletcustomers: !this.state.walletcustomers });
-                        this.setState({ refresh: !this.state.refresh });
+						// this.setState({ refresh: !this.state.refresh });
+						this.prepareData();
                     }}>
                         <Text style={[styles.headerItem]}>Wallet
                             <Icons
@@ -354,12 +349,13 @@ class CustomerList extends React.Component {
         return (
             <View style={{ backgroundColor: '#fff', flex: 1 }}>
 
-                <StickyContainer stickyHeaderIndices={[0]}
+				<StickyContainer
+				   stickyHeaderIndices={[0]}
                     overrideRowRenderer={this._overrideRowRenderer}>
                     <RecyclerListView
                         style={{ flex: 1 }}
                         rowRenderer={this.rowRenderer}
-                        dataProvider={this.state.list}
+                        dataProvider={this.state.dataProvider}
                         layoutProvider={this.layoutProvider}
                     />
                 </StickyContainer>
@@ -567,7 +563,7 @@ class SearchWatcher extends React.PureComponent {
                     that.props.parent.props.searchString;
                 that.props.parent.setState({
                     refresh: !that.props.parent.state.refresh
-                });
+				});
             }
         }, 50);
         return null;
