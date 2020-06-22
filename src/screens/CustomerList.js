@@ -1,23 +1,23 @@
-import React from 'react';
+import React, { useReducer, createContext } from 'react';
 if (process.env.NODE_ENV === 'development') {
-	const whyDidYouRender = require('@welldone-software/why-did-you-render');
-	whyDidYouRender(React, {
-	  trackAllPureComponents: true,
-	});
-  }
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import {
     View,
     Text,
     StyleSheet,
-	Alert,
-	FlatList,
-	Dimensions,
-	TouchableWithoutFeedback,
-	TouchableHighlight
+    Alert,
+    FlatList,
+    Dimensions,
+    TouchableWithoutFeedback,
+    TouchableHighlight
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
-
+import AppContext from '../context/app-context';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Modal from 'react-native-modalbox';
@@ -40,8 +40,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 class CustomerList extends React.Component {
     constructor(props) {
         super(props);
-		// slowlog(this, /.*/);
-		let { width } = Dimensions.get("window");
+        // slowlog(this, /.*/);
+        let { width } = Dimensions.get("window");
 
 		this.state = {
             refresh: false,
@@ -73,9 +73,14 @@ class CustomerList extends React.Component {
 		});
 
         this.rowRenderer = this.rowRenderer.bind(this);
+    }
+
+    static whyDidYouRender = true;
+    static contextType = AppContext;
+    componentDidMount() {
+		console.log('this.context', this.context);
 	}
 
-	static whyDidYouRender = true;
 
 	componentDidMount(){
 
@@ -93,7 +98,8 @@ class CustomerList extends React.Component {
 
         this.props.customerActions.CustomerSelected({});
         this.props.customerActions.setCustomerEditStatus(false);
-	}
+
+    }
 
     searchCustomer = (searchText) => {
         this.props.customerActions.SearchCustomers(searchText);
@@ -189,37 +195,34 @@ class CustomerList extends React.Component {
     };
 
     handleOnPress(item) {
-		// requestAnimationFrame(() => {
-			this.props.customerActions.CustomerSelected(item);
-			this.props.customerActions.SetCustomerProp(
-			    {
-			        isDueAmount: item.dueAmount,
-			        isCustomerSelected: false,
-					customerName: '',
-					'title': item.name + "'s Order"
-			    }
-			);
+        this.context.setSelectedCustomer(item);
+        this.context.setCustomerProps(
+            {
+                isDueAmount: item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': item.name + "'s Order"
+            }
+        );
+         this.props.navigation.navigate('OrderView');
 
-			this.props.navigation.navigate('OrderView');
-		// });
+
     };
 
     onLongPressItem(item) {
+        this.context.setSelectedCustomer(item);
+        this.context.setCustomerProps(
+            {
+                isCustomerSelected: true,
+                isDueAmount: item.dueAmount,
+                customerName: item.name,
+                'title': item.name
+            }
+        );
 
-			this.props.customerActions.CustomerSelected(item);
+        this.props.customerActions.setCustomerEditStatus(true);
 
-			this.props.customerActions.SetCustomerProp(
-				{
-					isCustomerSelected: true,
-					isDueAmount: item.dueAmount,
-					customerName: item.name,
-					'title': item.name
-				}
-			);
-
-			this.props.customerActions.setCustomerEditStatus(true);
-
-	};
+    };
 
 	rowRenderer = (type, data, index) => {
 		let isSelected = false;
@@ -276,15 +279,15 @@ class CustomerList extends React.Component {
                     </View>
 
 
-                </View>
-				</TouchableHighlight>
+                    </View>
+                </TouchableHighlight>
             );
         } else {
             return <View />;
         }
-	  }
+    }
 
-   _overrideRowRenderer = (type, data, index) => {
+    _overrideRowRenderer = (type, data, index) => {
         const view = this.rowRenderer(type, data, index);
         switch(index) {
             case 0:
@@ -351,31 +354,28 @@ class CustomerList extends React.Component {
         return (
             <View style={{ backgroundColor: '#fff', flex: 1 }}>
 
-			<StickyContainer
-				stickyHeaderIndices={[0]}
-                overrideRowRenderer={this._overrideRowRenderer}>
-               <RecyclerListView
-					style={{flex: 1}}
-					rowRenderer={this.rowRenderer}
-					dataProvider={this.state.dataProvider}
-					layoutProvider={this.layoutProvider}
-					extraData={this.state.refresh}
-
-					/>
-			 </StickyContainer>
+                <StickyContainer stickyHeaderIndices={[0]}
+                    overrideRowRenderer={this._overrideRowRenderer}>
+                    <RecyclerListView
+                        style={{ flex: 1 }}
+                        rowRenderer={this.rowRenderer}
+                        dataProvider={this.state.list}
+                        layoutProvider={this.layoutProvider}
+                    />
+                </StickyContainer>
 
                 <FloatingAction
                     onOpen={name => {
                         this.props.customerActions.CustomerSelected({});
                         this.props.customerActions.setCustomerEditStatus(false);
-						this.props.customerActions.SetCustomerProp(
-							{
-								isCustomerSelected: false,
-								isDueAmount: 0,
-								customerName: '',
-								'title': '',
-							}
-						);
+                        this.props.customerActions.SetCustomerProp(
+                            {
+                                isCustomerSelected: false,
+                                isDueAmount: 0,
+                                customerName: '',
+                                'title': '',
+                            }
+                        );
                         this.props.navigation.navigate('EditCustomer');
                     }}
                 />
@@ -397,15 +397,15 @@ class CustomerList extends React.Component {
                 </SearchWatcher>
             </View>
         );
-	};
+    };
 
-	getItemLayout = (data, index) => ({
-		length: 50,
-		offset: 50 * index,
-		index
-	});
+    getItemLayout = (data, index) => ({
+        length: 50,
+        offset: 50 * index,
+        index
+    });
 
-	filterItems = data => {
+    filterItems = data => {
         let filter = {
             searchString: this.props.searchString.length > 0 ? this.props.searchString : "",
             customerType: this.props.customerTypeFilter.length > 0 ? this.props.customerTypeFilter === 'all' ? "" : this.props.customerTypeFilter : "",
@@ -644,6 +644,7 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         paddingBottom: 15,
         alignItems: 'center'
+<<<<<<< HEAD
     },
     iconStyle: {
         marginLeft: 10, marginRight: 5
@@ -654,5 +655,7 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         paddingBottom: 15,
         alignItems: 'center'
+=======
+>>>>>>> c8f60a72ee54dd128974018462a5fdc497514a44
     }
 });

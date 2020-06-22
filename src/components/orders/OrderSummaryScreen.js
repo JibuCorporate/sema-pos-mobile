@@ -9,7 +9,7 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DiscountRealm from '../../database/discount/discount.operations';
 import ToggleSwitch from 'toggle-switch-react-native';
-
+import AppContext from '../../context/app-context';
 import { bindActionCreators } from "redux";
 import * as OrderActions from "../../actions/OrderActions";
 import * as DiscountActions from '../../actions/DiscountActions';
@@ -77,7 +77,11 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.handleCompleteSale = this.handleCompleteSale.bind(this);
 		this.orderItems = [...this.props.orderItems];
 	}
+	static contextType = AppContext;
 
+	componentDidMount() {
+		console.log('this.context.sum', this.context.selectedCustomer);
+	}
 	orderSummaryElement = () => {
 		return (
 			<View style={styles.container}>
@@ -1750,16 +1754,16 @@ class OrderSummaryScreen extends React.PureComponent {
 	};
 
 	calculateLoanBalance() {
-		return this.props.selectedCustomer.dueAmount;
+		return this.context.selectedCustomer.dueAmount;
 	}
 
 	updateWallet = (amount) => {
-		//this.props.selectedCustomer.walletBalance = Number(this.props.selectedCustomer.walletBalance) + Number(amount);
+		//this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) + Number(amount);
 		CustomerRealm.updateCustomerWalletBalance(
-			this.props.selectedCustomer,
+			this.context.selectedCustomer,
 			amount
 		);
-		this.props.customerActions.CustomerSelected(this.props.selectedCustomer);
+		this.props.customerActions.CustomerSelected(this.context.selectedCustomer);
 		this.props.customerActions.setCustomers(
 			CustomerRealm.getAllCustomer()
 		);
@@ -1767,7 +1771,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	topUpWallet = (amount, balance, recieptId) => {
 		CreditRealm.createCredit(
-			this.props.selectedCustomer.customerId,
+			this.context.selectedCustomer.customerId,
 			Number(amount),
 			Number(balance),
 			recieptId
@@ -1779,7 +1783,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	logCredit = (amount, balance, recieptId) => {
-		CustomerDebtRealm.createCustomerDebt(amount, this.props.selectedCustomer.customerId, balance, recieptId);
+		CustomerDebtRealm.createCustomerDebt(amount, this.context.selectedCustomer.customerId, balance, recieptId);
 		this.props.paymentTypesActions.setCustomerPaidDebt(
 			CustomerDebtRealm.getCustomerDebts()
 		);
@@ -1790,10 +1794,10 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	updateLoanBalance = (amount) => {
 		CustomerRealm.updateCustomerDueAmount(
-			this.props.selectedCustomer,
+			this.context.selectedCustomer,
 			amount
 		);
-		this.props.customerActions.CustomerSelected(this.props.selectedCustomer);
+		this.props.customerActions.CustomerSelected(this.context.selectedCustomer);
 		this.props.customerActions.setCustomers(
 			CustomerRealm.getAllCustomer()
 		);
@@ -1808,15 +1812,15 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		if (this.currentCredit() > this.calculateOrderDue()) {
 			if (totalAmountPaid > 0) {
-				this.props.selectedCustomer.walletBalance =
-					Number(this.props.selectedCustomer.walletBalance) + Number(totalAmountPaid) - (this.calculateOrderDue());
-				this.updateWallet(this.props.selectedCustomer.walletBalance);
-				this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.props.selectedCustomer.walletBalance, recieptId);
+				this.context.selectedCustomer.walletBalance =
+					Number(this.context.selectedCustomer.walletBalance) + Number(totalAmountPaid) - (this.calculateOrderDue());
+				this.updateWallet(this.context.selectedCustomer.walletBalance);
+				this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.context.selectedCustomer.walletBalance, recieptId);
 			} else if (totalAmountPaid <= 0) {
-				this.props.selectedCustomer.walletBalance = Number(this.props.selectedCustomer.walletBalance) - this.calculateOrderDue();
-				this.updateWallet(this.props.selectedCustomer.walletBalance);
+				this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) - this.calculateOrderDue();
+				this.updateWallet(this.context.selectedCustomer.walletBalance);
 
-				//this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.props.selectedCustomer.walletBalance, recieptId);
+				//this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.context.selectedCustomer.walletBalance, recieptId);
 			}
 			const creditIndex = PaymentTypeRealm.getPaymentTypes().map(function (e) { return e.name }).indexOf("credit");
 			if (creditIndex >= 0) {
@@ -1828,14 +1832,14 @@ class OrderSummaryScreen extends React.PureComponent {
 				if (totalAmountPaid > 0) {
 					let totalAmountAvailable = Number(totalAmountPaid) + this.currentCredit();
 					if (totalAmountAvailable > this.calculateOrderDue()) {
-						this.props.selectedCustomer.walletBalance = Number(totalAmountAvailable) - this.calculateOrderDue();
-						this.updateWallet(this.props.selectedCustomer.walletBalance);
+						this.context.selectedCustomer.walletBalance = Number(totalAmountAvailable) - this.calculateOrderDue();
+						this.updateWallet(this.context.selectedCustomer.walletBalance);
 
 					} else if (totalAmountAvailable < this.calculateOrderDue()) {
 
-						this.props.selectedCustomer.dueAmount = this.calculateOrderDue() - totalAmountAvailable;
+						this.context.selectedCustomer.dueAmount = this.calculateOrderDue() - totalAmountAvailable;
 
-						this.updateLoanBalance(this.props.selectedCustomer.dueAmount);
+						this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
 						const loanIndex = PaymentTypeRealm.getPaymentTypes().map(function (e) { return e.name }).indexOf("loan");
 
 						if (loanIndex >= 0) {
@@ -1847,14 +1851,14 @@ class OrderSummaryScreen extends React.PureComponent {
 							this.props.paymentTypesActions.setSelectedPaymentTypes({ ...this.props.paymentTypes[creditIndex], created_at: new Date(), isSelected: this.props.paymentTypes[creditIndex].isSelected === true ? false : true, amount: this.currentCredit() });
 						}
 
-						this.props.selectedCustomer.walletBalance = 0;
-						this.updateWallet(this.props.selectedCustomer.walletBalance);
+						this.context.selectedCustomer.walletBalance = 0;
+						this.updateWallet(this.context.selectedCustomer.walletBalance);
 					}
 
 				} else if (totalAmountPaid <= 0) {
-					this.props.selectedCustomer.dueAmount = Number(this.props.selectedCustomer.dueAmount) + (this.calculateOrderDue() - this.currentCredit());
+					this.context.selectedCustomer.dueAmount = Number(this.context.selectedCustomer.dueAmount) + (this.calculateOrderDue() - this.currentCredit());
 
-					this.updateLoanBalance(this.props.selectedCustomer.dueAmount);
+					this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
 					const loanIndex = PaymentTypeRealm.getPaymentTypes().map(function (e) { return e.name }).indexOf("loan");
 					if (loanIndex >= 0) {
 						this.props.paymentTypesActions.setSelectedPaymentTypes({ ...this.props.paymentTypes[loanIndex], created_at: new Date(), isSelected: this.props.paymentTypes[loanIndex].isSelected === true ? false : true, amount: this.calculateOrderDue() - this.currentCredit() });
@@ -1864,38 +1868,38 @@ class OrderSummaryScreen extends React.PureComponent {
 						this.props.paymentTypesActions.setSelectedPaymentTypes({ ...this.props.paymentTypes[creditIndex], created_at: new Date(), isSelected: this.props.paymentTypes[creditIndex].isSelected === true ? false : true, amount: this.currentCredit() });
 					}
 
-					this.props.selectedCustomer.walletBalance = 0;
-					this.updateWallet(this.props.selectedCustomer.walletBalance);
+					this.context.selectedCustomer.walletBalance = 0;
+					this.updateWallet(this.context.selectedCustomer.walletBalance);
 				}
 			} else if (this.currentCredit() <= 0) {
 				if (totalAmountPaid > 0) {
 					if (totalAmountPaid > this.calculateOrderDue()) {
 						if (this.calculateLoanBalance() === 0) {
-							this.props.selectedCustomer.walletBalance = Number(this.props.selectedCustomer.walletBalance) + Number(totalAmountPaid - this.calculateOrderDue());
-							this.updateWallet(this.props.selectedCustomer.walletBalance);
-							this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.props.selectedCustomer.walletBalance, recieptId);
+							this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) + Number(totalAmountPaid - this.calculateOrderDue());
+							this.updateWallet(this.context.selectedCustomer.walletBalance);
+							this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.context.selectedCustomer.walletBalance, recieptId);
 
 						} else if (this.calculateLoanBalance() > 0) {
 							let postToLoan = Number(totalAmountPaid) - this.calculateOrderDue();
 							if (postToLoan > this.calculateLoanBalance()) {
 								const topUpExpected = Number(postToLoan) - this.calculateLoanBalance();
-								//this.props.selectedCustomer.dueAmount = 0;
+								//this.context.selectedCustomer.dueAmount = 0;
 								this.updateLoanBalance(0);
-								this.logCredit(Number(this.props.selectedCustomer.dueAmount), 0, recieptId);
-								this.props.selectedCustomer.walletBalance = Number(this.props.selectedCustomer.walletBalance) + topUpExpected;
-								this.updateWallet(this.props.selectedCustomer.walletBalance);
-								this.topUpWallet(topUpExpected, this.props.selectedCustomer.walletBalance, recieptId);
+								this.logCredit(Number(this.context.selectedCustomer.dueAmount), 0, recieptId);
+								this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) + topUpExpected;
+								this.updateWallet(this.context.selectedCustomer.walletBalance);
+								this.topUpWallet(topUpExpected, this.context.selectedCustomer.walletBalance, recieptId);
 							} else if (postToLoan <= this.calculateLoanBalance()) {
-								this.props.selectedCustomer.dueAmount = Number(this.props.selectedCustomer.dueAmount) - postToLoan;
-								this.updateLoanBalance(this.props.selectedCustomer.dueAmount);
-								this.logCredit(Number(postToLoan), this.props.selectedCustomer.dueAmount, recieptId);
+								this.context.selectedCustomer.dueAmount = Number(this.context.selectedCustomer.dueAmount) - postToLoan;
+								this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
+								this.logCredit(Number(postToLoan), this.context.selectedCustomer.dueAmount, recieptId);
 							}
 						}
 					} else if (totalAmountPaid < this.calculateOrderDue()) {
 
-						this.props.selectedCustomer.dueAmount = Number(this.calculateLoanBalance()) + this.calculateOrderDue() - totalAmountPaid;
+						this.context.selectedCustomer.dueAmount = Number(this.calculateLoanBalance()) + this.calculateOrderDue() - totalAmountPaid;
 
-						this.updateLoanBalance(this.props.selectedCustomer.dueAmount);
+						this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
 						const loanIndex = PaymentTypeRealm.getPaymentTypes().map(function (e) { return e.name }).indexOf("loan");
 						if (loanIndex >= 0) {
 							this.props.paymentTypesActions.setSelectedPaymentTypes({ ...this.props.paymentTypes[loanIndex], created_at: new Date(), isSelected: this.props.paymentTypes[loanIndex].isSelected === true ? false : true, amount: this.calculateOrderDue() - totalAmountPaid });
@@ -1903,8 +1907,8 @@ class OrderSummaryScreen extends React.PureComponent {
 					}
 
 				} else if (totalAmountPaid <= 0) {
-					this.props.selectedCustomer.dueAmount = Number(this.calculateLoanBalance()) + this.calculateOrderDue() - totalAmountPaid;
-					this.updateLoanBalance(this.props.selectedCustomer.dueAmount);
+					this.context.selectedCustomer.dueAmount = Number(this.calculateLoanBalance()) + this.calculateOrderDue() - totalAmountPaid;
+					this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
 					const loanIndex = PaymentTypeRealm.getPaymentTypes().map(function (e) { return e.name }).indexOf("loan");
 					if (loanIndex >= 0) {
 						this.props.paymentTypesActions.setSelectedPaymentTypes({ ...this.props.paymentTypes[loanIndex], created_at: new Date(), isSelected: this.props.paymentTypes[loanIndex].isSelected === true ? false : true, amount: this.calculateOrderDue() - totalAmountPaid });
@@ -1941,7 +1945,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			uuid: SettingRealm.getAllSetting().siteId + '-' + this.invoiceid(),
 			created_at: receiptDate,
 			currency_code: this.props.orderItems[0].product.priceCurrency,
-			customer_account_id: this.props.selectedCustomer.customerId,
+			customer_account_id: this.context.selectedCustomer.customerId,
 			isWalkIn: this.props.payment.isWalkIn,
 			amount_cash: this.props.payment.cash,
 			delivery: this.props.delivery,
@@ -1951,12 +1955,12 @@ class OrderSummaryScreen extends React.PureComponent {
 			amount_bank: this.props.payment.bank,
 			amount_cheque: this.props.payment.cheque,
 			amountjibuCredit: this.props.payment.jibuCredit,
-			siteId: this.props.selectedCustomer.siteId
-				? this.props.selectedCustomer.siteId
+			siteId: this.context.selectedCustomer.siteId
+				? this.context.selectedCustomer.siteId
 				: SettingRealm.getAllSetting().siteId,
 			payment_type: '', // NOT sure what this is
-			sales_channel_id: this.props.selectedCustomer.salesChannelId,
-			customer_type_id: this.props.selectedCustomer.customerTypeId,
+			sales_channel_id: this.context.selectedCustomer.salesChannelId,
+			customer_type_id: this.context.selectedCustomer.customerTypeId,
 			products: [],
 			active: 1
 		};
@@ -2004,7 +2008,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		if (receipt != null) {
 			const creditIndex = this.props.selectedPaymentTypes.map(function (e) { return e.name }).indexOf("credit");
 
-			receipt.customer_account = this.props.selectedCustomer;
+			receipt.customer_account = this.context.selectedCustomer;
 			if (this.props.selectedPaymentTypes.length > 0) {
 				ReceiptPaymentTypeRealm.createManyReceiptPaymentType(this.props.selectedPaymentTypes, receipt.id, receiptDate );
 				this.props.paymentTypesActions.setRecieptPaymentTypes(
@@ -2019,7 +2023,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			);
 			this.props.receiptActions.setTransaction(receipt);
 
-			this.saveCustomerFrequency(OrderRealm.getAllOrder().filter(r => r.customer_account_id === this.props.selectedCustomer.customerId));
+			this.saveCustomerFrequency(OrderRealm.getAllOrder().filter(r => r.customer_account_id === this.context.selectedCustomer.customerId));
 			this.props.customerReminderActions.setCustomerReminders(
 				CustomerReminderRealm.getCustomerReminders()
 			);
@@ -2028,7 +2032,7 @@ class OrderSummaryScreen extends React.PureComponent {
 				'Payment Made',
 				'Loan Cleared: ' + this.state.loanPaid +
 				'\nCustomer Wallet Topup: ' + this.state.topUpExpected +
-				'\nCustomer\'s Loan Balance: ' + this.props.selectedCustomer.dueAmount +
+				'\nCustomer\'s Loan Balance: ' + this.context.selectedCustomer.dueAmount +
 				'\nCustomer Wallet Balance: ' + this.currentCredit(),
 				[{
 					text: 'OK',
@@ -2124,7 +2128,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	};
 
 	currentCredit() {
-		return this.props.selectedCustomer.walletBalance;
+		return this.context.selectedCustomer.walletBalance;
 	}
 
 	getOpacity = () => {

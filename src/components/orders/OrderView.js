@@ -7,13 +7,17 @@ import * as OrderActions from "../../actions/OrderActions";
 import * as CustomerActions from "../../actions/CustomerActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-
+import AppContext from '../../context/app-context';
 
 class OrderView extends React.PureComponent {
 	constructor(props) {
 		super(props);
 	}
+	static contextType = AppContext;
 
+	componentDidMount() {
+		console.log('this.context.order', this.context);
+	}
 	render() {
 		return (
 			<View style={styles.orderView}>
