@@ -1,23 +1,23 @@
-import React from 'react';
+import React, { useReducer, createContext } from 'react';
 if (process.env.NODE_ENV === 'development') {
-	const whyDidYouRender = require('@welldone-software/why-did-you-render');
-	whyDidYouRender(React, {
-	  trackAllPureComponents: true,
-	});
-  }
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import {
     View,
     Text,
     StyleSheet,
-	Alert,
-	FlatList,
-	Dimensions,
-	TouchableWithoutFeedback,
-	TouchableHighlight
+    Alert,
+    FlatList,
+    Dimensions,
+    TouchableWithoutFeedback,
+    TouchableHighlight
 } from 'react-native';
 import { FloatingAction } from "react-native-floating-action";
 import * as CustomerActions from '../actions/CustomerActions';
-
+import AppContext from '../context/app-context';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Modal from 'react-native-modalbox';
@@ -34,25 +34,24 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 import PaymentModal from './paymentModal';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 import StickyContainer from 'recyclerlistview/sticky';
-
 class CustomerList extends React.Component {
     constructor(props) {
         super(props);
-		// slowlog(this, /.*/);
-		let { width } = Dimensions.get("window");
+        // slowlog(this, /.*/);
+        let { width } = Dimensions.get("window");
 
-		const customerData = [];
+        const customerData = [];
 
-		let mydata = this.prepareData();
+        let mydata = this.prepareData();
 
-		  for(let i in mydata) {
-			  customerData.push({
-				  type: 'NORMAL',
-				  item: mydata[i],
-			  });
-		  }
+        for (let i in mydata) {
+            customerData.push({
+                type: 'NORMAL',
+                item: mydata[i],
+            });
+        }
 
-		this.state = {
+        this.state = {
             refresh: false,
             searchString: '',
             debtcustomers: false,
@@ -60,32 +59,36 @@ class CustomerList extends React.Component {
             customerTypeFilter: '',
             customerTypeValue: '',
             hasScrolled: false,
-			isPaymentModal: true,
-			list: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(customerData)
-		  };
+            isPaymentModal: true,
+            list: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(customerData)
+        };
 
-		this.layoutProvider = new LayoutProvider((i) => {
-		return this.state.list.getDataForIndex(i).type;
-		}, (type, dim) => {
-		switch (type) {
-			case 'NORMAL':
-			dim.width = width;
-			dim.height = 50;
-			break;
-			default:
-			dim.width = 0;
-			dim.height = 0;
-			break;
-		};
-		});
+        this.layoutProvider = new LayoutProvider((i) => {
+            return this.state.list.getDataForIndex(i).type;
+        }, (type, dim) => {
+            switch (type) {
+                case 'NORMAL':
+                    dim.width = width;
+                    dim.height = 50;
+                    break;
+                default:
+                    dim.width = 0;
+                    dim.height = 0;
+                    break;
+            };
+        });
 
         this.rowRenderer = this.rowRenderer.bind(this);
-	}
+    }
 
-	static whyDidYouRender = true;
+    static whyDidYouRender = true;
+    static contextType = AppContext;
+    componentDidMount() {
+        console.log('this.context', this.context);
 
-	componentDidMount(){
-		this.props.navigation.setParams({
+
+
+        this.props.navigation.setParams({
             isCustomerSelected: false,
             customerTypeValue: 'all',
             customerName: '',
@@ -97,7 +100,8 @@ class CustomerList extends React.Component {
 
         this.props.customerActions.CustomerSelected({});
         this.props.customerActions.setCustomerEditStatus(false);
-	}
+        
+    }
 
     searchCustomer = (searchText) => {
         this.props.customerActions.SearchCustomers(searchText);
@@ -193,42 +197,59 @@ class CustomerList extends React.Component {
     };
 
     handleOnPress(item) {
-		// requestAnimationFrame(() => {
-			this.props.customerActions.CustomerSelected(item);
-			this.props.customerActions.SetCustomerProp(
-			    {
-			        isDueAmount: item.dueAmount,
-			        isCustomerSelected: false,
-					customerName: '',
-					'title': item.name + "'s Order"
-			    }
-			);
+        // this.props.customerActions.CustomerSelected(item);
+        // this.props.customerActions.SetCustomerProp(
+        //     {
+        //         isDueAmount: item.dueAmount,
+        //         isCustomerSelected: false,
+        // 		customerName: '',
+        // 		'title': item.name + "'s Order"
+        //     }
+        // );
+        this.context.setSelectedCustomer(item);
+        this.context.setCustomerProps(
+            {
+                isDueAmount: item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': item.name + "'s Order"
+            }
+        );
+         this.props.navigation.navigate('OrderView');
 
-			// alert("Kimi Raikonnen" + JSON.stringify(item));
-			this.props.navigation.navigate('OrderView');
-		// });
 
     };
 
     onLongPressItem(item) {
 
-			this.props.customerActions.CustomerSelected(item);
+        // this.props.customerActions.CustomerSelected(item);
 
-			this.props.customerActions.SetCustomerProp(
-				{
-					isCustomerSelected: true,
-					isDueAmount: item.dueAmount,
-					customerName: item.name,
-					'title': item.name
-				}
-			);
+        // this.props.customerActions.SetCustomerProp(
+        //     {
+        //         isCustomerSelected: true,
+        //         isDueAmount: item.dueAmount,
+        //         customerName: item.name,
+        //         'title': item.name
+        //     }
+        // );
 
-			this.props.customerActions.setCustomerEditStatus(true);
 
-	};
+        this.context.setSelectedCustomer(item);
+        this.context.setCustomerProps(
+            {
+                isCustomerSelected: true,
+                isDueAmount: item.dueAmount,
+                customerName: item.name,
+                'title': item.name
+            }
+        );
 
-	rowRenderer = (type, data, index) => {
-		let isSelected = false;
+        this.props.customerActions.setCustomerEditStatus(true);
+
+    };
+
+    rowRenderer = (type, data, index) => {
+        let isSelected = false;
         // if (
         //     this.props.selectedCustomer &&
         //     this.props.selectedCustomer.customerId === data.item.customerId
@@ -237,115 +258,115 @@ class CustomerList extends React.Component {
         // }
         if (type == 'NORMAL') {
             return (
-				<TouchableHighlight
-                            onLongPress={() => this.onLongPressItem(data.item)}
-                            onPress={() => this.handleOnPress(data.item)}>
-                <View
-					style={[
-						this.getRowBackground(1, isSelected),
-						{
-							flex: 1,
-							flexDirection: 'row',
-							paddingTop: 15,
-							paddingBottom: 15,
-							alignItems: 'center'
-						}
-					]}>
-                    <View style={{ flex: 1.5 }}>
-                        <Text style={[styles.baseItem, styles.leftMargin]}>
-                            {data.item.name}
-                        </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.phoneNumber}
-                        </Text>
-                    </View>
+                <TouchableHighlight
+                    onLongPress={() => this.onLongPressItem(data.item)}
+                    onPress={() => this.handleOnPress(data.item)}>
+                    <View
+                        style={[
+                            this.getRowBackground(1, isSelected),
+                            {
+                                flex: 1,
+                                flexDirection: 'row',
+                                paddingTop: 15,
+                                paddingBottom: 15,
+                                alignItems: 'center'
+                            }
+                        ]}>
+                        <View style={{ flex: 1.5 }}>
+                            <Text style={[styles.baseItem, styles.leftMargin]}>
+                                {data.item.name}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.phoneNumber}
+                            </Text>
+                        </View>
 
-                    <View style={{ flex: 1.5 }}>
-                        <Text style={[styles.baseItem]}>{data.item.address}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.customerType}
-                        </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.dueAmount.toFixed(2)}
-                        </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.walletBalance.toFixed(2)}
-                        </Text>
-                    </View>
+                        <View style={{ flex: 1.5 }}>
+                            <Text style={[styles.baseItem]}>{data.item.address}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.customerType}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.dueAmount.toFixed(2)}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.walletBalance.toFixed(2)}
+                            </Text>
+                        </View>
 
 
-                </View>
-				</TouchableHighlight>
+                    </View>
+                </TouchableHighlight>
             );
         } else {
             return <View />;
         }
-	  }
+    }
 
-   _overrideRowRenderer = (type, data, index) => {
+    _overrideRowRenderer = (type, data, index) => {
         const view = this.rowRenderer(type, data, index);
-        switch(index) {
+        switch (index) {
             case 0: // Only overriding sticky index 7, sticky indices 3 and 10 will remain as they are.
                 return (
                     <View
-						style={[
-							{
-								flex: 1,
-								flexDirection: 'row',
-								height: 50,
-								alignItems: 'center'
-							},
-							styles.headerBackground
-						]}>
-						<View style={[{ flex: 1.5 }]}>
-							<Text style={[styles.headerItem, styles.leftMargin]}>
-								{i18n.t('account-name')}
-							</Text>
-						</View>
-						<View style={[{ flex: 1 }]}>
-							<Text style={[styles.headerItem]}>
-								{i18n.t('telephone-number')}
-							</Text>
-						</View>
-						<View style={[{ flex: 1.5 }]}>
-							<Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
-						</View>
-						<View style={[{ flex: 1 }]}>
-							<Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
-						</View>
-						<View style={[{ flex: 1, flexDirection: 'row' }]}>
-							<TouchableWithoutFeedback onPress={() => {
-								// this.setState({ debtcustomers: !this.state.debtcustomers });
-								// this.setState({ refresh: !this.state.refresh });
-							}}>
-								<Text style={[styles.headerItem]}>{i18n.t('balance')}
-									<Icons
-										name='sort'
-										size={18}
-										color="white"
-										style={{
-											marginLeft: 10,
-											marginRight: 5,
-										}}
-									/>
-								</Text>
+                        style={[
+                            {
+                                flex: 1,
+                                flexDirection: 'row',
+                                height: 50,
+                                alignItems: 'center'
+                            },
+                            styles.headerBackground
+                        ]}>
+                        <View style={[{ flex: 1.5 }]}>
+                            <Text style={[styles.headerItem, styles.leftMargin]}>
+                                {i18n.t('account-name')}
+                            </Text>
+                        </View>
+                        <View style={[{ flex: 1 }]}>
+                            <Text style={[styles.headerItem]}>
+                                {i18n.t('telephone-number')}
+                            </Text>
+                        </View>
+                        <View style={[{ flex: 1.5 }]}>
+                            <Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
+                        </View>
+                        <View style={[{ flex: 1 }]}>
+                            <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
+                        </View>
+                        <View style={[{ flex: 1, flexDirection: 'row' }]}>
+                            <TouchableWithoutFeedback onPress={() => {
+                                // this.setState({ debtcustomers: !this.state.debtcustomers });
+                                // this.setState({ refresh: !this.state.refresh });
+                            }}>
+                                <Text style={[styles.headerItem]}>{i18n.t('balance')}
+                                    <Icons
+                                        name='sort'
+                                        size={18}
+                                        color="white"
+                                        style={{
+                                            marginLeft: 10,
+                                            marginRight: 5,
+                                        }}
+                                    />
+                                </Text>
 
-							</TouchableWithoutFeedback>
-						</View>
-						<View style={[{ flex: 1 }]}>
-							<Text style={[styles.headerItem]}>Wallet</Text>
-						</View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                        <View style={[{ flex: 1 }]}>
+                            <Text style={[styles.headerItem]}>Wallet</Text>
+                        </View>
 
-					</View>
-				);
+                    </View>
+                );
 
                 break;
         }
@@ -356,28 +377,28 @@ class CustomerList extends React.Component {
         return (
             <View style={{ backgroundColor: '#fff', flex: 1 }}>
 
-			<StickyContainer stickyHeaderIndices={[0]}
-                             overrideRowRenderer={this._overrideRowRenderer}>
-               <RecyclerListView
-					style={{flex: 1}}
-					rowRenderer={this.rowRenderer}
-					dataProvider={this.state.list}
-					layoutProvider={this.layoutProvider}
-					/>
-		 </StickyContainer>
+                <StickyContainer stickyHeaderIndices={[0]}
+                    overrideRowRenderer={this._overrideRowRenderer}>
+                    <RecyclerListView
+                        style={{ flex: 1 }}
+                        rowRenderer={this.rowRenderer}
+                        dataProvider={this.state.list}
+                        layoutProvider={this.layoutProvider}
+                    />
+                </StickyContainer>
 
                 <FloatingAction
                     onOpen={name => {
                         this.props.customerActions.CustomerSelected({});
                         this.props.customerActions.setCustomerEditStatus(false);
-						this.props.customerActions.SetCustomerProp(
-							{
-								isCustomerSelected: false,
-								isDueAmount: 0,
-								customerName: '',
-								'title': '',
-							}
-						);
+                        this.props.customerActions.SetCustomerProp(
+                            {
+                                isCustomerSelected: false,
+                                isDueAmount: 0,
+                                customerName: '',
+                                'title': '',
+                            }
+                        );
                         this.props.navigation.navigate('EditCustomer');
                     }}
                 />
@@ -399,15 +420,15 @@ class CustomerList extends React.Component {
                 </SearchWatcher>
             </View>
         );
-	};
+    };
 
-	getItemLayout = (data, index) => ({
-		length: 50,
-		offset: 50 * index,
-		index
-	});
+    getItemLayout = (data, index) => ({
+        length: 50,
+        offset: 50 * index,
+        index
+    });
 
-	filterItems = data => {
+    filterItems = data => {
         let filter = {
             searchString: this.props.searchString.length > 0 ? this.props.searchString : "",
             customerType: this.props.customerTypeFilter.length > 0 ? this.props.customerTypeFilter === 'all' ? "" : this.props.customerTypeFilter : "",
@@ -453,8 +474,8 @@ class CustomerList extends React.Component {
     prepareData = () => {
         let data = [];
         if (CustomerRealm.getAllCustomer().length > 0) {
-			// data = this.filterItems(this.props.customers);
-			data = this.filterItems(CustomerRealm.getAllCustomer());
+            // data = this.filterItems(this.props.customers);
+            data = this.filterItems(CustomerRealm.getAllCustomer());
         }
         return data;
     };
@@ -673,12 +694,12 @@ const styles = StyleSheet.create({
     },
     selectedBackground: {
         backgroundColor: '#9AADC8'
-	},
-	listSty:  {
-		flex: 1,
-		flexDirection: 'row',
-		paddingTop: 15,
-		paddingBottom: 15,
-		alignItems: 'center'
-	}
+    },
+    listSty: {
+        flex: 1,
+        flexDirection: 'row',
+        paddingTop: 15,
+        paddingBottom: 15,
+        alignItems: 'center'
+    }
 });
