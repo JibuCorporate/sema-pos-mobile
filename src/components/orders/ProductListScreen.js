@@ -17,10 +17,11 @@ import SalesChannelRealm from '../../database/sales-channels/sales-channels.oper
 import * as ProductActions from '../../actions/ProductActions';
 import * as OrderActions from '../../actions/OrderActions';
 import { withNavigation } from 'react-navigation';
+import AppContext from '../../context/app-context';
 class ProductListScreen extends React.PureComponent {
+	static contextType = AppContext;
 	constructor(props) {
 		super(props);
-
 		let { width } = Dimensions.get('window');
 		// Empirically we know that this view has flex of 1 and the view beside it,
 		// (OrderSummaryScreen has a flex of .6 This makes the width of this view 1/1.6 * screen width
@@ -28,10 +29,16 @@ class ProductListScreen extends React.PureComponent {
 		// this to set width. (Note this will break if view layout changes
 		this.viewWidth = 1 / 1.6 * width;
 		// this.salesChannel;
-		this.state = {
-			salesChannel: SalesChannelRealm.getSalesChannelFromId(this.props.selectedCustomer.salesChannelId)
-		}
+		// this.state = {
+		// 	salesChannel: SalesChannelRealm.getSalesChannelFromId(this.context.selectedCustomer.salesChannelId)
+		// }
 	};
+
+	
+
+	componentDidMount() {
+		console.log('this.context.pres', this.context.selectedCustomer);
+	}
 
 	handleOnPress = (item) => {
 		requestAnimationFrame(() => {
@@ -45,7 +52,7 @@ class ProductListScreen extends React.PureComponent {
 
 	getItemPrice = item => {
 		let salesChannel = SalesChannelRealm.getSalesChannelFromName(
-			this.state.salesChannel.name
+			SalesChannelRealm.getSalesChannelFromId(this.context.selectedCustomer.salesChannelId).name
 		);
 		if (salesChannel) {
 			let productMrp = ProductMRPRealm.getFilteredProductMRP()[
@@ -93,7 +100,7 @@ class ProductListScreen extends React.PureComponent {
 
 
 	render() {
-		if (this.state.salesChannel) {
+		if (SalesChannelRealm.getSalesChannelFromId(this.context.selectedCustomer.salesChannelId)) {
 			return (
 				<View style={styles.container}>
 					<FlatList
@@ -126,7 +133,7 @@ class ProductListScreen extends React.PureComponent {
 	getLabelBackground = (categoryId) => {
 		return {
 			backgroundColor: `${randomMC.getColor({
-				text: `${categoryId}-${this.state.salesChannel.name}`
+				text: `${categoryId}-${SalesChannelRealm.getSalesChannelFromId(this.context.selectedCustomer.salesChannelId).name}`
 			})}`
 		};
 	};

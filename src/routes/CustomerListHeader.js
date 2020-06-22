@@ -8,15 +8,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import i18n from '../app/i18n';
 import { withNavigation } from 'react-navigation';
+import AppContext from '../context/app-context';
 class CustomerListHeader extends React.PureComponent {
-
+    static contextType = AppContext;
     render() {
         return (
             <View
                 style={styles.headerCont}>
                 <View
                     style={styles.iconsContainer}>
-                    {this.props.customerProps.isCustomerSelected && (
+                    {this.context.customerProps.isCustomerSelected && (
                         <Icons
                             name='balance-scale'
                             size={25}
@@ -26,7 +27,7 @@ class CustomerListHeader extends React.PureComponent {
                         />
 
                     )}
-                    {this.props.customerProps.isCustomerSelected && (
+                    {this.context.customerProps.isCustomerSelected && (
                         <Icon
                             name='md-cart'
                             size={25}
@@ -38,7 +39,7 @@ class CustomerListHeader extends React.PureComponent {
                         />
 
                     )}
-                    {this.props.customerProps.isCustomerSelected && (
+                    {this.context.customerProps.isCustomerSelected && (
                         <Icon
                             name='md-more'
                             size={25}
@@ -46,7 +47,7 @@ class CustomerListHeader extends React.PureComponent {
                             style={styles.iconStyle}
                         />
                     )}
-                    {this.props.customerProps.isCustomerSelected && (
+                    {this.context.customerProps.isCustomerSelected && (
                         <Icon
                             name='md-information-circle-outline'
                             size={25}
@@ -58,7 +59,7 @@ class CustomerListHeader extends React.PureComponent {
 
                         />
                     )}
-                    {this.props.customerProps.isCustomerSelected && (
+                    {this.context.customerProps.isCustomerSelected && (
                         <Icon
                             name='md-trash'
                             size={25}
@@ -67,19 +68,20 @@ class CustomerListHeader extends React.PureComponent {
                             onPress={this.props.navigation.getParam('onDelete')}
                         />
                     )}
-                    {this.props.customerProps.isCustomerSelected && (
+                    {this.context.customerProps.isCustomerSelected && (
                         <Icon
                             name='md-create'
                             size={25}
                             color="white"
                             style={styles.iconStyle}
                             onPress={() => {
-                                this.props.customerActions.SetCustomerProp(
+                              
+                                this.context.setCustomerProps(
                                     {
                                         isCustomerSelected: false,
                                         isDueAmount: 0,
                                         customerName: '',
-                                        'title': '',
+                                        'title': ''
                                     }
                                 );
                                 this.props.navigation.navigate('EditCustomer');
@@ -103,7 +105,7 @@ class CustomerListHeader extends React.PureComponent {
                     style={styles.pickerCont}>
                     <Picker
                         mode="dropdown"
-                        selectedValue={this.props.customerTypeFilter}
+                        selectedValue={this.context.customerTypeFilter}
                         style={styles.pickerdpn}
                         onValueChange={(searchText) => {
                             this.checkCustomerTypefilter(searchText)
@@ -125,34 +127,15 @@ class CustomerListHeader extends React.PureComponent {
     }
 
     searchCustomer = (searchText) => {
-        this.props.customerActions.SearchCustomers(searchText);
+        this.context.SearchCustomers(searchText);
     };
 
     checkCustomerTypefilter = (searchText) => {
-        this.props.customerActions.SearchCustomerTypes(searchText);
+        this.context.SearchCustomerTypes(searchText);
     };
 }
 
-function mapStateToProps(state, props) {
-    return {
-        selectedCustomer: state.customerReducer.selectedCustomer,
-        customers: state.customerReducer.customers,
-        searchString: state.customerReducer.searchString,
-        customerProps: state.customerReducer.customerProps,
-        customerTypeFilter: state.customerReducer.customerTypeFilter,
-        paymentTypes: state.paymentTypesReducer.paymentTypes,
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        customerActions: bindActionCreators(CustomerActions, dispatch),
-    };
-}
-
-export default connect(
-    mapStateToProps, mapDispatchToProps
-)(withNavigation(CustomerListHeader));
+export default withNavigation(CustomerListHeader);
 
 const styles = StyleSheet.create({
 	iconStyle: {
