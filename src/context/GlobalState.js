@@ -7,6 +7,7 @@ class GlobalState extends Component {
     selectedCustomer: {},
     customerTypeFilter: "all",
     searchString: "",
+    isEdit: false,
     paymentTypeFilter: "",
     customerProps: {
       isDueAmount: 0,
@@ -43,10 +44,17 @@ class GlobalState extends Component {
     this.setState({ customerProps });
   };
 
+  setCustomerEditStatus = isEdit => {
+    console.log('Adding isEdit', isEdit);
+    const updatedSelectedCustomer = { ...this.state.isEdit };
+    this.setState({ isEdit });
+  };
+
   render() {
     return (
       <AppContext.Provider
         value={{
+          isEdit: this.state.isEdit,
           searchString: this.state.searchString,
           customerTypeFilter: this.state.customerTypeFilter,
           selectedCustomer: this.state.selectedCustomer,
@@ -56,7 +64,8 @@ class GlobalState extends Component {
           setSelectedCustomer: this.setSelectedCustomer,
           SearchCustomers: this.SearchCustomers,
           SearchCustomerTypes: this.SearchCustomerTypes,
-          setCustomerProps: this.setCustomerProps
+          setCustomerProps: this.setCustomerProps,
+          setCustomerEditStatus: this.setCustomerEditStatus
         }}
       >
         {this.props.children}

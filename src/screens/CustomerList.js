@@ -35,6 +35,7 @@ import PaymentModal from './paymentModal';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 import StickyContainer from 'recyclerlistview/sticky';
 class CustomerList extends React.Component {
+    static contextType = AppContext;
     constructor(props) {
         super(props);
         // slowlog(this, /.*/);
@@ -42,7 +43,7 @@ class CustomerList extends React.Component {
 
         const customerData = [];
 
-        let mydata = this.prepareData();
+        let mydata = this.prepareData(this.context);
 
         for (let i in mydata) {
             customerData.push({
@@ -82,7 +83,7 @@ class CustomerList extends React.Component {
     }
 
     static whyDidYouRender = true;
-    static contextType = AppContext;
+   
     componentDidMount() {
         console.log('this.context', this.context);
 
@@ -98,18 +99,19 @@ class CustomerList extends React.Component {
             clearLoan: this.clearLoan,
         });
 
-        this.props.customerActions.CustomerSelected({});
-        this.props.customerActions.setCustomerEditStatus(false);
+        this.context.setSelectedCustomer({});     
+        
+        this.context.setCustomerEditStatus(false);
         
     }
 
     searchCustomer = (searchText) => {
-        this.props.customerActions.SearchCustomers(searchText);
+        this.context.SearchCustomers(searchText);
     };
 
 
     checkCustomerTypefilter = (searchText) => {
-        this.props.customerActions.SearchCustomerTypes(searchText);
+        this.context.SearchCustomerTypes(searchText);
     };
 
     modalOnClose() {
@@ -129,12 +131,12 @@ class CustomerList extends React.Component {
 
     onDelete = () => {
         if (
-            this.props.selectedCustomer.hasOwnProperty('name')
-            // && !this._isAnonymousCustomer(this.props.selectedCustomer)
+            this.context.selectedCustomer.hasOwnProperty('name')
+            // && !this._isAnonymousCustomer(this.context.selectedCustomer)
         ) {
             let alertMessage =
-                'Delete  customer ' + this.props.selectedCustomer.name;
-            if (this.props.selectedCustomer.dueAmount === 0) {
+                'Delete  customer ' + this.context.selectedCustomer.name;
+            if (this.context.selectedCustomer.dueAmount === 0) {
                 Alert.alert(
                     alertMessage,
                     'Are you sure you want to delete this customer?',
@@ -148,18 +150,19 @@ class CustomerList extends React.Component {
                             text: 'OK',
                             onPress: () => {
                                 CustomerRealm.softDeleteCustomer(
-                                    this.props.selectedCustomer
+                                    this.context.selectedCustomer
                                 ); // Delete from storage
-                                this.props.customerActions.CustomerSelected({}); // Clear selected customer
 
-                                this.props.customerActions.SetCustomerProp(
+
+                                this.context.setSelectedCustomer({});
+                                this.context.setCustomerProps(
                                     {
-                                        isDueAmount: 0,
                                         isCustomerSelected: false,
+                                        isDueAmount: 0,
                                         customerName: '',
-                                        'title': ""
+                                        'title': '',
                                     }
-                                );
+                                );                              
 
 
                                 this.props.customerActions.setCustomers(
@@ -173,21 +176,23 @@ class CustomerList extends React.Component {
             } else {
                 Alert.alert(
                     "Customer '" +
-                    this.props.selectedCustomer.name +
+                    this.context.selectedCustomer.name +
                     "' has an outstanding credit and cannot be deleted",
                     '',
                     [{
                         text: 'OK', onPress: () => {
-                            this.props.customerActions.CustomerSelected({}); // Clear selected customer
+                            
 
-                            this.props.customerActions.SetCustomerProp(
+                            this.context.setSelectedCustomer({});
+                            this.context.setCustomerProps(
                                 {
-                                    isDueAmount: 0,
                                     isCustomerSelected: false,
+                                    isDueAmount: 0,
                                     customerName: '',
-                                    'title': ""
+                                    'title': '',
                                 }
                             );
+                            
                         }
                     }],
                     { cancelable: true }
@@ -197,15 +202,6 @@ class CustomerList extends React.Component {
     };
 
     handleOnPress(item) {
-        // this.props.customerActions.CustomerSelected(item);
-        // this.props.customerActions.SetCustomerProp(
-        //     {
-        //         isDueAmount: item.dueAmount,
-        //         isCustomerSelected: false,
-        // 		customerName: '',
-        // 		'title': item.name + "'s Order"
-        //     }
-        // );
         this.context.setSelectedCustomer(item);
         this.context.setCustomerProps(
             {
@@ -220,18 +216,7 @@ class CustomerList extends React.Component {
 
     };
 
-    onLongPressItem(item) {
-
-        // this.props.customerActions.CustomerSelected(item);
-
-        // this.props.customerActions.SetCustomerProp(
-        //     {
-        //         isCustomerSelected: true,
-        //         isDueAmount: item.dueAmount,
-        //         customerName: item.name,
-        //         'title': item.name
-        //     }
-        // );
+    onLongPressItem(item) {       
 
 
         this.context.setSelectedCustomer(item);
@@ -244,15 +229,15 @@ class CustomerList extends React.Component {
             }
         );
 
-        this.props.customerActions.setCustomerEditStatus(true);
+        this.context.setCustomerEditStatus(true);
 
     };
 
     rowRenderer = (type, data, index) => {
         let isSelected = false;
         // if (
-        //     this.props.selectedCustomer &&
-        //     this.props.selectedCustomer.customerId === data.item.customerId
+        //     this.context.selectedCustomer &&
+        //     this.context.selectedCustomer.customerId === data.item.customerId
         // ) {
         //     isSelected = true;
         // }
@@ -389,9 +374,9 @@ class CustomerList extends React.Component {
 
                 <FloatingAction
                     onOpen={name => {
-                        this.props.customerActions.CustomerSelected({});
-                        this.props.customerActions.setCustomerEditStatus(false);
-                        this.props.customerActions.SetCustomerProp(
+
+                        this.context.setSelectedCustomer({});
+                        this.context.setCustomerProps(
                             {
                                 isCustomerSelected: false,
                                 isDueAmount: 0,
@@ -399,6 +384,9 @@ class CustomerList extends React.Component {
                                 'title': '',
                             }
                         );
+                        
+                        this.context.setCustomerEditStatus(false);
+                   
                         this.props.navigation.navigate('EditCustomer');
                     }}
                 />
@@ -428,7 +416,8 @@ class CustomerList extends React.Component {
         index
     });
 
-    filterItems = data => {
+    filterItems = (data, context) => {
+        console.log('-context-', context);
         let filter = {
             searchString: this.props.searchString.length > 0 ? this.props.searchString : "",
             customerType: this.props.customerTypeFilter.length > 0 ? this.props.customerTypeFilter === 'all' ? "" : this.props.customerTypeFilter : "",
@@ -471,11 +460,10 @@ class CustomerList extends React.Component {
         return filteredItems;
     };
 
-    prepareData = () => {
+    prepareData = (context) => {
         let data = [];
         if (CustomerRealm.getAllCustomer().length > 0) {
-            // data = this.filterItems(this.props.customers);
-            data = this.filterItems(CustomerRealm.getAllCustomer());
+            data = this.filterItems(CustomerRealm.getAllCustomer(),context);
         }
         return data;
     };
@@ -501,9 +489,9 @@ class CustomerList extends React.Component {
 
     deleteCustomer() {
         let alertMessage = i18n.t('delete-specific-customer', {
-            customerName: this.props.selectedCustomer.name
+            customerName: this.context.selectedCustomer.name
         });
-        if (this.props.selectedCustomer.dueAmount === 0) {
+        if (this.context.selectedCustomer.dueAmount === 0) {
             Alert.alert(
                 alertMessage,
                 i18n.t('are-you-sure', {
@@ -519,9 +507,10 @@ class CustomerList extends React.Component {
                         text: i18n.t('ok'),
                         onPress: () => {
                             CustomerRealm.softDeleteCustomer(
-                                this.props.selectedCustomer
+                                this.context.selectedCustomer
                             ); // Delete from storage
-                            this.props.customerActions.CustomerSelected({}); // Clear selected customer
+                           // Clear selected customer
+                           this.context.setSelectedCustomer({});                           
                             this.props.customerActions.setCustomers(
                                 CustomerRealm.getAllCustomer()
                             );
@@ -533,7 +522,7 @@ class CustomerList extends React.Component {
         } else {
             Alert.alert(
                 i18n.t('credit-customer-no-delete', {
-                    customerName: this.props.selectedCustomer.name
+                    customerName: this.context.selectedCustomer.name
                 }),
                 '',
                 [

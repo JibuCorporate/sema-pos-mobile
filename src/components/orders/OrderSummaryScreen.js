@@ -2083,6 +2083,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	getRemindersNew = (data) => {
+		//console.log('data-data', data)
 		const groupCustomers = this.groupBy("customer_account_id");
 		groupCustomers(data);
 
@@ -2108,6 +2109,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	saveCustomerFrequency(receipts) {
+		console.log('data-data-receipts', receipts)
 		CustomerReminderRealm.createCustomerReminder(this.getRemindersNew(receipts)[0], SettingRealm.getAllSetting().siteId)
 	}
 

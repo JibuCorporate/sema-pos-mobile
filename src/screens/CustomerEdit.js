@@ -21,10 +21,11 @@ import CustomerRealm from '../database/customers/customer.operations';
 import CustomerTypeRealm from '../database/customer-types/customer-types.operations';
 import SalesChannelRealm from '../database/sales-channels/sales-channels.operations';
 import * as CustomerActions from '../actions/CustomerActions';
-
+import AppContext from '../context/app-context';
 import i18n from '../app/i18n';
 
 class CustomerEdit extends React.PureComponent {
+	static contextType = AppContext;
 	constructor(props) {
 		super(props);
 
@@ -34,13 +35,7 @@ class CustomerEdit extends React.PureComponent {
 			isLoading: true,
 			salescid: 0,
 			language: "",
-			name: this.props.selectedCustomer.name ? this.props.selectedCustomer.name : "",
-			phoneNumber: this.props.selectedCustomer.phoneNumber ? this.props.selectedCustomer.phoneNumber : "",
-			secondPhoneNumber: this.props.selectedCustomer.secondPhoneNumber ? this.props.selectedCustomer.secondPhoneNumber : "",
-			address: this.props.selectedCustomer.address ? this.props.selectedCustomer.address : "",
-			reference: '7',
-			customerType: this.props.selectedCustomer.customerTypeId ? this.props.selectedCustomer.customerTypeId : 0,
-			customerChannel: this.props.selectedCustomer.salesChannelId ? this.props.selectedCustomer.salesChannelId : 0
+
 		};
 
 		this.saleschannelid = 0;
@@ -70,8 +65,21 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	componentDidMount() {
-		if (this.props.isEdit) {
+		console.log('this.context.edit', this.context);
+		if (this.context.isEdit) {
 			this.props.navigation.setParams({ isEdit: true });
+
+			this.setState({
+				name: this.context.selectedCustomer.name ? this.context.selectedCustomer.name : "",
+				phoneNumber: this.context.selectedCustomer.phoneNumber ? this.context.selectedCustomer.phoneNumber : "",
+				secondPhoneNumber: this.context.selectedCustomer.secondPhoneNumber ? this.context.selectedCustomer.secondPhoneNumber : "",
+				address: this.context.selectedCustomer.address ? this.context.selectedCustomer.address : "",
+				reference: '7',
+				customerType: this.context.selectedCustomer.customerTypeId ? this.context.selectedCustomer.customerTypeId : 0,
+				customerChannel: this.context.selectedCustomer.salesChannelId ? this.context.selectedCustomer.salesChannelId : 0
+			})
+
+
 		} else {
 			this.props.navigation.setParams({ isEdit: false });
 		}
@@ -90,9 +98,9 @@ class CustomerEdit extends React.PureComponent {
 		try {
 			let salesChannelId = this.state.customerChannel > 0 ? this.state.customerChannel : -1;
 			let customerTypeId = this.state.customerType > 0 ? this.state.customerType : -1;
-			if (this.props.isEdit) {
+			if (this.context.isEdit) {
 				CustomerRealm.updateCustomer(
-					this.props.selectedCustomer,
+					this.context.selectedCustomer,
 					this.state.phoneNumber,
 					this.state.name,
 					this.state.address,
@@ -120,7 +128,7 @@ class CustomerEdit extends React.PureComponent {
 							},
 							{
 								text: 'OK',
-								onPress: () => {}
+								onPress: () => { }
 							}
 						],
 						{ cancelable: false }
@@ -250,11 +258,11 @@ class CustomerEdit extends React.PureComponent {
 									},
 
 									placeholder: {
-									  color: '#333',
-									  fontSize: 18,
-									  fontWeight: 'bold',
+										color: '#333',
+										fontSize: 18,
+										fontWeight: 'bold',
 									},
-								  }}
+								}}
 
 								Icon={() => {
 									return <Ionicons name="md-ribbon" size={24} />;
@@ -296,14 +304,14 @@ class CustomerEdit extends React.PureComponent {
 
 	checkEdit() {
 
-		if (this.props.isEdit) {
-			this.setState({ name: this.props.selectedCustomer.name });
-			this.setState({ phoneNumber: this.props.selectedCustomer.phoneNumber });
-			this.setState({ secondPhoneNumber: this.props.selectedCustomer.secondPhoneNumber });
-			this.setState({ address: this.props.selectedCustomer.address });
-			this.setState({ reference: this.props.selectedCustomer.frequency });
-			this.setState({ customerType: this.props.selectedCustomer.customerTypeId });
-			this.setState({ customerChannel: this.props.selectedCustomer.salesChannelId });
+		if (this.context.isEdit) {
+			this.setState({ name: this.context.selectedCustomer.name });
+			this.setState({ phoneNumber: this.context.selectedCustomer.phoneNumber });
+			this.setState({ secondPhoneNumber: this.context.selectedCustomer.secondPhoneNumber });
+			this.setState({ address: this.context.selectedCustomer.address });
+			this.setState({ reference: this.context.selectedCustomer.frequency });
+			this.setState({ customerType: this.context.selectedCustomer.customerTypeId });
+			this.setState({ customerChannel: this.context.selectedCustomer.salesChannelId });
 		}
 
 	}
@@ -378,11 +386,11 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	getDefaultChannelValue() {
-		if (this.props.isEdit) {
+		if (this.context.isEdit) {
 			for (let i = 0; i < this.salesChannels.length; i++) {
 				if (
 					this.salesChannels[i].id ==
-					this.props.selectedCustomer.salesChannelId
+					this.context.selectedCustomer.salesChannelId
 				) {
 					return this.salesChannels[i].displayName;
 				}
@@ -392,11 +400,11 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	getDefaultTypeValue() {
-		if (this.props.isEdit) {
+		if (this.context.isEdit) {
 			for (let i = 0; i < this.customerTypes.length; i++) {
 				if (
 					this.customerTypes[i].id ==
-					this.props.selectedCustomer.customerTypeId
+					this.context.selectedCustomer.customerTypeId
 				) {
 					return this.customerTypes[i].displayName;
 				}
@@ -406,12 +414,12 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	getDefaultChannelIndex() {
-		if (this.props.isEdit) {
+		if (this.context.isEdit) {
 			const salesChannels = SalesChannelRealm.getSalesChannels();
 			for (let i = 0; i < salesChannels.length; i++) {
 				if (
 					salesChannels[i].id ==
-					this.props.selectedCustomer.salesChannelId
+					this.context.selectedCustomer.salesChannelId
 				) {
 					return i;
 				}
@@ -421,11 +429,11 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	getDefaultTypeIndex() {
-		if (this.props.isEdit) {
+		if (this.context.isEdit) {
 			for (let i = 0; i < this.customerTypesIndicies.length; i++) {
 				if (
 					this.customerTypesIndicies[i] ==
-					this.props.selectedCustomer.customerTypeId
+					this.context.selectedCustomer.customerTypeId
 				) {
 					return i;
 				}
@@ -435,12 +443,12 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	getHeaderText() {
-		return this.props.isEdit
+		return this.context.isEdit
 			? i18n.t('edit-customer')
 			: i18n.t('new-customer');
 	}
 	getSubmitText() {
-		return this.props.isEdit
+		return this.context.isEdit
 			? i18n.t('update-customer')
 			: i18n.t('create-customer');
 	}
@@ -562,7 +570,7 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-	flex1:{
+	flex1: {
 		flex: 1
 	},
 
@@ -586,7 +594,7 @@ const styles = StyleSheet.create({
 	loadertext: {
 		fontSize: 24,
 		fontWeight: 'bold'
-	 },
+	},
 
 	createLoader: {
 		flex: 1,
@@ -601,14 +609,17 @@ const styles = StyleSheet.create({
 
 	flexanddirection: {
 		flex: 1,
-		flexDirection: 'row' },
+		flexDirection: 'row'
+	},
 	flexCenter: {
 		flex: 1,
-		 alignItems: 'center' },
+		alignItems: 'center'
+	},
 	custeditcont: {
 		flex: 1,
 		backgroundColor: '#f1f1f1',
-		justifyContent: 'center' },
+		justifyContent: 'center'
+	},
 	headerText: {
 		fontSize: 24,
 		color: 'black',
@@ -637,10 +648,11 @@ const styles = StyleSheet.create({
 	flexpt5: { flex: .5 },
 
 	contCard: {
-		 width: '56%',
-		 marginTop: 30,
-		 padding: 0,
-		 borderRadius: 8 },
+		width: '56%',
+		marginTop: 30,
+		padding: 0,
+		borderRadius: 8
+	},
 
 	inputText: {
 		alignSelf: 'center',
