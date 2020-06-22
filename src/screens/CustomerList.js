@@ -644,7 +644,6 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         paddingBottom: 15,
         alignItems: 'center'
-<<<<<<< HEAD
     },
     iconStyle: {
         marginLeft: 10, marginRight: 5
@@ -655,7 +654,5 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         paddingBottom: 15,
         alignItems: 'center'
-=======
->>>>>>> c8f60a72ee54dd128974018462a5fdc497514a44
     }
 });
