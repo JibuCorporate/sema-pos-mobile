@@ -35,22 +35,13 @@ import PaymentModal from './paymentModal';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 import StickyContainer from 'recyclerlistview/sticky';
 
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
 class CustomerList extends React.Component {
     constructor(props) {
         super(props);
 		// slowlog(this, /.*/);
 		let { width } = Dimensions.get("window");
-
-		const customerData = [];
-
-		let mydata = this.prepareData();
-
-		  for(let i in mydata) {
-			  customerData.push({
-				  type: 'NORMAL',
-				  item: mydata[i],
-			  });
-		  }
 
 		this.state = {
             refresh: false,
@@ -61,16 +52,18 @@ class CustomerList extends React.Component {
             customerTypeValue: '',
             hasScrolled: false,
 			isPaymentModal: true,
-			list: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(customerData)
+			dataProvider: new DataProvider((r1, r2) => {
+				return r1 !== r2;
+			  }),
 		  };
 
 		this.layoutProvider = new LayoutProvider((i) => {
-		return this.state.list.getDataForIndex(i).type;
+		return this.state.dataProvider.getDataForIndex(i).type;
 		}, (type, dim) => {
 		switch (type) {
 			case 'NORMAL':
 			dim.width = width;
-			dim.height = 40;
+			dim.height = 60;
 			break;
 			default:
 			dim.width = 0;
@@ -85,6 +78,9 @@ class CustomerList extends React.Component {
 	static whyDidYouRender = true;
 
 	componentDidMount(){
+
+		this.prepareData();
+
 		this.props.navigation.setParams({
             isCustomerSelected: false,
             customerTypeValue: 'all',
@@ -193,7 +189,7 @@ class CustomerList extends React.Component {
     };
 
     handleOnPress(item) {
-		requestAnimationFrame(() => {
+		// requestAnimationFrame(() => {
 			this.props.customerActions.CustomerSelected(item);
 			this.props.customerActions.SetCustomerProp(
 			    {
@@ -205,7 +201,7 @@ class CustomerList extends React.Component {
 			);
 
 			this.props.navigation.navigate('OrderView');
-		});
+		// });
     };
 
     onLongPressItem(item) {
@@ -244,8 +240,8 @@ class CustomerList extends React.Component {
 						{
 							flex: 1,
 							flexDirection: 'row',
-							paddingTop: 15,
-							paddingBottom: 15,
+							paddingTop: 25,
+							paddingBottom: 25,
 							alignItems: 'center'
 						}
 					]}>
@@ -261,7 +257,7 @@ class CustomerList extends React.Component {
                     </View>
 
                     <View style={{ flex: 1.5 }}>
-                        <Text style={[styles.baseItem]}>{data.item.address}</Text>
+                        <Text style={styles.baseItem}>{data.item.address}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
                         <Text style={styles.baseItem}>
@@ -291,58 +287,59 @@ class CustomerList extends React.Component {
    _overrideRowRenderer = (type, data, index) => {
         const view = this.rowRenderer(type, data, index);
         switch(index) {
-            case 0: // Only overriding sticky index 7, sticky indices 3 and 10 will remain as they are.
+            case 0:
                 return (
-                    <View
-						style={[
-							{
-								flex: 1,
-								flexDirection: 'row',
-								height: 50,
-								alignItems: 'center'
-							},
-							styles.headerBackground
-						]}>
-						<View style={[{ flex: 1.5 }]}>
-							<Text style={[styles.headerItem, styles.leftMargin]}>
-								{i18n.t('account-name')}
-							</Text>
-						</View>
-						<View style={[{ flex: 1 }]}>
-							<Text style={[styles.headerItem]}>
-								{i18n.t('telephone-number')}
-							</Text>
-						</View>
-						<View style={[{ flex: 1.5 }]}>
-							<Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
-						</View>
-						<View style={[{ flex: 1 }]}>
-							<Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
-						</View>
-						<View style={[{ flex: 1, flexDirection: 'row' }]}>
-							<TouchableWithoutFeedback onPress={() => {
-								// this.setState({ debtcustomers: !this.state.debtcustomers });
-								// this.setState({ refresh: !this.state.refresh });
-							}}>
-								<Text style={[styles.headerItem]}>{i18n.t('balance')}
-									<Icons
-										name='sort'
-										size={18}
-										color="white"
-										style={{
-											marginLeft: 10,
-											marginRight: 5,
-										}}
-									/>
-								</Text>
+            <View
+                style={styles.headerBackground}>
+                <View style={styles.OneHalf}>
+                    <Text style={[styles.headerItem, styles.leftMargin]}>
+                        {i18n.t('account-name')}
+                    </Text>
+                </View>
+                <View style={styles.flexOne}>
+                    <Text style={styles.headerItem}>
+                        {i18n.t('telephone-number')}
+                    </Text>
+                </View>
+                <View style={styles.OneHalf}>
+                    <Text style={styles.headerItem}>{i18n.t('address')}</Text>
+                </View>
+                <View style={styles.flexOne}>
+                    <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
+                </View>
+                <View style={styles.balance}>
+                    <TouchableWithoutFeedback onPress={() => {
+                        this.setState({ debtcustomers: !this.state.debtcustomers });
+						this.setState({ refresh: !this.state.refresh });
+                    }}>
+                        <Text style={styles.headerItem}>{i18n.t('balance')}
+                            <Icons
+                                name='sort'
+                                size={18}
+                                color="white"
+                                style={styles.iconStyle}
+                            />
+                        </Text>
 
-							</TouchableWithoutFeedback>
-						</View>
-						<View style={[{ flex: 1 }]}>
-							<Text style={[styles.headerItem]}>Wallet</Text>
-						</View>
+                    </TouchableWithoutFeedback>
+                </View>
+                <View style={styles.flexOne}>
+                    <TouchableWithoutFeedback onPress={() => {
+                        this.setState({ walletcustomers: !this.state.walletcustomers });
+                        this.setState({ refresh: !this.state.refresh });
+                    }}>
+                        <Text style={[styles.headerItem]}>Wallet
+                            <Icons
+                                name='sort'
+                                size={18}
+                                color="white"
+                                style={styles.iconStyle}
+                            />
+                        </Text>
+                    </TouchableWithoutFeedback>
+                </View>
 
-					</View>
+       	     </View>
 				);
 
                 break;
@@ -354,15 +351,18 @@ class CustomerList extends React.Component {
         return (
             <View style={{ backgroundColor: '#fff', flex: 1 }}>
 
-			<StickyContainer stickyHeaderIndices={[0]}
-                             overrideRowRenderer={this._overrideRowRenderer}>
+			<StickyContainer
+				stickyHeaderIndices={[0]}
+                overrideRowRenderer={this._overrideRowRenderer}>
                <RecyclerListView
 					style={{flex: 1}}
 					rowRenderer={this.rowRenderer}
-					dataProvider={this.state.list}
+					dataProvider={this.state.dataProvider}
 					layoutProvider={this.layoutProvider}
+					extraData={this.state.refresh}
+
 					/>
-		 </StickyContainer>
+			 </StickyContainer>
 
                 <FloatingAction
                     onOpen={name => {
@@ -422,17 +422,17 @@ class CustomerList extends React.Component {
             return a.name.toLowerCase() > b.name.toLowerCase();
         });
 
-        // if (this.state.debtcustomers) {
-        //     data.sort((a, b) => {
-        //         return Number(b.dueAmount) - Number(a.dueAmount);
-        //     });
-        // }
+        if (this.state.debtcustomers) {
+            data.sort((a, b) => {
+                return Number(b.dueAmount) - Number(a.dueAmount);
+            });
+        }
 
-        // if (this.state.walletcustomers) {
-        //     data.sort((a, b) => {
-        //         return Number(b.walletBalance) - Number(a.walletBalance);
-        //     });
-        // }
+        if (this.state.walletcustomers) {
+            data.sort((a, b) => {
+                return Number(b.walletBalance) - Number(a.walletBalance);
+            });
+        }
 
         let filteredItems = data.filter(function (item) {
             for (var key in filter) {
@@ -453,8 +453,20 @@ class CustomerList extends React.Component {
         if (CustomerRealm.getAllCustomer().length > 0) {
 			// data = this.filterItems(this.props.customers);
 			data = this.filterItems(CustomerRealm.getAllCustomer());
-        }
-        return data;
+		}
+
+		const customerData = [];
+
+		  for(let i in data) {
+			  customerData.push({
+				  type: 'NORMAL',
+				  item: data[i],
+			  });
+		  }
+
+		this.setState({
+			dataProvider: this.state.dataProvider.cloneWithRows(customerData)
+		});
     };
 
     getCustomerTypes(item) {
@@ -524,60 +536,6 @@ class CustomerList extends React.Component {
         }
     }
 
-    showHeader = () => {
-        return (
-            <View
-                style={[
-                    {
-                        flex: 1,
-                        flexDirection: 'row',
-                        height: 50,
-                        alignItems: 'center'
-                    },
-                    styles.headerBackground
-                ]}>
-                <View style={[{ flex: 1.5 }]}>
-                    <Text style={[styles.headerItem, styles.leftMargin]}>
-                        {i18n.t('account-name')}
-                    </Text>
-                </View>
-                <View style={[{ flex: 1 }]}>
-                    <Text style={[styles.headerItem]}>
-                        {i18n.t('telephone-number')}
-                    </Text>
-                </View>
-                <View style={[{ flex: 1.5 }]}>
-                    <Text style={[styles.headerItem]}>{i18n.t('address')}</Text>
-                </View>
-                <View style={[{ flex: 1 }]}>
-                    <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
-                </View>
-                <View style={[{ flex: 1, flexDirection: 'row' }]}>
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.setState({ debtcustomers: !this.state.debtcustomers });
-                        this.setState({ refresh: !this.state.refresh });
-                    }}>
-                        <Text style={[styles.headerItem]}>{i18n.t('balance')}
-                            <Icons
-                                name='sort'
-                                size={18}
-                                color="white"
-                                style={{
-                                    marginLeft: 10,
-                                    marginRight: 5,
-                                }}
-                            />
-                        </Text>
-
-                    </TouchableWithoutFeedback>
-                </View>
-                <View style={[{ flex: 1 }]}>
-                    <Text style={[styles.headerItem]}>Wallet</Text>
-                </View>
-
-            </View>
-        );
-    };
 
     getRowBackground = (index, isSelected) => {
         if (isSelected) {
@@ -638,27 +596,35 @@ export default connect(
     mapDispatchToProps
 )(CustomerList);
 
-
 const styles = StyleSheet.create({
     baseItem: {
         fontSize: 17
     },
+    flexOne: { flex: 1 },
     leftMargin: {
         left: 10
     },
+    balance: { flex: 1, flexDirection: 'row' },
     headerItem: {
         fontWeight: 'bold',
         fontSize: 18
     },
+    OneHalf: { flex: 1.5 },
     headerBackground: {
+        flex: 1,
+        flexDirection: 'row',
+        height: 50,
+        alignItems: 'center',
         backgroundColor: '#ABC1DE'
     },
+    list: { backgroundColor: '#fff', flex: 1 },
     modalPayment: {
         backgroundColor: 'white',
     },
     modal3: {
-        width: '70%',
-        height: 400,
+        justifyContent: 'center',
+        width: wp('70%'),
+        height: 500,
     },
     modal: {
         justifyContent: 'center',
@@ -671,12 +637,22 @@ const styles = StyleSheet.create({
     },
     selectedBackground: {
         backgroundColor: '#9AADC8'
-	},
-	listSty:  {
-		flex: 1,
-		flexDirection: 'row',
-		paddingTop: 15,
-		paddingBottom: 15,
-		alignItems: 'center'
-	}
+    },
+    listSty: {
+        flex: 1,
+        flexDirection: 'row',
+        paddingTop: 15,
+        paddingBottom: 15,
+        alignItems: 'center'
+    },
+    iconStyle: {
+        marginLeft: 10, marginRight: 5
+    },
+    listStyles: {
+        flex: 1,
+        flexDirection: 'row',
+        paddingTop: 15,
+        paddingBottom: 15,
+        alignItems: 'center'
+    }
 });

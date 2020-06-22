@@ -41,14 +41,13 @@ class CustomerRealm {
     getAllCustomer() {
         let customers = Object.values(JSON.parse(JSON.stringify(realm.objects('Customer'))));
         customers = customers.map(e => {
-            return { ...e, 
+            return { ...e,
                 customerType: Object.values(JSON.parse(JSON.stringify(realm.objects('CustomerType').filtered(`id = "${e.customerTypeId}"`))))[0].name
              }
-        })
-        console.log('customers', customers[0])
+        });
         return customers.filter(r => {
             return r.is_delete === null || r.is_delete === 1;
-        })
+        });
     }
 
     selectedCustomer(customerId) {

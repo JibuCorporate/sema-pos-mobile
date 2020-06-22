@@ -72,11 +72,7 @@ class SalesReport extends React.PureComponent {
 								data={this.getSalesData()}
 								ListHeaderComponent={this.showHeader}
 								extraData={this.state.refreshing}
-								renderItem={({ item, index, separators }) => (
-									<View>
-										{this.getRow(item, index, separators)}
-									</View>
-								)}
+								renderItem={this._renderItem}
 								keyExtractor={item => item.sku}
 								initialNumToRender={50}
 							/>
@@ -86,11 +82,7 @@ class SalesReport extends React.PureComponent {
 								data={this.props.salesData.totalTypes}
 								ListHeaderComponent={this.showPaymentHeader}
 								extraData={this.state.refreshing}
-								renderItem={({ item, index, separators }) => (
-									<View>
-										{this.getPaymentRow(item, index, separators)}
-									</View>
-								)}
+								renderItem={this._renderPaymentItem}
 								keyExtractor={item => item.name}
 							/>
 
@@ -101,6 +93,45 @@ class SalesReport extends React.PureComponent {
 			</View>
 		);
 	}
+
+	_renderItem = ({ item, index, separators }) => {
+        return (
+			<View style={styles.rowBackground}>
+				<View style={styles.flex1}>
+					<Text numberOfLines={1} style={styles.rowItem, styles.leftMargin}>
+						{item.description}</Text>
+				</View>
+				<View style={styles.flex1}>
+					<Text style={styles.rowItemCenter}>{item.quantity}</Text>
+				</View>
+				<View style={styles.flex1}>
+					<Text style={styles.rowItemCenter}>{!isNaN(item.totalLiters) ? item.totalLiters.toFixed(1) : 0}</Text>
+				</View>
+				<View style={styles.flex1}>
+					<Text style={styles.rowItemCenter}>{item.totalSales.toFixed(2)}</Text>
+				</View>
+			</View>
+		);
+
+		};
+
+	_renderPaymentItem = ({ item, index, separators }) => {
+			return (
+				<View style={styles.rowBackground}>
+
+				<View style={styles.flex1}>
+					<Text style={styles.rowItemCenter}>
+						{item.name == 'credit' ? 'WALLET' : item.name.toUpperCase()}
+					</Text>
+				</View>
+
+				<View style={styles.flex1}>
+					<Text style={styles.rowItemCenter}>{item.totalAmount !== null ? item.totalAmount.toFixed(2) : 0}</Text>
+				</View>
+			</View>
+			);
+
+			};
 
 	getSalesData() {
 		let sales = [];
@@ -119,7 +150,6 @@ class SalesReport extends React.PureComponent {
 		}
 		return sales;
 	}
-
 
 	getRow = (item) => {
 		return (
