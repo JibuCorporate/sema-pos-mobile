@@ -546,7 +546,6 @@ class CustomerList extends React.Component {
         }
     }
 
-
     getRowBackground = (index, isSelected) => {
         if (isSelected) {
             return styles.selectedBackground;
