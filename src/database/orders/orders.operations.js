@@ -50,13 +50,14 @@ class OrderRealm {
 				}
 			);
         }
-
         return this.order = formattedArray;
     }
 
 
     getActiveOrders() {
-        let formattedArray = [...Object.values(JSON.parse(JSON.stringify(realm.objects('Order').filtered(`is_delete = "${1}"`))))];
+        let formattedArray = [...Object.values(
+            JSON.parse(JSON.stringify(realm.objects('Order').filtered(`is_delete = "${1}"`)))
+            )];
         for (let i in formattedArray) {
             formattedArray[i].customer_account = JSON.parse(JSON.stringify(realm.objects('Customer').filtered(`id = "${formattedArray[i].customerAccountId}"`)))[0]
 
