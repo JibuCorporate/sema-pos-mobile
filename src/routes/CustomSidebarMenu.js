@@ -59,24 +59,27 @@ class CustomSidebarMenu extends React.PureComponent {
         navOptionName: 'LogOut',
         screenToNavigate: 'LogOut',
       }
-    ];
+	];
+	// this.handleOnPress = this.handleOnPress.bind(this);
   }
 
-  handleOnPress(item, key) {
-    requestAnimationFrame(() => {
+  handleOnPress = (item, key) => {
+    // requestAnimationFrame(() => {
       global.currentScreenIndex = key;
 
       if (item.screenToNavigate === 'LogOut') {
         this.onLogout();
+	  }
+
+	  if (item.screenToNavigate === 'Sync') {
+        this.onSynchronize();
       }
 
       if (item.screenToNavigate != 'LogOut' || item.screenToNavigate != 'Sync') {
         this.props.navigation.navigate(item.screenToNavigate);
       }
-      if (item.screenToNavigate === 'Sync') {
-        this.onSynchronize();
-      }
-    });
+
+    // });
   }
 
   render() {

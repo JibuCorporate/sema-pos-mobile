@@ -33,6 +33,7 @@ import CustomerDebtRealm from '../../database/customer_debt/customer_debt.operat
 import { prepareSectionedData } from "../../reducers/ReceiptReducer";
 import i18n from '../../app/i18n';
 import { format, parseISO } from 'date-fns';
+import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 
 class ReceiptLineItem extends React.Component {
 	constructor(props) {
@@ -565,7 +566,6 @@ class Transactions extends React.Component {
 			selected: prepareSectionedData().length > 0 ? prepareSectionedData()[0].data[0] : {},
 		};
 	}
-
 
 
 	componentDidMount() {

@@ -52,6 +52,8 @@ const getSalesData = (beginDate) => {
 		return [...accumulator, ...currentValue.receipt_line_items]
 	}, []);
 
+	console.log("Shuffle Wastage " + JSON.stringify(filteredOrderItems));
+
 	let groupedOrderItems = groupBySku(filteredOrderItems, "sku");
 
 	let todaySales = [];
