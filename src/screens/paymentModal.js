@@ -72,7 +72,7 @@ class PaymentModal extends React.PureComponent {
 							<Text style={styles.baseItem}>Payment Method</Text>
 					</View>
 					<FlatList
-						data={this.props.paymentTypes}
+						data={PaymentTypeRealm.getPaymentTypes()}
 						renderItem={({ item, index, separators }) => (
 							this.paymentTypesRow(item, index, separators)
 						)}
@@ -136,6 +136,8 @@ class PaymentModal extends React.PureComponent {
 	};
 
 	paymentTypesRow = (item, index, separators) => {
+		console.log('itemr', item)
+		console.log('this.props.selectedPaymentTypes', this.props.selectedPaymentTypes)
 		let isSelectedAvailable = false;
 		if (this.props.selectedPaymentTypes.length > 0) {
 			const itemIndex = this.props.selectedPaymentTypes.map(function (e) { return e.id }).indexOf(item.id);

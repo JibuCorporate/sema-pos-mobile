@@ -118,9 +118,17 @@ class CustomerList extends React.Component {
         this.props.paymentTypesActions.resetSelectedDebt();
         this.props.paymentTypesActions.setPaymentTypes(
             PaymentTypeRealm.getPaymentTypes());
+        this.props.paymentTypesActions.resetSelectedPayment();
+        this.prepareData()
     }
 
     closePaymentModal = () => {
+        PaymentTypeRealm.resetSelected();
+        this.props.paymentTypesActions.resetSelectedDebt();
+        this.props.paymentTypesActions.resetSelectedPayment();
+        this.props.paymentTypesActions.setPaymentTypes(
+            PaymentTypeRealm.getPaymentTypes());
+        this.prepareData()
         this.refs.modal6.close();
     };
 
@@ -230,7 +238,7 @@ class CustomerList extends React.Component {
 
     rowRenderer = (type, data, index) => {
         let isSelected = false;
-        if ( this.context.selectedCustomer && this.context.selectedCustomer.customerId === data.item.customerId ) {
+        if (this.context.selectedCustomer && this.context.selectedCustomer.customerId === data.item.customerId) {
             isSelected = true;
         }
         if (type == 'NORMAL') {
@@ -442,7 +450,7 @@ class CustomerList extends React.Component {
                 return Number(b.walletBalance) - Number(a.walletBalance);
             });
         }
-console.log('filter-',filter)
+        console.log('filter-', filter)
         let filteredItems = data.filter(function (item) {
             for (var key in filter) {
                 if (
