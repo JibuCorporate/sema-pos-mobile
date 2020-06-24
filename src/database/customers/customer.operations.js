@@ -110,29 +110,30 @@ class CustomerRealm {
         customerTypeId,
         frequency,
         secondPhoneNumber) {
-        const now = new Date();
-
-        const newCustomer = {
-            customerId: uuidv1(),
-            name: name,
-            phoneNumber: phone,
-            address: address,
-            siteId: siteId,
-            dueAmount: 0,
-            salesChannelId: salesChannelId,
-            customerTypeId: customerTypeId,
-            created_at: now,
-            updated_at: now,
-            frequency: frequency.toString(),
-            secondPhoneNumber: secondPhoneNumber,
-            syncAction: 'create',
-            active: false
-        };
+       
         try {
+            const now = new Date();
+
+            const newCustomer = {
+                customerId: uuidv1(),
+                name: name,
+                phoneNumber: phone,
+                address: address,
+                siteId: siteId,
+                dueAmount: 0,
+                salesChannelId: salesChannelId,
+                customerTypeId: customerTypeId,
+                created_at: now,
+                updated_at: now,
+                secondPhoneNumber: secondPhoneNumber,
+                syncAction: 'create',
+                active: false
+            };
             realm.write(() => {
                 realm.create('Customer', newCustomer);
             });
         } catch (e) {
+            console.log('error', e)
         }
 
     }
@@ -161,7 +162,7 @@ class CustomerRealm {
                     customerObj[0].customerTypeId = customerTypeId;
                     customerObj[0].updated_at = new Date();
                     customerObj[0].syncAction = 'update';
-                    customerObj[0].frequency = frequency.toString();
+                   // customerObj[0].frequency = frequency.toString();
                     customerObj[0].secondPhoneNumber = secondPhoneNumber;
                     customerObj[0].dueAmount = customer.dueAmount;
                     customerObj[0].walletBalance = customer.walletBalance;
