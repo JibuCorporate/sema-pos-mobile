@@ -94,6 +94,7 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	onEdit() {
+		console.log('this.context.isEdit',this.context.isEdit)
 		this.props.customerActions.setIsLoading(true);
 		try {
 			let salesChannelId = this.state.customerChannel > 0 ? this.state.customerChannel : -1;
@@ -135,8 +136,7 @@ class CustomerEdit extends React.PureComponent {
 					);
 					return;
 				}
-
-
+ 
 				CustomerRealm.createCustomer(
 					this.state.phoneNumber,
 					this.state.name,
@@ -146,7 +146,7 @@ class CustomerEdit extends React.PureComponent {
 					customerTypeId,
 					this.state.reference,
 					this.state.secondPhoneNumber
-				);
+				); 
 				this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());
 				this.props.customerActions.CustomerSelected({});
 				this.setState({ isCreateInProgress: true });

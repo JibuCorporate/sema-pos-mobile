@@ -58,7 +58,7 @@ class CustomerList extends React.Component {
         };
 
         this.layoutProvider = new LayoutProvider((i) => {
-            return this.state.dataProvider.getDataForIndex(i).type;
+            return this.state.dataProvider ? this.state.dataProvider.getDataForIndex(i).type : [];
         }, (type, dim) => {
             switch (type) {
                 case 'NORMAL':
@@ -171,10 +171,9 @@ class CustomerList extends React.Component {
                                     }
                                 );
 
+                                this.prepareData();
 
-                                this.props.customerActions.setCustomers(
-                                    CustomerRealm.getAllCustomer()
-                                );
+
                             }
                         }
                     ],
