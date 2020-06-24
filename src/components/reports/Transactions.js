@@ -12,7 +12,8 @@ import {
 	ScrollView,
 	SectionList,
 	SafeAreaView,
-	RefreshControl
+	RefreshControl,
+	Dimensions
 } from 'react-native';
 import ProductsRealm from '../../database/products/product.operations';
 import { connect } from 'react-redux';
@@ -30,7 +31,7 @@ import * as paymentTypesActions from '../../actions/PaymentTypesActions';
 import * as TopUpActions from '../../actions/TopUpActions';
 import CreditRealm from '../../database/credit/credit.operations';
 import CustomerDebtRealm from '../../database/customer_debt/customer_debt.operations';
- 
+
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
 import PaymentTypeRealm from '../../database/payment_types/payment_types.operations';
 import { format, parseISO, isBefore } from 'date-fns';
@@ -83,22 +84,6 @@ class ReceiptLineItem extends React.Component {
 		return productImage.description;
 	};
 
-	// getImage = item => {
-	// 	const productImage =
-	// 		item.base64encodedImage || item.base64encoded_image ||
-	// 		ProductsRealm.getProducts().reduce((image, product) => {
-	// 			if (product.productId === item.product_id)
-	// 				return product.base64encodedImage;
-	// 			return image;
-	// 		}, '');
-
-	// 	if (productImage.startsWith('data:image')) {
-	// 		return productImage;
-
-	// 	} else {
-	// 		return 'data:image/png;base64,' + productImage;
-	// 	}
-	// };
 }
 
 class PaymentTypeItem extends React.Component {
@@ -566,19 +551,44 @@ class Transactions extends React.Component {
 			searchString: '',
 			hasScrolled: false,
 			paymentTypeValue: '',
-			selected: this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[0].data[0] : {},
+			dataProvider: new DataProvider((r1, r2) => { return r1 !== r2; }),
+			// selected: this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[0].data[0] : {},
+			selected: {}
 		};
+
+		let { width } = Dimensions.get("window");
+
+		this.layoutProvider = new LayoutProvider((i) => {
+			return this.state.dataProvider.getDataForIndex(i).type;
+			}, (type, dim) => {
+			switch (type) {
+				case 'NORMAL':
+				dim.width = width * 1/3;
+				dim.height = 300;
+				break;
+				case 'SECTION':
+				dim.width = width  * 1/3;
+				dim.height = 60;
+				break;
+				default:
+				dim.width = 0;
+				dim.height = 0;
+				break;
+			};
+			});
+		this.rowRenderer = this.rowRenderer.bind(this);
 	}
 
-
 	componentDidMount() {
+		this.prepareSectionedData();
+		// this.prepareSectionedDataOld()
 		this.props.navigation.setParams({ paymentTypeValue: 'all' });
 		this.props.navigation.setParams({ checkPaymentTypefilter: this.checkPaymentTypefilter });
-		Events.on(
-			'ScrollCustomerTo',
-			'customerId1',
-			this.onScrollCustomerTo.bind(this)
-		);
+		// Events.on(
+		// 	'ScrollCustomerTo',
+		// 	'customerId1',
+		// 	this.onScrollCustomerTo.bind(this)
+		// );
 	}
 
 	comparePaymentTypeReceipts = () => {
@@ -594,34 +604,32 @@ class Transactions extends React.Component {
 			}
 			customerReceipt.paymentTypes = paymentTypes;
 			finalCustomerReceiptsPaymentTypes.push(customerReceipt);
-	
+
 		}
 		return finalCustomerReceiptsPaymentTypes;
 	}
-	
+
 	comparePaymentTypes = () => {
 		let receiptsPaymentTypes = ReceiptPaymentTypeRealm.getReceiptPaymentTypes();
 		let paymentTypes = PaymentTypeRealm.getPaymentTypes();
-	
+
 		let finalreceiptsPaymentTypes = [];
-	
+
 		for (let receiptsPaymentType of receiptsPaymentTypes) {
 			const rpIndex = paymentTypes.map(function (e) { return e.id }).indexOf(receiptsPaymentType.payment_type_id);
 			if (rpIndex >= 0) {
 				receiptsPaymentType.name = paymentTypes[rpIndex].name;
 				finalreceiptsPaymentTypes.push(receiptsPaymentType);
-	
+
 			}
 		}
 		return finalreceiptsPaymentTypes;
 	}
-	
-	
-	
+
 	prepareData = () => {
 		// Used for enumerating receipts
 		const totalCount = OrderRealm.getAllOrder().length;
-	
+
 		let receipts = this.comparePaymentTypeReceipts().map((receipt, index) => {
 			return {
 				active: receipt.active,
@@ -652,21 +660,21 @@ class Transactions extends React.Component {
 				notes: receipt.notes
 			};
 		});
-	
+
 		receipts.sort((a, b) => {
 			return isBefore(new Date(a.createdAt), new Date(b.createdAt))
 				? 1
 				: -1;
 		});
 		// receipts = this.filterItems(receipts);
-	
+
 		return [...receipts];
 	}
-	
+
 	prepareCustomerDebt = () => {
 		let debtArray = CustomerDebtRealm.getCustomerDebtsTransactions();
 		const totalCount = debtArray.length;
-	
+
 		let debtPayment = debtArray.map((receipt, index) => {
 			return {
 				active: receipt.active,
@@ -697,7 +705,7 @@ class Transactions extends React.Component {
 				balance: receipt.balance
 			};
 		});
-	
+
 		debtPayment.sort((a, b) => {
 			return isBefore(new Date(a.createdAt), new Date(b.createdAt))
 				? 1
@@ -705,7 +713,7 @@ class Transactions extends React.Component {
 		});
 		return [...debtPayment];
 	}
-	
+
 	prepareTopUpData = () => {
 		// Used for enumerating receipts
 		let creditArray = CreditRealm.getCreditTransactions();
@@ -740,7 +748,7 @@ class Transactions extends React.Component {
 				totalAmount: receipt.topup
 			};
 		});
-	
+
 		topups.sort((a, b) => {
 			return isBefore(new Date(a.createdAt), new Date(b.createdAt))
 				? 1
@@ -748,7 +756,7 @@ class Transactions extends React.Component {
 		});
 		return [...topups];
 	}
-	
+
 	groupBySectionTitle = (objectArray, property) => {
 		return objectArray.reduce(function (acc, obj) {
 			let key = obj[property];
@@ -759,8 +767,8 @@ class Transactions extends React.Component {
 			return acc;
 		}, {});
 	}
-	
-	 prepareSectionedData(){
+
+	prepareSectionedData(){
 		// Used for enumerating receipts
 		let receipts = this.prepareData();
 		let topups = this.prepareTopUpData();
@@ -770,7 +778,38 @@ class Transactions extends React.Component {
 				? 1
 				: -1;
 		});
-	
+
+		let transformedarray = this.groupBySectionTitle(finalArray, 'sectiontitle');
+		const transactionData = [];
+		for (let i of Object.getOwnPropertyNames(transformedarray)) {
+			transactionData.push({
+				type: 'SECTION',
+				item: i,
+			});
+
+			transactionData.push({
+				type: 'NORMAL',
+				item: transformedarray[i],
+			});
+		}
+
+		this.setState({
+			dataProvider: this.state.dataProvider.cloneWithRows(transactionData)
+		});
+	}
+
+
+	 prepareSectionedDataOld(){
+		// Used for enumerating receipts
+		let receipts = this.prepareData();
+		let topups = this.prepareTopUpData();
+		let deptPayment = this.prepareCustomerDebt();
+		let finalArray = (deptPayment.concat(topups)).concat(receipts).sort((a, b) => {
+			return isBefore(new Date(a.createdAt), new Date(b.createdAt))
+				? 1
+				: -1;
+		});
+
 		let transformedarray = this.groupBySectionTitle(finalArray, 'sectiontitle');
 		let newarray = [];
 		for (let i of Object.getOwnPropertyNames(transformedarray)) {
@@ -781,7 +820,7 @@ class Transactions extends React.Component {
 		}
 		return newarray;
 	}
-	
+
 
 	checkPaymentTypefilter = (searchText) => {
 		this.props.navigation.setParams({ paymentTypeValue: searchText });
@@ -789,12 +828,12 @@ class Transactions extends React.Component {
 	};
 
 	componentWillUnmount() {
-		Events.rm('ScrollCustomerTo', 'customerId1');
+		// Events.rm('ScrollCustomerTo', 'customerId1');
 	}
 
-	onScrollCustomerTo(data) {
+	// onScrollCustomerTo(data) {
 
-	}
+	// }
 
 	setSelected(item) {
 		this.props.receiptActions.setIsUpate(true);
@@ -814,7 +853,7 @@ class Transactions extends React.Component {
 				<View style={styles.detmain}>
 					<View style={styles.detailcont}>
 						<SafeAreaView style={styles.container}>
-							<ScrollView
+							{/* <ScrollView
 								style={styles.flex1}
 								refreshControl={
 									<RefreshControl
@@ -832,7 +871,13 @@ class Transactions extends React.Component {
 										<Text style={styles.sectionTitle}>{title}</Text>
 									)}
 								/>
-							</ScrollView>
+							</ScrollView> */}
+							<RecyclerListView
+								style={styles.flex1}
+								rowRenderer={this.rowRenderer}
+								dataProvider={this.state.dataProvider}
+								layoutProvider={this.layoutProvider}
+							/>
 						</SafeAreaView>
 					</View>
 
@@ -870,8 +915,6 @@ class Transactions extends React.Component {
 		);
 		return null;
 	}
-
-
 
 	filterItems = data => {
 		let filter = {
@@ -920,6 +963,77 @@ class Transactions extends React.Component {
 		let settings = SettingRealm.getAllSetting();
 		return settings.currency;
 	};
+
+	rowRenderer = (type, data, index) => {
+        let isSelected = false;
+
+	   switch (type) {
+        case 'NORMAL':
+            return (
+				<TouchableNativeFeedback onPress={() => this.setSelected(data.item)}>
+				<View key={index} style={styles.rcptPad}>
+					<View style={styles.itemData}>
+						<Text style={styles.customername}>{data.item.isReceipt ? data.item.customerAccount.name : data.item.customerAccount.name}</Text>
+					</View>
+					<Text style={styles.customername}>
+						{this.getCurrency().toUpperCase()} {data.item.totalAmount}
+					</Text>
+					<View style={styles.receiptStats}>
+						{data.item.isReceipt ? data.item.is_delete === 0 && (
+							<Text style={styles.receiptStatusText}>
+								{'Deleted - '.toUpperCase()}
+							</Text>
+						) : !data.item.isReceipt ? !data.item.active && (
+							<Text style={styles.receiptStatusText}>
+								{'Deleted - '.toUpperCase()}
+							</Text>
+						) : null}
+
+						{!data.item.isReceipt ? !data.item.synched ? (
+							<View style={styles.rowFlex}>
+								<Text style={styles.receiptPendingText}>
+									{' Pending'.toUpperCase()}
+								</Text>
+							</View>
+						) : (
+								<View style={styles.rowFlex}>
+									{!data.item.synched && <Text> - </Text>}
+									<Text style={styles.receiptSyncedText}>
+										{' Synced'.toUpperCase()}
+									</Text>
+								</View>
+							) :
+							!data.item.active ? (
+								<View style={styles.rowFlex}>
+									<Text style={styles.receiptPendingText}>
+										{' Pending'.toUpperCase()}
+									</Text>
+								</View>
+							) : (
+									<View style={styles.rowFlex}>
+										{!data.item.active && <Text> - </Text>}
+										<Text style={styles.receiptSyncedText}>
+											{' Synced'.toUpperCase()}
+										</Text>
+									</View>
+								)}
+					</View>
+				</View>
+			</TouchableNativeFeedback>
+			);
+		case "SECTION":
+			return(
+				<View style={styles.flex1}>
+					<Text style={styles.sectionTitle}>{data}</Text>
+				</View>
+			)
+
+		default:
+			return(
+				<View />
+			)
+		}
+    }
 
 	renderReceipt({ item, index }) {
 		return (

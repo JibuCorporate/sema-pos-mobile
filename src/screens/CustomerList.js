@@ -364,7 +364,7 @@ class CustomerList extends React.Component {
 				   stickyHeaderIndices={[0]}
                     overrideRowRenderer={this._overrideRowRenderer}>
                     <RecyclerListView
-                        style={{ flex: 1 }}
+                        style={styles.flexOne}
                         rowRenderer={this.rowRenderer}
                         dataProvider={this.state.dataProvider}
                         layoutProvider={this.layoutProvider}
