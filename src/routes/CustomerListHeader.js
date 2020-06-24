@@ -92,9 +92,7 @@ class CustomerListHeader extends React.PureComponent {
 
                 <View>
                     <Input
-                        onChangeText={(searchText) => {
-                            this.searchCustomer(searchText)
-                        }}
+                        onChangeText={this.props.navigation.getParam('searchCustomer')}
                         placeholder={i18n.t('search-placeholder')}
                         placeholderTextColor='white'
                         inputStyle={styles.inputdpn}
@@ -107,9 +105,7 @@ class CustomerListHeader extends React.PureComponent {
                         mode="dropdown"
                         selectedValue={this.context.customerTypeFilter}
                         style={styles.pickerdpn}
-                        onValueChange={(searchText) => {
-                            this.checkCustomerTypefilter(searchText)
-                        }}>
+                        onValueChange={this.props.navigation.getParam('checkCustomerTypefilter')}>
 
                         <Picker.Item label="All Customer Types" value="all" />
                         <Picker.Item label="Business" value="Business" />

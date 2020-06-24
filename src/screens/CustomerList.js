@@ -44,7 +44,7 @@ class CustomerList extends React.Component {
         // slowlog(this, /.*/);
         let { width } = Dimensions.get("window");
 
-		this.state = {
+        this.state = {
             refresh: false,
             searchString: '',
             debtcustomers: false,
@@ -52,26 +52,26 @@ class CustomerList extends React.Component {
             customerTypeFilter: '',
             customerTypeValue: '',
             hasScrolled: false,
-			isPaymentModal: true,
-			dataProvider: new DataProvider((r1, r2) => {
-				return r1 !== r2;
-			  }),
-		  };
+            isPaymentModal: true,
+            dataProvider: new DataProvider((r1, r2) => {
+                return r1 !== r2;
+            }),
+        };
 
-		this.layoutProvider = new LayoutProvider((i) => {
-		return this.state.dataProvider.getDataForIndex(i).type;
-		}, (type, dim) => {
-		switch (type) {
-			case 'NORMAL':
-			dim.width = width;
-			dim.height = 60;
-			break;
-			default:
-			dim.width = 0;
-			dim.height = 0;
-			break;
-		};
-		});
+        this.layoutProvider = new LayoutProvider((i) => {
+            return this.state.dataProvider.getDataForIndex(i).type;
+        }, (type, dim) => {
+            switch (type) {
+                case 'NORMAL':
+                    dim.width = width;
+                    dim.height = 60;
+                    break;
+                default:
+                    dim.width = 0;
+                    dim.height = 0;
+                    break;
+            };
+        });
 
         this.rowRenderer = this.rowRenderer.bind(this);
     }
@@ -79,12 +79,12 @@ class CustomerList extends React.Component {
     static whyDidYouRender = true;
 
 
-	componentDidMount(){
-		console.log('this.context', this.context);
+    componentDidMount() {
+        console.log('this.context', this.context);
 
-		this.prepareData();
+        this.prepareData();
 
-		this.props.navigation.setParams({
+        this.props.navigation.setParams({
             isCustomerSelected: false,
             customerTypeValue: 'all',
             customerName: '',
@@ -101,14 +101,16 @@ class CustomerList extends React.Component {
     }
 
     searchCustomer = (searchText) => {
-		this.context.SearchCustomers(searchText);
-		this.prepareData();
+        // this.context.SearchCustomers(searchText);
+        console.log('searchText', searchText)
+        this.prepareData(searchText, '');
     };
 
 
     checkCustomerTypefilter = (searchText) => {
-		this.context.SearchCustomerTypes(searchText);
-		this.prepareData();
+        // this.context.SearchCustomerTypes(searchText);
+        console.log('checkCustomerTypefilter', searchText)
+        this.prepareData('', searchText);
     };
 
     modalOnClose() {
@@ -208,7 +210,7 @@ class CustomerList extends React.Component {
                 'title': item.name + "'s Order"
             }
         );
-         this.props.navigation.navigate('OrderView');
+        this.props.navigation.navigate('OrderView');
     };
 
     onLongPressItem(item) {
@@ -236,49 +238,49 @@ class CustomerList extends React.Component {
         // }
         if (type == 'NORMAL') {
             return (
-				<TouchableHighlight
-                            onLongPress={() => this.onLongPressItem(data.item)}
-                            onPress={() => this.handleOnPress(data.item)}>
-                <View
-					style={[
-						this.getRowBackground(1, isSelected),
-						{
-							flex: 1,
-							flexDirection: 'row',
-							paddingTop: 25,
-							paddingBottom: 25,
-							alignItems: 'center'
-						}
-					]}>
-                    <View style={{ flex: 1.5 }}>
-                        <Text style={[styles.baseItem, styles.leftMargin]}>
-                            {data.item.name}
-                        </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.phoneNumber}
-                        </Text>
-                    </View>
+                <TouchableHighlight
+                    onLongPress={() => this.onLongPressItem(data.item)}
+                    onPress={() => this.handleOnPress(data.item)}>
+                    <View
+                        style={[
+                            this.getRowBackground(1, isSelected),
+                            {
+                                flex: 1,
+                                flexDirection: 'row',
+                                paddingTop: 25,
+                                paddingBottom: 25,
+                                alignItems: 'center'
+                            }
+                        ]}>
+                        <View style={{ flex: 1.5 }}>
+                            <Text style={[styles.baseItem, styles.leftMargin]}>
+                                {data.item.name}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.phoneNumber}
+                            </Text>
+                        </View>
 
-                    <View style={{ flex: 1.5 }}>
-                        <Text style={styles.baseItem}>{data.item.address}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.customerType}
-                        </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.dueAmount.toFixed(2)}
-                        </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.baseItem}>
-                            {data.item.walletBalance.toFixed(2)}
-                        </Text>
-                    </View>
+                        <View style={{ flex: 1.5 }}>
+                            <Text style={styles.baseItem}>{data.item.address}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.customerType}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.dueAmount.toFixed(2)}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.baseItem}>
+                                {data.item.walletBalance.toFixed(2)}
+                            </Text>
+                        </View>
 
 
                     </View>
@@ -291,63 +293,63 @@ class CustomerList extends React.Component {
 
     _overrideRowRenderer = (type, data, index) => {
         const view = this.rowRenderer(type, data, index);
-        switch(index) {
+        switch (index) {
             case 0:
                 return (
-            <View
-                style={styles.headerBackground}>
-                <View style={styles.OneHalf}>
-                    <Text style={[styles.headerItem, styles.leftMargin]}>
-                        {i18n.t('account-name')}
-                    </Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={styles.headerItem}>
-                        {i18n.t('telephone-number')}
-                    </Text>
-                </View>
-                <View style={styles.OneHalf}>
-                    <Text style={styles.headerItem}>{i18n.t('address')}</Text>
-                </View>
-                <View style={styles.flexOne}>
-                    <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
-                </View>
-                <View style={styles.balance}>
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.setState({ debtcustomers: !this.state.debtcustomers });
-						// this.setState({ refresh: !this.state.refresh });
-						this.prepareData();
-                    }}>
-                        <Text style={styles.headerItem}>{i18n.t('balance')}
-                            <Icons
-                                name='sort'
-                                size={18}
-                                color="white"
-                                style={styles.iconStyle}
-                            />
-                        </Text>
+                    <View
+                        style={styles.headerBackground}>
+                        <View style={styles.OneHalf}>
+                            <Text style={[styles.headerItem, styles.leftMargin]}>
+                                {i18n.t('account-name')}
+                            </Text>
+                        </View>
+                        <View style={styles.flexOne}>
+                            <Text style={styles.headerItem}>
+                                {i18n.t('telephone-number')}
+                            </Text>
+                        </View>
+                        <View style={styles.OneHalf}>
+                            <Text style={styles.headerItem}>{i18n.t('address')}</Text>
+                        </View>
+                        <View style={styles.flexOne}>
+                            <Text style={[styles.headerItem]}>{i18n.t('customer-type')}</Text>
+                        </View>
+                        <View style={styles.balance}>
+                            <TouchableWithoutFeedback onPress={() => {
+                                this.setState({ debtcustomers: !this.state.debtcustomers });
+                                // this.setState({ refresh: !this.state.refresh });
+                                this.prepareData();
+                            }}>
+                                <Text style={styles.headerItem}>{i18n.t('balance')}
+                                    <Icons
+                                        name='sort'
+                                        size={18}
+                                        color="white"
+                                        style={styles.iconStyle}
+                                    />
+                                </Text>
 
-                    </TouchableWithoutFeedback>
-                </View>
-                <View style={styles.flexOne}>
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.setState({ walletcustomers: !this.state.walletcustomers });
-						// this.setState({ refresh: !this.state.refresh });
-						this.prepareData();
-                    }}>
-                        <Text style={[styles.headerItem]}>Wallet
+                            </TouchableWithoutFeedback>
+                        </View>
+                        <View style={styles.flexOne}>
+                            <TouchableWithoutFeedback onPress={() => {
+                                this.setState({ walletcustomers: !this.state.walletcustomers });
+                                // this.setState({ refresh: !this.state.refresh });
+                                this.prepareData();
+                            }}>
+                                <Text style={[styles.headerItem]}>Wallet
                             <Icons
-                                name='sort'
-                                size={18}
-                                color="white"
-                                style={styles.iconStyle}
-                            />
-                        </Text>
-                    </TouchableWithoutFeedback>
-                </View>
+                                        name='sort'
+                                        size={18}
+                                        color="white"
+                                        style={styles.iconStyle}
+                                    />
+                                </Text>
+                            </TouchableWithoutFeedback>
+                        </View>
 
-       	     </View>
-				);
+                    </View>
+                );
 
                 break;
         }
@@ -358,8 +360,8 @@ class CustomerList extends React.Component {
         return (
             <View style={{ backgroundColor: '#fff', flex: 1 }}>
 
-				<StickyContainer
-				   stickyHeaderIndices={[0]}
+                <StickyContainer
+                    stickyHeaderIndices={[0]}
                     overrideRowRenderer={this._overrideRowRenderer}>
                     <RecyclerListView
                         style={{ flex: 1 }}
@@ -413,11 +415,12 @@ class CustomerList extends React.Component {
         index
     });
 
-    filterItems = (data, context) => {
-        console.log('-context-', context);
+    filterItems = (data, customerSearch, customerTypeFilter) => {
+        console.log('-customerSearch-', customerSearch);
+        console.log('-customerTypeFilter-', customerTypeFilter);
         let filter = {
-            searchString: this.props.searchString.length > 0 ? this.props.searchString : "",
-            customerType: this.props.customerTypeFilter.length > 0 ? this.props.customerTypeFilter === 'all' ? "" : this.props.customerTypeFilter : "",
+            searchString: customerSearch ? customerSearch : "",
+            customerType: customerTypeFilter > 0 ? customerTypeFilter === 'all' ? "" : customerTypeFilter : "",
         };
         data = data.map(item => {
             return {
@@ -457,25 +460,26 @@ class CustomerList extends React.Component {
         return filteredItems;
     };
 
-    prepareData = (context) => {
+    prepareData = (customerSearch, customerTypeFilter) => {
         let data = [];
         if (CustomerRealm.getAllCustomer().length > 0) {
-			// data = this.filterItems(this.props.customers);
-			data = this.filterItems(CustomerRealm.getAllCustomer());
-		}
+            // data = this.filterItems(this.props.customers);
+            console.log('here again')
+            data = this.filterItems(CustomerRealm.getAllCustomer(), customerSearch, customerTypeFilter);
+        }
 
-		const customerData = [];
+        const customerData = [];
 
-		  for(let i in data) {
-			  customerData.push({
-				  type: 'NORMAL',
-				  item: data[i],
-			  });
-		  }
+        for (let i in data) {
+            customerData.push({
+                type: 'NORMAL',
+                item: data[i],
+            });
+        }
 
-		this.setState({
-			dataProvider: this.state.dataProvider.cloneWithRows(customerData)
-		});
+        this.setState({
+            dataProvider: this.state.dataProvider.cloneWithRows(customerData)
+        });
     };
 
     getCustomerTypes(item) {
@@ -519,8 +523,8 @@ class CustomerList extends React.Component {
                             CustomerRealm.softDeleteCustomer(
                                 this.context.selectedCustomer
                             ); // Delete from storage
-                           // Clear selected customer
-                           this.context.setSelectedCustomer({});
+                            // Clear selected customer
+                            this.context.setSelectedCustomer({});
                             this.props.customerActions.setCustomers(
                                 CustomerRealm.getAllCustomer()
                             );
@@ -577,7 +581,7 @@ class SearchWatcher extends React.PureComponent {
                     that.props.parent.props.searchString;
                 that.props.parent.setState({
                     refresh: !that.props.parent.state.refresh
-				});
+                });
             }
         }, 50);
         return null;

@@ -2086,7 +2086,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		//console.log('data-data', data)
 		const groupCustomers = this.groupBy("customer_account_id");
 		groupCustomers(data);
-
+//console.log('groupCustomers(data)[key][0]', groupCustomers(data))
 		let final = [];
 		for (let key of Object.keys(groupCustomers(data))) {
 			let dateArray = groupCustomers(data)[key].map(e => e.created_at);
