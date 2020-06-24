@@ -459,8 +459,6 @@ class CustomerList extends React.Component {
     prepareData = (customerSearch, customerTypeFilter) => {
         let data = [];
         if (CustomerRealm.getAllCustomer().length > 0) {
-            // data = this.filterItems(this.props.customers);
-            console.log('here again')
             data = this.filterItems(CustomerRealm.getAllCustomer(), customerSearch, customerTypeFilter);
         }
 

@@ -781,11 +781,11 @@ class Transactions extends React.Component {
 
 		let transformedarray = this.groupBySectionTitle(finalArray, 'sectiontitle');
 		const transactionData = [];
+		// transactionData.push({
+		// 	type: 'SECTION',
+		// 	item: i,
+		// });
 		for (let i of Object.getOwnPropertyNames(transformedarray)) {
-			transactionData.push({
-				type: 'SECTION',
-				item: i,
-			});
 
 			transactionData.push({
 				type: 'NORMAL',
