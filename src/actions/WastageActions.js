@@ -52,8 +52,6 @@ const getSalesData = (beginDate) => {
 		return [...accumulator, ...currentValue.receipt_line_items]
 	}, []);
 
-	console.log("Shuffle Wastage " + JSON.stringify(filteredOrderItems));
-
 	let groupedOrderItems = groupBySku(filteredOrderItems, "sku");
 
 	let todaySales = [];
@@ -114,6 +112,9 @@ const createInventory = (salesData, inventorySettings, products) => {
 	salesAndProducts.salesItems = salesData.salesItems.slice();
 	let emptyProducts = [];
 	for (const prod of products) {
+		
+	console.log("Shuffle Wastage " ,isNotIncluded(prod, salesAndProducts.salesItems));
+
 		if (isNotIncluded(prod, salesAndProducts.salesItems)) {
 			emptyProducts.push({
 				sku: prod.sku,
