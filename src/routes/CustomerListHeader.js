@@ -122,13 +122,6 @@ class CustomerListHeader extends React.PureComponent {
         );
     }
 
-    searchCustomer = (searchText) => {
-        this.context.SearchCustomers(searchText);
-    };
-
-    checkCustomerTypefilter = (searchText) => {
-        this.context.SearchCustomerTypes(searchText);
-    };
 }
 
 export default withNavigation(CustomerListHeader);
