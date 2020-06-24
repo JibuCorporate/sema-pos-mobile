@@ -109,6 +109,7 @@ class CustomerList extends React.Component {
     checkCustomerTypefilter = (searchText) => {
         // this.context.SearchCustomerTypes(searchText);
         console.log('checkCustomerTypefilter', searchText)
+        this.context.SearchCustomerTypes(searchText);
         this.prepareData('', searchText);
     };
 
@@ -416,13 +417,13 @@ class CustomerList extends React.Component {
         console.log('-customerTypeFilter-', customerTypeFilter);
         let filter = {
             searchString: customerSearch ? customerSearch : "",
-            customerType: customerTypeFilter > 0 ? customerTypeFilter === 'all' ? "" : customerTypeFilter : "",
+            customerType: customerTypeFilter ? customerTypeFilter === 'all' ? "" : customerTypeFilter : "",
         };
         data = data.map(item => {
             return {
                 ...item,
                 walletBalance: item.walletBalance ? item.walletBalance : 0,
-                searchString: item.name + ' ' + item.phoneNumber + ' ' + item.address,
+                searchString: item.name.toLowerCase() + ' ' + item.phoneNumber.toLowerCase() + ' ' + item.address.toLowerCase(),
                 customerType: item.customerType !== undefined ? item.customerType.toLowerCase() : "",
             }
         });
@@ -441,7 +442,7 @@ class CustomerList extends React.Component {
                 return Number(b.walletBalance) - Number(a.walletBalance);
             });
         }
-
+console.log('filter-',filter)
         let filteredItems = data.filter(function (item) {
             for (var key in filter) {
                 if (
