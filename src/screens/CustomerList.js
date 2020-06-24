@@ -1,4 +1,4 @@
-import React, { useReducer, createContext } from 'react';
+import React from 'react';
 if (process.env.NODE_ENV === 'development') {
     const whyDidYouRender = require('@welldone-software/why-did-you-render');
     whyDidYouRender(React, {
@@ -10,7 +10,6 @@ import {
     Text,
     StyleSheet,
     Alert,
-    FlatList,
     Dimensions,
     TouchableWithoutFeedback,
     TouchableHighlight
@@ -80,8 +79,6 @@ class CustomerList extends React.Component {
 
 
 	componentDidMount(){
-		console.log('this.context', this.context);
-
 		this.prepareData();
 
 		this.props.navigation.setParams({
@@ -102,13 +99,19 @@ class CustomerList extends React.Component {
 
     searchCustomer = (searchText) => {
 		this.context.SearchCustomers(searchText);
-		this.prepareData();
+		// this.prepareData();
+		this.props.customerActions.setCustomers(
+			CustomerRealm.getAllCustomer()
+		);
     };
 
 
     checkCustomerTypefilter = (searchText) => {
 		this.context.SearchCustomerTypes(searchText);
-		this.prepareData();
+		// this.prepareData();
+		this.props.customerActions.setCustomers(
+			CustomerRealm.getAllCustomer()
+		);
     };
 
     modalOnClose() {
@@ -228,17 +231,15 @@ class CustomerList extends React.Component {
 
     rowRenderer = (type, data, index) => {
         let isSelected = false;
-        // if (
-        //     this.context.selectedCustomer &&
-        //     this.context.selectedCustomer.customerId === data.item.customerId
-        // ) {
-        //     isSelected = true;
-        // }
+        if ( this.context.selectedCustomer && this.context.selectedCustomer.customerId === data.item.customerId ) {
+            isSelected = true;
+        }
         if (type == 'NORMAL') {
             return (
 				<TouchableHighlight
                             onLongPress={() => this.onLongPressItem(data.item)}
-                            onPress={() => this.handleOnPress(data.item)}>
+                            onPress={() => this.handleOnPress(data.item)}
+							>
                 <View
 					style={[
 						this.getRowBackground(1, isSelected),
@@ -249,7 +250,8 @@ class CustomerList extends React.Component {
 							paddingBottom: 25,
 							alignItems: 'center'
 						}
-					]}>
+					]}
+					>
                     <View style={{ flex: 1.5 }}>
                         <Text style={[styles.baseItem, styles.leftMargin]}>
                             {data.item.name}
@@ -477,18 +479,6 @@ class CustomerList extends React.Component {
 			dataProvider: this.state.dataProvider.cloneWithRows(customerData)
 		});
     };
-
-    getCustomerTypes(item) {
-        try {
-            for (let i = 0; i < this.customerTypes.length; i++) {
-                if (this.customerTypes[i].id === item.customerTypeId) {
-                    return this.customerTypes[i].name;
-                }
-            }
-        } catch (error) {
-            return 'Walk-up';
-        }
-    }
 
     _isAnonymousCustomer(customer) {
         return CustomerTypeRealm.getCustomerTypeByName('anonymous').id ==
