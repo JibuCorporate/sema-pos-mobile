@@ -35,7 +35,6 @@ import CustomerDebtRealm from '../../database/customer_debt/customer_debt.operat
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
 import PaymentTypeRealm from '../../database/payment_types/payment_types.operations';
 import { format, parseISO, isBefore } from 'date-fns';
-//import { prepareSectionedData } from "../../reducers/ReceiptReducer";
 import i18n from '../../app/i18n';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 
@@ -563,15 +562,9 @@ class Transactions extends React.Component {
 		}, (type, dim) => {
 			switch (type) {
 				case 'NORMAL':
-<<<<<<< HEAD
 				dim.width = width * 1/3;
-				dim.height = 100;
+				dim.height = 200;
 				break;
-=======
-					dim.width = width * 1 / 3;
-					dim.height = 300;
-					break;
->>>>>>> f9403d7d9f3947a2b588709c9c15dd7f752353f5
 				case 'SECTION':
 					dim.width = width * 1 / 3;
 					dim.height = 60;
@@ -789,11 +782,6 @@ class Transactions extends React.Component {
 		const transactionData = [];
 
 		for (let i of Object.getOwnPropertyNames(transformedarray)) {
-			// transactionData.push({
-			// 	type: 'SECTION',
-			// 	item: i,
-			// });
-
 			transactionData.push({
 				type: 'NORMAL',
 				title: i,
@@ -860,25 +848,6 @@ class Transactions extends React.Component {
 				<View style={styles.detmain}>
 					<View style={styles.detailcont}>
 						<SafeAreaView style={styles.container}>
-							{/* <ScrollView
-								style={styles.flex1}
-								refreshControl={
-									<RefreshControl
-										refreshing={this.state.refreshing}
-										onRefresh={this._onRefresh}
-									/>
-								}>
-								<SectionList
-									extraData={this.state.refreshing}
-									ItemSeparatorComponent={this.renderSeparator}
-									sections={this.prepareSectionedData()}
-									keyExtractor={(item, index) => item + index}
-									renderItem={this.renderReceipt.bind(this)}
-									renderSectionHeader={({ section: { title } }) => (
-										<Text style={styles.sectionTitle}>{title}</Text>
-									)}
-								/>
-							</ScrollView> */}
 							<RecyclerListView
 								style={styles.flex1}
 								rowRenderer={this.rowRenderer}
@@ -972,9 +941,9 @@ class Transactions extends React.Component {
 	};
 
 	runThrough(data) {
-		console.log('data-', data)
-
 		data = data.map((item, idx) => {
+			// console.log("Jovan " + item.id);
+			// if (type == 'NORMAL') {
 			return (
 				<TouchableNativeFeedback onPress={() => this.setSelected(item)}>
 					<View key={idx} style={styles.rcptPad}>
@@ -1028,29 +997,18 @@ class Transactions extends React.Component {
 					</View>
 				</TouchableNativeFeedback>
 			);
+			// }
 		});
-
-		return data;
-
 	}
 
 	rowRenderer = (type, data, index) => {
 		let isSelected = false;
-		switch (type) {
-			case 'NORMAL':
+		return (
+			<View style={styles.flex1}>
+				<Text style={styles.sectionTitle}>{data.title}</Text>
 				{this.runThrough(data.item)}
-			case "SECTION":
-				return (
-					<View style={styles.flex1}>
-						<Text style={styles.sectionTitle}>{data.title}</Text>
-					</View>
-				)
-
-			default:
-				return (
-					<View />
-				)
-		}
+			</View>
+		)
 	}
 
 	renderReceipt({ item, index }) {
