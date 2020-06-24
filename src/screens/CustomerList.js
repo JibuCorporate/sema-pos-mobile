@@ -1,4 +1,4 @@
-import React, { useReducer, createContext } from 'react';
+import React from 'react';
 if (process.env.NODE_ENV === 'development') {
     const whyDidYouRender = require('@welldone-software/why-did-you-render');
     whyDidYouRender(React, {
@@ -10,7 +10,6 @@ import {
     Text,
     StyleSheet,
     Alert,
-    FlatList,
     Dimensions,
     TouchableWithoutFeedback,
     TouchableHighlight
@@ -230,12 +229,9 @@ class CustomerList extends React.Component {
 
     rowRenderer = (type, data, index) => {
         let isSelected = false;
-        // if (
-        //     this.context.selectedCustomer &&
-        //     this.context.selectedCustomer.customerId === data.item.customerId
-        // ) {
-        //     isSelected = true;
-        // }
+        if ( this.context.selectedCustomer && this.context.selectedCustomer.customerId === data.item.customerId ) {
+            isSelected = true;
+        }
         if (type == 'NORMAL') {
             return (
                 <TouchableHighlight
@@ -482,18 +478,6 @@ class CustomerList extends React.Component {
         });
     };
 
-    getCustomerTypes(item) {
-        try {
-            for (let i = 0; i < this.customerTypes.length; i++) {
-                if (this.customerTypes[i].id === item.customerTypeId) {
-                    return this.customerTypes[i].name;
-                }
-            }
-        } catch (error) {
-            return 'Walk-up';
-        }
-    }
-
     _isAnonymousCustomer(customer) {
         return CustomerTypeRealm.getCustomerTypeByName('anonymous').id ==
             customer.customerTypeId
@@ -549,7 +533,6 @@ class CustomerList extends React.Component {
             );
         }
     }
-
 
     getRowBackground = (index, isSelected) => {
         if (isSelected) {

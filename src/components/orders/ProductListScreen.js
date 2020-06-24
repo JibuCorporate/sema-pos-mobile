@@ -34,10 +34,10 @@ class ProductListScreen extends React.PureComponent {
 		// }
 	};
 
-	
+
 
 	componentDidMount() {
-		console.log('this.context.pres', this.context.selectedCustomer);
+		// console.log('this.context.pres', this.context.selectedCustomer);
 	}
 
 	handleOnPress = (item) => {
