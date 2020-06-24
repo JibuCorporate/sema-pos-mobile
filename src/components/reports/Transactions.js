@@ -440,6 +440,7 @@ class TransactionDetail extends React.Component {
 				} else {
 					return (
 						<View style={styles.flex1}>
+							<Text style={styles.notesst}>{"Select a receipt to view its details."}</Text>
 						</View>
 					)
 				}
@@ -562,11 +563,11 @@ class Transactions extends React.Component {
 		}, (type, dim) => {
 			switch (type) {
 				case 'NORMAL':
-					dim.width = width * 1 / 3;
-					dim.height = 70;
+					dim.width = width / 4;
+					dim.height = 80;
 					break;
 				case 'SECTION':
-					dim.width = width * 1 / 3;
+					dim.width = width / 4;
 					dim.height = 40;
 					break;
 				default:
@@ -936,7 +937,7 @@ class Transactions extends React.Component {
 								<Text style={styles.customername}>
 									{this.getCurrency().toUpperCase()} {data.item.totalAmount}
 								</Text>
-								<View style={styles.receiptStats}>
+								{/* <View style={styles.receiptStats}> */}
 									{data.item.isReceipt ? data.item.is_delete === 0 && (
 										<Text style={styles.receiptStatusText}>
 											{'Deleted - '.toUpperCase()}
@@ -975,7 +976,6 @@ class Transactions extends React.Component {
 													</Text>
 												</View>
 											)}
-								</View>
 							</View>
 						</TouchableNativeFeedback>
 					);
@@ -984,12 +984,10 @@ class Transactions extends React.Component {
 						<View style={styles.flex1}>
 							<Text style={styles.sectionTitle}>{data.item.title}</Text>
 						</View>
-					)
+					);
 
 				default:
-					return (
-						<View />
-					)
+					return null;
 			}
 	}
 
@@ -1081,7 +1079,7 @@ const styles = StyleSheet.create({
 		flex: 1.5
 	},
 
-	transdetcont: { flex: 2, backgroundColor: '#fff', paddingLeft: 20 },
+	transdetcont: { flex: 3, backgroundColor: '#fff', paddingLeft: 20 },
 
 	aseparator: {
 		height: 1,

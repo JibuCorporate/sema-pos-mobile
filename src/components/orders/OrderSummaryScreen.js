@@ -2083,10 +2083,9 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	getRemindersNew = (data) => {
-		//console.log('data-data', data)
 		const groupCustomers = this.groupBy("customer_account_id");
 		groupCustomers(data);
-//console.log('groupCustomers(data)[key][0]', groupCustomers(data))
+
 		let final = [];
 		for (let key of Object.keys(groupCustomers(data))) {
 			let dateArray = groupCustomers(data)[key].map(e => e.created_at);
@@ -2096,6 +2095,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			final.push({
 				customer_account_id: key,
 				name: groupCustomers(data)[key][0].customer_account.name,
+				// name: CustomerRealm.getCustomerById(key).name,
 				phoneNumber: groupCustomers(data)[key][0].customer_account.hasOwnProperty('phone_number') ? groupCustomers(data)[key][0].customer_account.phone_number : 'N/A',
 				address: groupCustomers(data)[key][0].customer_account.hasOwnProperty('address') ? groupCustomers(data)[key][0].customer_account.address : groupCustomers(data)[key][0].customer_account.address_line1,
 				frequency: this.pairwiseDifference(dateArray, dateArray.length) > 10 ? 10 : this.pairwiseDifference(dateArray, dateArray.length),
