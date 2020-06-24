@@ -561,10 +561,12 @@ class Transactions extends React.Component {
 		this.layoutProvider = new LayoutProvider((i) => {
 			return this.state.dataProvider.getDataForIndex(i).type;
 		}, (type, dim) => {
+			console.log('type-type', type)
+			console.log('type-dim', type)
 			switch (type) {
 				case 'NORMAL':
 					dim.width = width * 1 / 3;
-					dim.height = 300;
+					dim.height = 400;
 					break;
 				case 'SECTION':
 					dim.width = width * 1 / 3;
@@ -973,7 +975,7 @@ class Transactions extends React.Component {
 				<TouchableNativeFeedback onPress={() => this.setSelected(item)}>
 					<View key={idx} style={styles.rcptPad}>
 						<View style={styles.itemData}>
-							<Text style={styles.customername}>{item.isReceipt ? item.customerAccount.name : ""}</Text>
+							<Text style={styles.customername}>{item.isReceipt ? item.customerAccount.name : item.customerAccount.name}</Text>
 						</View>
 						<Text style={styles.customername}>
 							{this.getCurrency().toUpperCase()} {item.totalAmount}
