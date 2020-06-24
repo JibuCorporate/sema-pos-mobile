@@ -564,7 +564,7 @@ class Transactions extends React.Component {
 			switch (type) {
 				case 'NORMAL':
 				dim.width = width * 1/3;
-				dim.height = 300;
+				dim.height = 100;
 				break;
 				case 'SECTION':
 				dim.width = width  * 1/3;
@@ -781,11 +781,12 @@ class Transactions extends React.Component {
 
 		let transformedarray = this.groupBySectionTitle(finalArray, 'sectiontitle');
 		const transactionData = [];
-		// transactionData.push({
-		// 	type: 'SECTION',
-		// 	item: i,
-		// });
+
 		for (let i of Object.getOwnPropertyNames(transformedarray)) {
+			// transactionData.push({
+			// 	type: 'SECTION',
+			// 	item: i,
+			// });
 
 			transactionData.push({
 				type: 'NORMAL',
@@ -797,7 +798,6 @@ class Transactions extends React.Component {
 			dataProvider: this.state.dataProvider.cloneWithRows(transactionData)
 		});
 	}
-
 
 	 prepareSectionedDataOld(){
 		// Used for enumerating receipts
@@ -820,7 +820,6 @@ class Transactions extends React.Component {
 		}
 		return newarray;
 	}
-
 
 	checkPaymentTypefilter = (searchText) => {
 		this.props.navigation.setParams({ paymentTypeValue: searchText });
@@ -965,15 +964,13 @@ class Transactions extends React.Component {
 	};
 
 	rowRenderer = (type, data, index) => {
-        let isSelected = false;
-
 	   switch (type) {
         case 'NORMAL':
             return (
 				<TouchableNativeFeedback onPress={() => this.setSelected(data.item)}>
 				<View key={index} style={styles.rcptPad}>
 					<View style={styles.itemData}>
-						<Text style={styles.customername}>{data.item.isReceipt ? data.item.customerAccount.name : data.item.customerAccount.name}</Text>
+						<Text style={styles.customername}>{data.item.isReceipt ? data.item.customerAccount.name : "Customer Name"}</Text>
 					</View>
 					<Text style={styles.customername}>
 						{this.getCurrency().toUpperCase()} {data.item.totalAmount}
@@ -1024,10 +1021,9 @@ class Transactions extends React.Component {
 		case "SECTION":
 			return(
 				<View style={styles.flex1}>
-					<Text style={styles.sectionTitle}>{data}</Text>
+					<Text style={styles.sectionTitle}>{data.item}</Text>
 				</View>
 			)
-
 		default:
 			return(
 				<View />
