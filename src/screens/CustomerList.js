@@ -361,7 +361,7 @@ class CustomerList extends React.Component {
                     stickyHeaderIndices={[0]}
                     overrideRowRenderer={this._overrideRowRenderer}>
                     <RecyclerListView
-                        style={{ flex: 1 }}
+                        style={styles.flexOne}
                         rowRenderer={this.rowRenderer}
                         dataProvider={this.state.dataProvider}
                         layoutProvider={this.layoutProvider}
@@ -460,8 +460,6 @@ console.log('filter-',filter)
     prepareData = (customerSearch, customerTypeFilter) => {
         let data = [];
         if (CustomerRealm.getAllCustomer().length > 0) {
-            // data = this.filterItems(this.props.customers);
-            console.log('here again')
             data = this.filterItems(CustomerRealm.getAllCustomer(), customerSearch, customerTypeFilter);
         }
 
