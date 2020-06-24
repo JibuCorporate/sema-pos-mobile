@@ -108,11 +108,11 @@ class CustomerListHeader extends React.PureComponent {
                         onValueChange={this.props.navigation.getParam('checkCustomerTypefilter')}>
 
                         <Picker.Item label="All Customer Types" value="all" />
-                        <Picker.Item label="Business" value="Business" />
-                        <Picker.Item label="Household" value="Household" />
-                        <Picker.Item label="Retailer" value="Retailer" />
-                        <Picker.Item label="Outlet Franchise" value="Outlet Franchise" />
-                        <Picker.Item label="Anonymous" value="Anonymous" />
+                        <Picker.Item label="Business" value="business" />
+                        <Picker.Item label="Household" value="household" />
+                        <Picker.Item label="Retailer" value="retailer" />
+                        <Picker.Item label="Outlet Franchise" value="outlet franchise" />
+                        <Picker.Item label="Anonymous" value="anonymous" />
                     </Picker>
 
                 </View>
@@ -122,13 +122,6 @@ class CustomerListHeader extends React.PureComponent {
         );
     }
 
-    searchCustomer = (searchText) => {
-        this.context.SearchCustomers(searchText);
-    };
-
-    checkCustomerTypefilter = (searchText) => {
-        this.context.SearchCustomerTypes(searchText);
-    };
 }
 
 export default withNavigation(CustomerListHeader);
