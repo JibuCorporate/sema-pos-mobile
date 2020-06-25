@@ -79,9 +79,9 @@ const getSalesData = (beginDate) => {
 export const getMrps = products => {
 	let productMrp = ProductMRPRealm.getFilteredProductMRP();
 	let ids = Object.keys(productMrp).map(key => productMrp[key].productId);
-	let filProduct = products.map(e=>{
+	let filProduct = products.map(e => {
 		delete e.base64encodedImage;
-		return {...e }
+		return { ...e }
 	})
 	let matchProducts = filProduct.filter(prod => ids.includes(prod.productId));
 	let waterProducts = matchProducts.filter(prod => 3 === prod.categoryId);
@@ -111,9 +111,13 @@ const createInventory = (salesData, inventorySettings, products) => {
 	let salesAndProducts = { ...salesData };
 	salesAndProducts.salesItems = salesData.salesItems.slice();
 	let emptyProducts = [];
+	console.log("Shuffle Wastage prod", products.length);
+
+	console.log("Shuffle Wastage salesItems", salesAndProducts.salesItems);
+
 	for (const prod of products) {
-		
-	console.log("Shuffle Wastage " ,isNotIncluded(prod, salesAndProducts.salesItems));
+
+		//	console.log("Shuffle Wastage isNotIncluded" ,isNotIncluded(prod, salesAndProducts.salesItems));
 
 		if (isNotIncluded(prod, salesAndProducts.salesItems)) {
 			emptyProducts.push({
@@ -126,6 +130,7 @@ const createInventory = (salesData, inventorySettings, products) => {
 			});
 		}
 	}
+	console.log('emptyProducts', emptyProducts)
 	salesAndProducts.salesItems = salesAndProducts.salesItems.concat(
 		emptyProducts
 	);

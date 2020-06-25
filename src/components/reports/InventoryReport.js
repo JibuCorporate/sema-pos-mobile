@@ -6,6 +6,7 @@ import * as WastageActions from "../../actions/WastageActions";
 import * as ProductActions from "../../actions/ProductActions";
 import * as InventoryActions from '../../actions/InventoryActions';
 import { connect } from "react-redux";
+import ProductsRealm from '../../database/products/product.operations';
 import DateFilter from "./DateFilter";
 import InventroyRealm from "../../database/inventory/inventory.operations";
 
@@ -90,11 +91,11 @@ class InventoryReport extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
-		// this.currentDate = new Date();
-		// this.previousDate = this.addDays(new Date(), 1);
-		let currentDate = new Date();
-		this.currentDate = null;
-		this.previousDate = null;
+		this.currentDate = new Date();
+		this.previousDate = this.addDays(new Date(), 1);
+		//let currentDate = new Date();
+		//this.currentDate = null;
+		//this.previousDate = null;
 		this.state = {
 			currentSkuEdit: "",
 			notDispatchedEdit: "",
@@ -195,17 +196,20 @@ class InventoryReport extends React.PureComponent {
 		else return value.toFixed(2);
 	}
 
-	getInventoryData() {
-		if (this.props.dateFilter.hasOwnProperty("currentDate") && this.props.dateFilter.hasOwnProperty("previousDate")) {
-			if (isSameDay(this.props.dateFilter.currentDate, this.currentDate) && isSameDay(this.props.dateFilter.previousDate, this.previousDate)) {
-				return this.props.wastageData.salesAndProducts.salesItems;
-			} else {
-				this.currentDate = this.props.dateFilter.currentDate;
-				this.previousDate = this.props.dateFilter.previousDate;
-				this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, this.props.products);
-				return this.props.wastageData.salesAndProducts.salesItems;
-			}
-		}
+	async getInventoryData() {
+			console.log('this.props.wastageData.salesAndProducts.salesItems-1', this.props.wastageData.salesAndProducts.salesItems)
+			if (this.props.dateFilter.hasOwnProperty("currentDate") && this.props.dateFilter.hasOwnProperty("previousDate")) {
+				if (isSameDay(this.props.dateFilter.currentDate, this.currentDate) && isSameDay(this.props.dateFilter.previousDate, this.previousDate)) {
+					console.log('no data-1');
+					return this.props.wastageData.salesAndProducts.salesItems;
+				} else {
+					console.log('no data-2');
+					this.currentDate = this.props.dateFilter.currentDate;
+					this.previousDate = this.props.dateFilter.previousDate;
+					this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, ProductsRealm.getProducts());
+					return this.props.wastageData.salesAndProducts.salesItems;
+				}
+			} 
 	}
 
 
@@ -324,7 +328,7 @@ class InventoryReport extends React.PureComponent {
 				},
 					this.props.dateFilter.currentDate);
 			}
-			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, this.props.products);
+			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, ProductsRealm.getProducts());
 			this.setState({ refresh: true });
 		} else {
 			// TODO - Show alert
@@ -363,7 +367,7 @@ class InventoryReport extends React.PureComponent {
 				},
 					this.props.dateFilter.currentDate);
 			}
-			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, this.props.products);
+			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, ProductsRealm.getProducts());
 			this.setState({ refresh: true });
 		} else {
 			// TODO - Show alert
@@ -464,17 +468,20 @@ class InventoryReport extends React.PureComponent {
 		return `${((current - previous) * item.litersPerSku).toFixed(2)} L`;
 	}
 
-	getTotalInventory() {
+	async getTotalInventory() {
 		try {
 			let result = 0;
 			let valid = false;
-			for (let index = 0; index < this.props.wastageData.salesAndProducts.salesItems.length; index++) {
-				let inventoryItem = this.getTotalForSkuDisplay(this.props.wastageData.salesAndProducts.salesItems[index]);
-				if (inventoryItem != '-') {
-					valid = true;
-					result += parseFloat(inventoryItem);
+			//console.log('this.props.wastageData.salesAndProducts.salesItems', this.props.wastageData.salesAndProducts.salesItems)
+		for (let index = 0; index < this.props.wastageData.salesAndProducts.salesItems.length; index++) {
+					let inventoryItem = this.getTotalForSkuDisplay(this.props.wastageData.salesAndProducts.salesItems[index]);
+					if (inventoryItem != '-') {
+						valid = true;
+						result += parseFloat(inventoryItem);
+					}
 				}
-			}
+
+			 
 			if (valid) {
 				return result.toFixed(2) + ' L';
 			} else {
@@ -487,17 +494,20 @@ class InventoryReport extends React.PureComponent {
 	}
 
 
-	getTotalNotDispatched() {
+	async getTotalNotDispatched() {
 		try {
 			let result = 0;
 			let valid = false;
-			for (let index = 0; index < this.props.wastageData.salesAndProducts.salesItems.length; index++) {
-				let inventoryItem = this.getTotalForSkuDisplayNotDispatched(this.props.wastageData.salesAndProducts.salesItems[index]);
-				if (inventoryItem != '-') {
-					valid = true;
-					result += parseFloat(inventoryItem);
+			//console.log('this.props.wastageData.salesAndProducts.salesItems', this.props.wastageData.salesAndProducts.salesItems)
+
+						for (let index = 0; index < this.props.wastageData.salesAndProducts.salesItems.length; index++) {
+					let inventoryItem = this.getTotalForSkuDisplayNotDispatched(this.props.wastageData.salesAndProducts.salesItems[index]);
+					if (inventoryItem != '-') {
+						valid = true;
+						result += parseFloat(inventoryItem);
+					}
 				}
-			}
+		
 			if (valid) {
 				return result.toFixed(2) + ' L';
 			} else {
@@ -613,10 +623,10 @@ class InventoryReport extends React.PureComponent {
 			if (isNaN(wastage)) {
 				return 'N/A'
 			} else {
-				if(wastage < 0) {
+				if (wastage < 0) {
 					return 0
-				} else{
-				return wastage.toFixed(2) + ' %';
+				} else {
+					return wastage.toFixed(2) + ' %';
 				}
 			}
 		}
@@ -722,7 +732,7 @@ const styles = StyleSheet.create({
 
 	bottomtotalstab: { flex: .33, color: '#fff', padding: 10 },
 
-	fontinvmeter:{
+	fontinvmeter: {
 		fontWeight: 'bold', fontSize: 22
 	},
 	irmain: {
@@ -736,7 +746,7 @@ const styles = StyleSheet.create({
 		fontSize: 24, fontWeight: 'bold'
 	},
 
-	inveditcont:{
+	inveditcont: {
 		flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10
 	},
 
@@ -774,7 +784,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 5
 	},
 
-	closingMeterStyle:{ flex: .3, flexDirection: 'row', alignItems: "center" },
+	closingMeterStyle: { flex: .3, flexDirection: 'row', alignItems: "center" },
 	rowItemCenter: {
 		fontSize: 16,
 		paddingLeft: 10,
@@ -809,9 +819,9 @@ const styles = StyleSheet.create({
 	headerBackground: {
 		backgroundColor: 'white',
 		flex: 1,
-		 flexDirection: 'row',
-		 height: 50,
-		  alignItems: 'center'
+		flexDirection: 'row',
+		height: 50,
+		alignItems: 'center'
 	},
 	totalItem: {
 		fontWeight: "bold",
@@ -867,11 +877,11 @@ const styles = StyleSheet.create({
 
 	},
 
-	irdatecont:{
+	irdatecont: {
 		flex: .1, flexDirection: 'row'
 	},
 
-	thiscontstyle:{
+	thiscontstyle: {
 		flex: 1, flexDirection: 'row'
 	},
 

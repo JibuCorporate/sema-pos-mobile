@@ -70,6 +70,8 @@ class AuthLoadingScreen extends React.PureComponent {
 
             if (settings.token.length > 1) {
                 this.props.settingsActions.setSettings({ ...settings, loginSync: false });
+                this.props.wastageActions.GetInventoryReportData(this.subtractDays(new Date(), 1), new Date(), ProductsRealm.getProducts());
+
                 this.props.navigation.navigate('App');
             }
 

@@ -2,7 +2,9 @@ import React from 'react';
 
 import { Text, View, TouchableHighlight, StyleSheet } from 'react-native';
 import { bindActionCreators } from "redux";
+import * as WastageActions from "../../actions/WastageActions";
 import * as reportActions from "../../actions/ReportActions";
+import ProductsRealm from '../../database/products/product.operations';
 import { connect } from "react-redux";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { set, getSeconds, getMinutes, getHours } from 'date-fns';
@@ -109,6 +111,8 @@ class DateFilter extends React.PureComponent {
 		const currentDate = this.state.currentDate;
 		const previousDate = new Date(currentDate.getTime() - dayInMilliseconds);
 		this.props.reportActions.setReportFilter(currentDate, previousDate);
+	//	this.props.wastageActions.GetInventoryReportData(previousDate, currentDate, ProductsRealm.getProducts());
+
 	}
 }
 
@@ -117,7 +121,8 @@ function mapStateToProps(state, props) {
 }
 
 function mapDispatchToProps(dispatch) {
-	return { reportActions: bindActionCreators(reportActions, dispatch) };
+	return { reportActions: bindActionCreators(reportActions, dispatch),
+		wastageActions: bindActionCreators(WastageActions, dispatch) };
 }
 
 //Connect everything

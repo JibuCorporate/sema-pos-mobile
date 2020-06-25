@@ -132,6 +132,8 @@ class Login extends React.PureComponent {
 			this.setState({ isLoading: true });
 			Synchronization.synchronize().then(syncResult => {
 				 console.log('syncResult', syncResult);
+				 this.props.wastageActions.GetInventoryReportData(this.subtractDays(new Date(), 1), new Date(), ProductsRealm.getProducts());
+
 					this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 					this.setState({ isLoading: false });
 					this.props.navigation.navigate('App');
@@ -240,6 +242,8 @@ class Login extends React.PureComponent {
 
 						if (!this.isSiteIdDifferent(result.response.data.kiosk.id, oldSettings.siteId)) {
 							this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
+							this.props.wastageActions.GetInventoryReportData(this.subtractDays(new Date(), 1), new Date(), ProductsRealm.getProducts());
+
 							this.setState({ isLoading: false });
 							this.props.navigation.navigate('App');
 						}
