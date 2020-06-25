@@ -40,7 +40,6 @@ class CustomerList extends React.Component {
     static contextType = AppContext;
     constructor(props) {
         super(props);
-        // slowlog(this, /.*/);
         let { width } = Dimensions.get("window");
 
         this.state = {
@@ -63,7 +62,7 @@ class CustomerList extends React.Component {
             switch (type) {
                 case 'NORMAL':
                     dim.width = width;
-                    dim.height = 60;
+                    dim.height = 65;
                     break;
                 default:
                     dim.width = 0;
@@ -79,8 +78,6 @@ class CustomerList extends React.Component {
 
 
     componentDidMount() {
-        console.log('this.context', this.context);
-
         this.prepareData();
 
         this.props.navigation.setParams({
@@ -100,15 +97,11 @@ class CustomerList extends React.Component {
     }
 
     searchCustomer = (searchText) => {
-        // this.context.SearchCustomers(searchText);
-        console.log('searchText', searchText)
         this.prepareData(searchText, '');
     };
 
 
     checkCustomerTypefilter = (searchText) => {
-        // this.context.SearchCustomerTypes(searchText);
-        console.log('checkCustomerTypefilter', searchText)
         this.context.SearchCustomerTypes(searchText);
         this.prepareData('', searchText);
     };
@@ -119,7 +112,7 @@ class CustomerList extends React.Component {
         this.props.paymentTypesActions.setPaymentTypes(
             PaymentTypeRealm.getPaymentTypes());
         this.props.paymentTypesActions.resetSelectedPayment();
-        this.prepareData()
+        this.prepareData();
     }
 
     closePaymentModal = () => {
@@ -128,7 +121,7 @@ class CustomerList extends React.Component {
         this.props.paymentTypesActions.resetSelectedPayment();
         this.props.paymentTypesActions.setPaymentTypes(
             PaymentTypeRealm.getPaymentTypes());
-        this.prepareData()
+        this.prepareData();
         this.refs.modal6.close();
     };
 
@@ -239,54 +232,47 @@ class CustomerList extends React.Component {
         let isSelected = false;
         if (this.context.selectedCustomer && this.context.selectedCustomer.customerId === data.item.customerId) {
             isSelected = true;
-        }
-        if (type == 'NORMAL') {
+		}
+
+        if (type == 'NORMAL' && data.item.id != null) {
             return (
                 <TouchableHighlight
                     onLongPress={() => this.onLongPressItem(data.item)}
                     onPress={() => this.handleOnPress(data.item)}>
                     <View
                         style={[
-                            this.getRowBackground(1, isSelected),
-                            {
-                                flex: 1,
-                                flexDirection: 'row',
-                                paddingTop: 25,
-                                paddingBottom: 25,
-                                alignItems: 'center'
-                            }
+                            this.getRowBackground(index, isSelected),
+                            styles.listrowcont
                         ]}>
-                        <View style={{ flex: 1.5 }}>
+                        <View style={styles.OneHalf}>
                             <Text style={[styles.baseItem, styles.leftMargin]}>
                                 {data.item.name}
                             </Text>
                         </View>
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.flexOne}>
                             <Text style={styles.baseItem}>
                                 {data.item.phoneNumber}
                             </Text>
                         </View>
 
-                        <View style={{ flex: 1.5 }}>
+                        <View style={styles.OneHalf}>
                             <Text style={styles.baseItem}>{data.item.address}</Text>
                         </View>
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.flexOne}>
                             <Text style={styles.baseItem}>
                                 {data.item.customerType}
                             </Text>
                         </View>
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.flexOne}>
                             <Text style={styles.baseItem}>
                                 {data.item.dueAmount.toFixed(2)}
                             </Text>
                         </View>
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.flexOne}>
                             <Text style={styles.baseItem}>
                                 {data.item.walletBalance.toFixed(2)}
                             </Text>
                         </View>
-
-
                     </View>
                 </TouchableHighlight>
             );
@@ -354,15 +340,19 @@ class CustomerList extends React.Component {
 
                     </View>
                 );
-
-                break;
+				break;
+				default:
+					return (
+						<View />
+					)
+				break;
         }
         return view;
     };
 
     render() {
         return (
-            <View style={{ backgroundColor: '#fff', flex: 1 }}>
+            <View style={styles.custcontainer}>
 
                 <StickyContainer
                     stickyHeaderIndices={[0]}
@@ -419,9 +409,8 @@ class CustomerList extends React.Component {
         index
     });
 
-    filterItems = (data, customerSearch, customerTypeFilter) => {
-        console.log('-customerSearch-', customerSearch);
-        console.log('-customerTypeFilter-', customerTypeFilter);
+    filterItems = (data, customerSearch="", customerTypeFilter="") => {
+
         let filter = {
             searchString: customerSearch ? customerSearch : "",
             customerType: customerTypeFilter ? customerTypeFilter === 'all' ? "" : customerTypeFilter : "",
@@ -448,8 +437,8 @@ class CustomerList extends React.Component {
             data.sort((a, b) => {
                 return Number(b.walletBalance) - Number(a.walletBalance);
             });
-        }
-        console.log('filter-', filter)
+		}
+
         let filteredItems = data.filter(function (item) {
             for (var key in filter) {
                 if (
@@ -477,7 +466,13 @@ class CustomerList extends React.Component {
                 type: 'NORMAL',
                 item: data[i],
             });
-        }
+		}
+		if(customerData.length <= 0){
+			customerData.push({
+				type: 'NORMAL',
+				item: {}
+			})
+		}
 
         this.setState({
             dataProvider: this.state.dataProvider.cloneWithRows(customerData)
@@ -600,6 +595,7 @@ export default connect(
 )(CustomerList);
 
 const styles = StyleSheet.create({
+	custcontainer: { backgroundColor: '#fff', flex: 1 },
     baseItem: {
         fontSize: 17
     },
@@ -657,5 +653,13 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         paddingBottom: 15,
         alignItems: 'center'
-    }
+	},
+	listrowcont: {
+		flex: 1,
+		flexDirection: 'row',
+		paddingTop: 25,
+		paddingBottom: 25,
+		alignItems: 'center'
+	},
+	OneHalf: { flex: 1.5 },
 });

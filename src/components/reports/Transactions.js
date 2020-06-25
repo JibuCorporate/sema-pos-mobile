@@ -35,9 +35,9 @@ import CustomerDebtRealm from '../../database/customer_debt/customer_debt.operat
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
 import PaymentTypeRealm from '../../database/payment_types/payment_types.operations';
 import { format, parseISO, isBefore } from 'date-fns';
-//import { prepareSectionedData } from "../../reducers/ReceiptReducer";
 import i18n from '../../app/i18n';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
+import { da } from 'date-fns/locale';
 
 class ReceiptLineItem extends React.Component {
 	constructor(props) {
@@ -440,6 +440,7 @@ class TransactionDetail extends React.Component {
 				} else {
 					return (
 						<View style={styles.flex1}>
+							<Text style={styles.notesst}>{"Select a receipt to view its details."}</Text>
 						</View>
 					)
 				}
@@ -552,7 +553,6 @@ class Transactions extends React.Component {
 			hasScrolled: false,
 			paymentTypeValue: '',
 			dataProvider: new DataProvider((r1, r2) => { return r1 !== r2; }),
-			// selected: this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[0].data[0] : {},
 			selected: {}
 		};
 
@@ -561,16 +561,14 @@ class Transactions extends React.Component {
 		this.layoutProvider = new LayoutProvider((i) => {
 			return this.state.dataProvider.getDataForIndex(i).type;
 		}, (type, dim) => {
-			console.log('type-type', type)
-			console.log('type-dim', type)
 			switch (type) {
 				case 'NORMAL':
-					dim.width = width * 1 / 3;
-					dim.height = 400;
+					dim.width = width / 4;
+					dim.height = 80;
 					break;
 				case 'SECTION':
-					dim.width = width * 1 / 3;
-					dim.height = 60;
+					dim.width = width / 4;
+					dim.height = 40;
 					break;
 				default:
 					dim.width = 0;
@@ -583,7 +581,6 @@ class Transactions extends React.Component {
 
 	componentDidMount() {
 		this.prepareSectionedData();
-		// this.prepareSectionedDataOld()
 		this.props.navigation.setParams({ paymentTypeValue: 'all' });
 		this.props.navigation.setParams({ checkPaymentTypefilter: this.checkPaymentTypefilter });
 		// Events.on(
@@ -783,47 +780,25 @@ class Transactions extends React.Component {
 
 		let transformedarray = this.groupBySectionTitle(finalArray, 'sectiontitle');
 		const transactionData = [];
-		// transactionData.push({
-		// 	type: 'SECTION',
-		// 	item: i,
-		// });
-		for (let i of Object.getOwnPropertyNames(transformedarray)) {
 
+		for (let i of Object.getOwnPropertyNames(transformedarray)) {
 			transactionData.push({
-				type: 'NORMAL',
-				title: i,
-				item: transformedarray[i],
+				type: "SECTION",
+				item: {"title" : i},
 			});
+
+			for (let rectopdebt of transformedarray[i]) {
+				transactionData.push({
+					type: "NORMAL",
+					item: rectopdebt,
+				});
+			}
 		}
 
 		this.setState({
 			dataProvider: this.state.dataProvider.cloneWithRows(transactionData)
 		});
 	}
-
-
-	prepareSectionedDataOld() {
-		// Used for enumerating receipts
-		let receipts = this.prepareData();
-		let topups = this.prepareTopUpData();
-		let deptPayment = this.prepareCustomerDebt();
-		let finalArray = (deptPayment.concat(topups)).concat(receipts).sort((a, b) => {
-			return isBefore(new Date(a.createdAt), new Date(b.createdAt))
-				? 1
-				: -1;
-		});
-
-		let transformedarray = this.groupBySectionTitle(finalArray, 'sectiontitle');
-		let newarray = [];
-		for (let i of Object.getOwnPropertyNames(transformedarray)) {
-			newarray.push({
-				title: i,
-				data: transformedarray[i],
-			});
-		}
-		return newarray;
-	}
-
 
 	checkPaymentTypefilter = (searchText) => {
 		this.props.navigation.setParams({ paymentTypeValue: searchText });
@@ -856,25 +831,6 @@ class Transactions extends React.Component {
 				<View style={styles.detmain}>
 					<View style={styles.detailcont}>
 						<SafeAreaView style={styles.container}>
-							{/* <ScrollView
-								style={styles.flex1}
-								refreshControl={
-									<RefreshControl
-										refreshing={this.state.refreshing}
-										onRefresh={this._onRefresh}
-									/>
-								}>
-								<SectionList
-									extraData={this.state.refreshing}
-									ItemSeparatorComponent={this.renderSeparator}
-									sections={this.prepareSectionedData()}
-									keyExtractor={(item, index) => item + index}
-									renderItem={this.renderReceipt.bind(this)}
-									renderSectionHeader={({ section: { title } }) => (
-										<Text style={styles.sectionTitle}>{title}</Text>
-									)}
-								/>
-							</ScrollView> */}
 							<RecyclerListView
 								style={styles.flex1}
 								rowRenderer={this.rowRenderer}
@@ -967,276 +923,73 @@ class Transactions extends React.Component {
 		return settings.currency;
 	};
 
-	runThrough(data) {
-		console.log('data-', data)
-
-		data = data.map((item, idx) => {
-			return (
-				<TouchableNativeFeedback onPress={() => this.setSelected(item)}>
-					<View key={idx} style={styles.rcptPad}>
-						<View style={styles.itemData}>
-							<Text style={styles.customername}>{item.isReceipt ? item.customerAccount.name : item.customerAccount.name}</Text>
-						</View>
-						<Text style={styles.customername}>
-							{this.getCurrency().toUpperCase()} {item.totalAmount}
-						</Text>
-						<View style={styles.receiptStats}>
-							{item.isReceipt ? item.is_delete === 0 && (
-								<Text style={styles.receiptStatusText}>
-									{'Deleted - '.toUpperCase()}
-								</Text>
-							) : !item.isReceipt ? !item.active && (
-								<Text style={styles.receiptStatusText}>
-									{'Deleted - '.toUpperCase()}
-								</Text>
-							) : null}
-
-							{!item.isReceipt ? !item.synched ? (
-								<View style={styles.rowFlex}>
-									<Text style={styles.receiptPendingText}>
-										{' Pending'.toUpperCase()}
-									</Text>
-								</View>
-							) : (
-									<View style={styles.rowFlex}>
-										{!item.synched && <Text> - </Text>}
-										<Text style={styles.receiptSyncedText}>
-											{' Synced'.toUpperCase()}
-										</Text>
-									</View>
-								) :
-								!item.active ? (
-									<View style={styles.rowFlex}>
-										<Text style={styles.receiptPendingText}>
-											{' Pending'.toUpperCase()}
-										</Text>
-									</View>
-								) : (
-										<View style={styles.rowFlex}>
-											{!item.active && <Text> - </Text>}
-											<Text style={styles.receiptSyncedText}>
-												{' Synced'.toUpperCase()}
-											</Text>
-										</View>
-									)}
-						</View>
-
-					</View>
-				</TouchableNativeFeedback>
-			);
-		});
-
-		return data;
-		// for (let item of data) {
-		// 	return (
-		// 		<TouchableNativeFeedback onPress={() => this.setSelected(item)}>
-		// 			<View key={item.id} style={styles.rcptPad}>
-		// 				<View style={styles.itemData}>
-		// 					<Text style={styles.customername}>{item.isReceipt ? item.customerAccount.name : ""}</Text>
-		// 				</View>
-		// 				<Text style={styles.customername}>
-		// 					{this.getCurrency().toUpperCase()} {item.totalAmount}
-		// 				</Text>
-		// 				<View style={styles.receiptStats}>
-		// 	 					{item.isReceipt ? item.is_delete === 0 && (
-		// 	  						<Text style={styles.receiptStatusText}>
-		// 	 							{'Deleted - '.toUpperCase()}
-		// 	  						</Text>
-		// 	 					) : !item.isReceipt ? !item.active && (
-		// 	 						<Text style={styles.receiptStatusText}>
-		//  						{'Deleted - '.toUpperCase()}
-		// 	 						</Text>
-		// 						) : null}
-
-		// 						{!item.isReceipt ? !item.synched ? (
-		// 							<View style={styles.rowFlex}>
-		// 								<Text style={styles.receiptPendingText}>
-		// 									{' Pending'.toUpperCase()}
-		// 								</Text>
-		// 							</View>
-		// 						) : (
-		// 								<View style={styles.rowFlex}>
-		// 									{!item.synched && <Text> - </Text>}
-		// 									<Text style={styles.receiptSyncedText}>
-		// 										{' Synced'.toUpperCase()}
-		// 									</Text>
-		// 								</View>
-		// 							) :
-		// 							!item.active ? (
-		// 								<View style={styles.rowFlex}>
-		// 									<Text style={styles.receiptPendingText}>
-		// 										{' Pending'.toUpperCase()}
-		// 									</Text>
-		// 								</View>
-		// 							) : (
-		// 									<View style={styles.rowFlex}>
-		// 										{!item.active && <Text> - </Text>}
-		// 										<Text style={styles.receiptSyncedText}>
-		// 											{' Synced'.toUpperCase()}
-		// 										</Text>
-		// 									</View>
-		// 								)}
-		// 					</View>
-
-		// 	 		</View>
-		// 	 	</TouchableNativeFeedback>
-		// 	 );
-		// }
-	}
-
 	rowRenderer = (type, data, index) => {
 		let isSelected = false;
-		return (
-			<View style={styles.flex1}>
-				<Text style={styles.sectionTitle}>{data.title}</Text>
-				{this.runThrough(data.item)}
-			</View>
-		)
-		// switch (type) {
-		// 	case 'NORMAL':
-		// 		return (
-		// 			<TouchableNativeFeedback onPress={() => this.setSelected(data.item)}>
-		// 				<View key={index} style={styles.rcptPad}>
-		// 					<View style={styles.itemData}>
-		// 						<Text style={styles.customername}>{data.item.isReceipt ? data.item.customerAccount.name : ""}</Text>
-		// 					</View>
-		// 					<Text style={styles.customername}>
-		// 						{this.getCurrency().toUpperCase()} {data.item.totalAmount}
-		// 					</Text>
-		// 					<View style={styles.receiptStats}>
-		// 						{data.item.isReceipt ? data.item.is_delete === 0 && (
-		// 							<Text style={styles.receiptStatusText}>
-		// 								{'Deleted - '.toUpperCase()}
-		// 							</Text>
-		// 						) : !data.item.isReceipt ? !data.item.active && (
-		// 							<Text style={styles.receiptStatusText}>
-		// 								{'Deleted - '.toUpperCase()}
-		// 							</Text>
-		// 						) : null}
 
-		// 						{!data.item.isReceipt ? !data.item.synched ? (
-		// 							<View style={styles.rowFlex}>
-		// 								<Text style={styles.receiptPendingText}>
-		// 									{' Pending'.toUpperCase()}
-		// 								</Text>
-		// 							</View>
-		// 						) : (
-		// 								<View style={styles.rowFlex}>
-		// 									{!data.item.synched && <Text> - </Text>}
-		// 									<Text style={styles.receiptSyncedText}>
-		// 										{' Synced'.toUpperCase()}
-		// 									</Text>
-		// 								</View>
-		// 							) :
-		// 							!data.item.active ? (
-		// 								<View style={styles.rowFlex}>
-		// 									<Text style={styles.receiptPendingText}>
-		// 										{' Pending'.toUpperCase()}
-		// 									</Text>
-		// 								</View>
-		// 							) : (
-		// 									<View style={styles.rowFlex}>
-		// 										{!data.item.active && <Text> - </Text>}
-		// 										<Text style={styles.receiptSyncedText}>
-		// 											{' Synced'.toUpperCase()}
-		// 										</Text>
-		// 									</View>
-		// 								)}
-		// 					</View>
-		// 				</View>
-		// 			</TouchableNativeFeedback>
-		// 		);
-		// 	case "SECTION":
-		// 		return (
-		// 			<View style={styles.flex1}>
-		// 				<Text style={styles.sectionTitle}>{data}</Text>
-		// 			</View>
-		// 		)
-
-		// 	default:
-		// 		return (
-		// 			<View />
-		// 		)
-		// }
-	}
-
-	renderReceipt({ item, index }) {
-		return (
-			<TouchableNativeFeedback onPress={() => this.setSelected(item)}>
-				<View key={index} style={styles.rcptPad}>
-					<View style={styles.itemData}>
-						<Text style={styles.customername}>{item.isReceipt ? item.customerAccount.name : item.customerAccount.name}</Text>
-					</View>
-					<Text style={styles.customername}>
-						{this.getCurrency().toUpperCase()} {item.totalAmount}
-					</Text>
-					<View style={styles.receiptStats}>
-						{item.isReceipt ? item.is_delete === 0 && (
-							<Text style={styles.receiptStatusText}>
-								{'Deleted - '.toUpperCase()}
-							</Text>
-						) : !item.isReceipt ? !item.active && (
-							<Text style={styles.receiptStatusText}>
-								{'Deleted - '.toUpperCase()}
-							</Text>
-						) : null}
-
-						{!item.isReceipt ? !item.synched ? (
-							<View style={styles.rowFlex}>
-								<Text style={styles.receiptPendingText}>
-									{' Pending'.toUpperCase()}
+		switch (type) {
+				case 'NORMAL':
+					return (
+						<TouchableNativeFeedback onPress={() => this.setSelected(data.item)}>
+							<View key={index} style={styles.rcptPad}>
+								<View style={styles.itemData}>
+									<Text style={styles.customername}>{data.item.isReceipt ? data.item.customerAccount.name : data.item.customerAccount.name}</Text>
+								</View>
+								<Text style={styles.customername}>
+									{this.getCurrency().toUpperCase()} {data.item.totalAmount}
 								</Text>
-							</View>
-						) : (
-								<View style={styles.rowFlex}>
-									{!item.synched && <Text> - </Text>}
-									<Text style={styles.receiptSyncedText}>
-										{' Synced'.toUpperCase()}
-									</Text>
-								</View>
-							) :
-							!item.active ? (
-								<View style={styles.rowFlex}>
-									<Text style={styles.receiptPendingText}>
-										{' Pending'.toUpperCase()}
-									</Text>
-								</View>
-							) : (
-									<View style={styles.rowFlex}>
-										{!item.active && <Text> - </Text>}
-										<Text style={styles.receiptSyncedText}>
-											{' Synced'.toUpperCase()}
+								{/* <View style={styles.receiptStats}> */}
+									{data.item.isReceipt ? data.item.is_delete === 0 && (
+										<Text style={styles.receiptStatusText}>
+											{'Deleted - '.toUpperCase()}
 										</Text>
-									</View>
-								)}
-					</View>
-				</View>
-			</TouchableNativeFeedback>
-		);
-	}
+									) : !data.item.isReceipt ? !data.item.active && (
+										<Text style={styles.receiptStatusText}>
+											{'Deleted - '.toUpperCase()}
+										</Text>
+									) : null}
 
-	showHeader = () => {
-		return (
-			<View
-				style={styles.headerBg}>
-				<View style={styles.flex2}>
-					<Text style={[styles.headerItem, styles.leftMargin]}>
-						{i18n.t('product')}
-					</Text>
-				</View>
-				<View style={styles.flex15}>
-					<Text style={[styles.headerItem]}>
-						{i18n.t('quantity')}
-					</Text>
-				</View>
-				<View style={styles.flex15}>
-					<Text style={[styles.headerItem]}>
-						{i18n.t('unitPrice')}
-					</Text>
-				</View>
-			</View>
-		);
-	};
+									{!data.item.isReceipt ? !data.item.synched ? (
+										<View style={styles.rowFlex}>
+											<Text style={styles.receiptPendingText}>
+												{' Pending'.toUpperCase()}
+											</Text>
+										</View>
+									) : (
+											<View style={styles.rowFlex}>
+												{!data.item.synched && <Text> - </Text>}
+												<Text style={styles.receiptSyncedText}>
+													{' Synced'.toUpperCase()}
+												</Text>
+											</View>
+										) :
+										!data.item.active ? (
+											<View style={styles.rowFlex}>
+												<Text style={styles.receiptPendingText}>
+													{' Pending'.toUpperCase()}
+												</Text>
+											</View>
+										) : (
+												<View style={styles.rowFlex}>
+													{!data.item.active && <Text> - </Text>}
+													<Text style={styles.receiptSyncedText}>
+														{' Synced'.toUpperCase()}
+													</Text>
+												</View>
+											)}
+							</View>
+						</TouchableNativeFeedback>
+					);
+				case "SECTION":
+					return (
+						<View style={styles.flex1}>
+							<Text style={styles.sectionTitle}>{data.item.title}</Text>
+						</View>
+					);
+
+				default:
+					return null;
+			}
+	}
 
 }
 
@@ -1326,7 +1079,7 @@ const styles = StyleSheet.create({
 		flex: 1.5
 	},
 
-	transdetcont: { flex: 2, backgroundColor: '#fff', paddingLeft: 20 },
+	transdetcont: { flex: 3, backgroundColor: '#fff', paddingLeft: 20 },
 
 	aseparator: {
 		height: 1,

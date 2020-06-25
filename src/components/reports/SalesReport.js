@@ -52,7 +52,7 @@ class SalesReport extends React.PureComponent {
 								</View>
 								<View style={styles.salestabs} >
 									<Text style={styles.totalLabel4}>{i18n.t('total-sales').toUpperCase()}</Text>
-									<Text style={styles.totalItem6}>{this.getCurrency()} {this.props.salesData.totalSales}</Text>
+									<Text style={styles.totalItem6}>{this.getCurrency()} {this.props.salesData.totalSales.toFixed(1)}</Text>
 								</View>
 								<View style={styles.salestabs} >
 									<Text style={styles.totalLabel4}>DEBT COLLECTED</Text>
@@ -61,7 +61,7 @@ class SalesReport extends React.PureComponent {
 								<View style={styles.salestabs} >
 									<Text style={styles.totalLabel4}>TOTAL EARNINGS</Text>
 									<Text style={styles.totalItem6}>
-										{this.getCurrency()} {this.props.salesData.totalTypes.length > 0 ? this.props.salesData.totalTypes.slice(-1)[0].totalAmount : 0}</Text>
+										{this.getCurrency()} {this.props.salesData.totalTypes.length > 0 ? this.props.salesData.totalTypes.slice(-1)[0].totalAmount.toFixed(1) : 0}</Text>
 								</View>
 							</View>
 						</View>

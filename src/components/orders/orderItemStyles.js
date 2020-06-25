@@ -14,6 +14,25 @@ export default orderItemStyles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row'
 	},
+	pad10: {
+		padding: 10
+	},
+
+	flexPadLeft: {
+		flex: 1,
+		paddingLeft: 10
+	},
+	closeModalBtn: {
+		justifyContent: 'flex-end',
+		flexDirection: 'row',
+		right: 10,
+		top: 0
+	},
+	qtyTxtInput: {
+		textAlign: 'center',
+		height: 50,
+		fontSize: 24
+	},
 	orderSideBar:{ flex: .6, backgroundColor: "blue", borderColor: '#2858a7', borderLeftWidth: 5 },
 	flexOne: { flex: 1 },
 	flexTwo: { flex: 2 },
