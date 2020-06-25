@@ -40,7 +40,6 @@ class CustomerList extends React.Component {
     static contextType = AppContext;
     constructor(props) {
         super(props);
-        // slowlog(this, /.*/);
         let { width } = Dimensions.get("window");
 
         this.state = {
@@ -233,8 +232,9 @@ class CustomerList extends React.Component {
         let isSelected = false;
         if (this.context.selectedCustomer && this.context.selectedCustomer.customerId === data.item.customerId) {
             isSelected = true;
-        }
-        if (type == 'NORMAL') {
+		}
+
+        if (type == 'NORMAL' && data.item.id != null) {
             return (
                 <TouchableHighlight
                     onLongPress={() => this.onLongPressItem(data.item)}
@@ -340,8 +340,12 @@ class CustomerList extends React.Component {
 
                     </View>
                 );
-
-                break;
+				break;
+				default:
+					return (
+						<View />
+					)
+				break;
         }
         return view;
     };
@@ -405,9 +409,8 @@ class CustomerList extends React.Component {
         index
     });
 
-    filterItems = (data, customerSearch, customerTypeFilter) => {
-        console.log('-customerSearch-', customerSearch);
-        console.log('-customerTypeFilter-', customerTypeFilter);
+    filterItems = (data, customerSearch="", customerTypeFilter="") => {
+
         let filter = {
             searchString: customerSearch ? customerSearch : "",
             customerType: customerTypeFilter ? customerTypeFilter === 'all' ? "" : customerTypeFilter : "",
@@ -434,8 +437,8 @@ class CustomerList extends React.Component {
             data.sort((a, b) => {
                 return Number(b.walletBalance) - Number(a.walletBalance);
             });
-        }
-        console.log('filter-', filter)
+		}
+
         let filteredItems = data.filter(function (item) {
             for (var key in filter) {
                 if (
@@ -463,7 +466,13 @@ class CustomerList extends React.Component {
                 type: 'NORMAL',
                 item: data[i],
             });
-        }
+		}
+		if(customerData.length <= 0){
+			customerData.push({
+				type: 'NORMAL',
+				item: {}
+			})
+		}
 
         this.setState({
             dataProvider: this.state.dataProvider.cloneWithRows(customerData)

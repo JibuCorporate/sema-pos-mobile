@@ -40,7 +40,7 @@ class OrderRealm {
         let formattedArray = [...Object.values(JSON.parse(JSON.stringify(realm.objects('Order'))))];
         for (let i in formattedArray) {
 
-			formattedArray[i].customer_account = JSON.parse(JSON.stringify(realm.objects('Customer').filtered(`id = "${formattedArray[i].customerAccountId}"`)))[0]
+			formattedArray[i].customer_account = JSON.parse(JSON.stringify(realm.objects('Customer').filtered(`id = "${formattedArray[i].customerAccountId ? formattedArray[i].customerAccountId : formattedArray[i].customer_account_id}"`)))[0]
 
             formattedArray[i].receipt_line_items = JSON.parse(formattedArray[i].receipt_line_items).map(
 				e => {
@@ -59,7 +59,7 @@ class OrderRealm {
             JSON.parse(JSON.stringify(realm.objects('Order').filtered(`is_delete = "${1}"`)))
             )];
         for (let i in formattedArray) {
-            formattedArray[i].customer_account = JSON.parse(JSON.stringify(realm.objects('Customer').filtered(`id = "${formattedArray[i].customerAccountId}"`)))[0]
+            formattedArray[i].customer_account = JSON.parse(JSON.stringify(realm.objects('Customer').filtered(`id = "${formattedArray[i].customerAccountId ? formattedArray[i].customerAccountId : formattedArray[i].customer_account_id}"`)))[0]
 
             formattedArray[i].receipt_line_items = JSON.parse(formattedArray[i].receipt_line_items).map(
 				e => {

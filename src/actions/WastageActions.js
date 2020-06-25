@@ -111,10 +111,8 @@ const createInventory = (salesData, inventorySettings, products) => {
 	let salesAndProducts = { ...salesData };
 	salesAndProducts.salesItems = salesData.salesItems.slice();
 	let emptyProducts = [];
-	for (const prod of products) {
-		
-	console.log("Shuffle Wastage " ,isNotIncluded(prod, salesAndProducts.salesItems));
 
+	for (const prod of products) {
 		if (isNotIncluded(prod, salesAndProducts.salesItems)) {
 			emptyProducts.push({
 				sku: prod.sku,
@@ -126,6 +124,7 @@ const createInventory = (salesData, inventorySettings, products) => {
 			});
 		}
 	}
+
 	salesAndProducts.salesItems = salesAndProducts.salesItems.concat(
 		emptyProducts
 	);

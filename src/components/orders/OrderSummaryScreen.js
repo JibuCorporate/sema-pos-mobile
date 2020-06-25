@@ -277,9 +277,7 @@ class OrderSummaryScreen extends React.PureComponent {
 							<FlatList
 								data={this.props.discounts}
 								extraData={this.state.selectedDiscounts}
-								renderItem={({ item, index, separators }) => (
-									this.discountRows(item, index, separators)
-								)}
+								renderItem={this.renderDiscountRow}
 							/>
 						</View>
 
@@ -394,11 +392,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		return (
 			<TextInput
-				style={{
-					textAlign: 'center',
-					height: 50,
-					fontSize: 24
-				}}
+				style={orderItemStyles.qtyTxtInput}
 				keyboardType="number-pad"
 				onChangeText={(value) => this.changeQuantity(value)}
 				value={qty}
@@ -538,11 +532,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		return (
 			<TextInput
-				style={{
-					textAlign: 'center',
-					height: 50,
-					fontSize: 24
-				}}
+				style={orderItemStyles.qtyTxtInput}
 				onChangeText={this.setRefillPending}
 				value={refillPending}
 				keyboardType="number-pad"
@@ -575,9 +565,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		}
 		return (
 			<TextInput
-				style={{
-					padding: 10
-				}}
+				style={orderItemStyles.pad10}
 				onChangeText={this.customDiscount}
 				value={(customValue.toString())}
 				keyboardType="number-pad"
@@ -631,7 +619,7 @@ class OrderSummaryScreen extends React.PureComponent {
 				<View style={[{ flex: 1.2 }]}>
 					<Text style={[orderItemStyles.baseItem, { textAlign: 'center' }]}>{item.quantity}</Text>
 				</View>
-				<View style={[orderItemStyles.flexTwo]}>
+				<View style={orderItemStyles.flexTwo}>
 					<Text numberOfLines={1} style={[orderItemStyles.baseItem, { textAlign: 'right', paddingRight: 5 }]}>
 						{this.getCurrency().toUpperCase()} {this.getDiscountPrice((item.quantity * item.unitPrice), item)}
 					</Text>
@@ -848,7 +836,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		return totalAmount;
 	}
 
-	discountRows = (item, index, separators) => {
+	renderDiscountRow = (item, index, separators) => {
 		const productIndex = this.props.selectedDiscounts.map(function (e) { return e.product.productId }).indexOf(this.state.selectedItem.product.productId);
 
 		let isDiscountAvailable = false;
@@ -1052,37 +1040,25 @@ class OrderSummaryScreen extends React.PureComponent {
 			return (
 				<ScrollView>
 					<TouchableOpacity>
-						<View style={{ flex: 1, paddingLeft: 10 }}>
+						<View style={orderItemStyles.flexPadLeft}>
 							<View style={orderItemStyles.bottleTracker}>
 								<View style={orderItemStyles.rowDirection}>
 									<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Bottle Tracker.</Text>
 								</View>
 								<View
-									style={{
-										justifyContent: 'flex-end',
-										flexDirection: 'row',
-										right: 10,
-										top: 0
-									}}>
+									style={orderItemStyles.closeModalBtn}>
 									{this.closeModalBtn('modal7')}
 								</View>
 							</View>
 
 							<View
-								style={{
-									flex: 1
-								}}>
+								style={orderItemStyles.flexOne}>
 								<FlatList
 									data={this.props.orderItems}
 									ListHeaderComponent={this.showBottlesHeader}
-									// extraData={this.state.refresh}
-									renderItem={({ item, index, separators }) => (
-										<View>
-											{this.getBottleRow(item, index, separators)}
-										</View>
-									)}
+									renderItem={this.renderBottleRow}
 									keyExtractor={item => item.product.description}
-									initialNumToRender={50}
+									initialNumToRender={10}
 								/>
 							</View>
 						</View>
@@ -1106,20 +1082,13 @@ class OrderSummaryScreen extends React.PureComponent {
 									<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Additional Notes.</Text>
 								</View>
 								<View
-									style={{
-										justifyContent: 'flex-end',
-										flexDirection: 'row',
-										right: 10,
-										top: 0
-									}}>
+									style={orderItemStyles.closeModalBtn}>
 									{this.closeModalBtn("notesModal")}
 								</View>
 							</View>
 
 							<View
-								style={{
-									flex: 1
-								}}>
+								style={orderItemStyles.flexOne}>
 								<TextInput
 									style={{
 										padding: 10
@@ -1148,12 +1117,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 					<TouchableOpacity>
 						<View
-							style={{
-								justifyContent: 'flex-end',
-								flexDirection: 'row',
-								right: 10,
-								top: 0
-							}}>
+							style={orderItemStyles.closeModalBtn}>
 							{this.closeModalBtn("modal6")}
 						</View>
 						<Card containerStyle={{ backgroundColor: '#ABC1DE', padding: 5 }}>
@@ -1397,7 +1361,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.setState({ notes });
 	}
 
-	getBottleRow = (item) => {
+	renderBottleRow  = ({ item, index, separators }) => {
 		if (item.product.description.includes('refill')) {
 			return (
 				<View style={orderItemStyles.discountRow}>
@@ -1447,7 +1411,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		} else {
 			return (<View />);
 		}
-	}
+	};
 
 	setEmptiesReturnedCheckOut = (emptiesReturned, item) => {
 		let refillPending = '';
@@ -2084,7 +2048,6 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	getRemindersNew = (data) => {
 		const groupCustomers = this.groupBy("customer_account_id");
-		groupCustomers(data);
 
 		let final = [];
 		for (let key of Object.keys(groupCustomers(data))) {
@@ -2095,7 +2058,6 @@ class OrderSummaryScreen extends React.PureComponent {
 			final.push({
 				customer_account_id: key,
 				name: groupCustomers(data)[key][0].customer_account.name,
-				// name: CustomerRealm.getCustomerById(key).name,
 				phoneNumber: groupCustomers(data)[key][0].customer_account.hasOwnProperty('phone_number') ? groupCustomers(data)[key][0].customer_account.phone_number : 'N/A',
 				address: groupCustomers(data)[key][0].customer_account.hasOwnProperty('address') ? groupCustomers(data)[key][0].customer_account.address : groupCustomers(data)[key][0].customer_account.address_line1,
 				frequency: this.pairwiseDifference(dateArray, dateArray.length) > 10 ? 10 : this.pairwiseDifference(dateArray, dateArray.length),
@@ -2109,24 +2071,25 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	saveCustomerFrequency(receipts) {
-		console.log('data-data-receipts', receipts)
 		CustomerReminderRealm.createCustomerReminder(this.getRemindersNew(receipts)[0], SettingRealm.getAllSetting().siteId)
 	}
 
 
 	closeModal = (modal) => {
-		if (modal === 'modal7') {
-			this.setState({ isBottleTrackerModal: false })
+		switch (modal) {
+			case 'modal7':
+				this.refs.modal7.close();
+				this.setState({ isBottleTrackerModal: false });
+				break;
+			case 'notesModal':
+				this.setState({ isAdditionalNotesModal: false });
+				this.refs.notesModal.close();
+				break;
+			case 'modal6':
+				this.setState({ isPaymentModal: false });
+				this.refs.modal6.close();
+				break;
 		}
-
-		if (modal === 'notesModal') {
-			this.setState({ isAdditionalNotesModal: false })
-		}
-		if (modal === 'modal6') {
-			this.setState({ isPaymentModal: false })
-		}
-
-		this.refs[modal].close();
 	};
 
 	currentCredit() {

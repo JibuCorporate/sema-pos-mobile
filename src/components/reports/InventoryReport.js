@@ -8,7 +8,7 @@ import * as InventoryActions from '../../actions/InventoryActions';
 import { connect } from "react-redux";
 import DateFilter from "./DateFilter";
 import InventroyRealm from "../../database/inventory/inventory.operations";
-
+import ProductsRealm from "../../database/products/product.operations";
 import { isSameDay } from 'date-fns';
 
 import i18n from '../../app/i18n';
@@ -17,6 +17,7 @@ class InventoryEdit extends React.PureComponent {
 		super(props);
 		this.state = { inventoryQuantity: this.props.quantity };
 		this.quantityInput = React.createRef();
+		this.onChangeText = this.onChangeText.bind(this);
 	}
 
 	render() {
@@ -38,7 +39,7 @@ class InventoryEdit extends React.PureComponent {
 								underlineColorAndroid='transparent'
 								onSubmitEditing={() => this.props.okMethod(this.props.wastageName, this.state.inventoryQuantity)}
 								keyboardType='decimal-pad'
-								onChangeText={this.onChangeText.bind(this)}
+								onChangeText={this.onChangeText}
 								value={this.state.inventoryQuantity}
 								ref={this.quantityInput}
 								autoFocus={true}
@@ -68,9 +69,11 @@ class InventoryEdit extends React.PureComponent {
 		);
 
 	}
+
 	closeCurrentSkuHandler() {
 		this.props.cancelMethod();
 	};
+
 	isVisible() {
 		if (this.props.type === "wastageName") {
 			return this.props.skuToShow === this.props.wastageName;
@@ -80,6 +83,7 @@ class InventoryEdit extends React.PureComponent {
 			return false;
 		}
 	}
+
 	onChangeText = (text) => {
 		this.setState({ inventoryQuantity: text });
 	}
@@ -101,6 +105,9 @@ class InventoryReport extends React.PureComponent {
 			refresh: false,
 			currentMeterVisible: false
 		};
+
+		// this.onCancelCurrentMeter = this.onCancelCurrentMeter.bind(this);
+		// this.onOkCurrentMeter = this.onOkCurrentMeter.bind(this);
 	}
 
 	addDays = (theDate, days) => {
@@ -128,11 +135,7 @@ class InventoryReport extends React.PureComponent {
 							data={this.getInventoryData()}
 							extraData={this.state.refresh}
 							ListHeaderComponent={this.showHeader}
-							renderItem={({ item, index, separators }) => (
-								<View>
-									{this.getRow(item, index, separators)}
-								</View>
-							)}
+							renderItem={this.renderItem}
 							keyExtractor={item => item.wastageName}
 							initialNumToRender={50}
 						/>
@@ -186,53 +189,7 @@ class InventoryReport extends React.PureComponent {
 		);
 	}
 
-	getInventoryCurrentMeterForEdit() {
-		let value = null
-		if (this.props.wastageData.hasOwnProperty("inventory")) {
-			value = this.props.wastageData.inventory.currentMeter;
-		}
-		if (value == null) return "";
-		else return value.toFixed(2);
-	}
-
-	getInventoryData() {
-		if (this.props.dateFilter.hasOwnProperty("currentDate") && this.props.dateFilter.hasOwnProperty("previousDate")) {
-			if (isSameDay(this.props.dateFilter.currentDate, this.currentDate) && isSameDay(this.props.dateFilter.previousDate, this.previousDate)) {
-				return this.props.wastageData.salesAndProducts.salesItems;
-			} else {
-				this.currentDate = this.props.dateFilter.currentDate;
-				this.previousDate = this.props.dateFilter.previousDate;
-				this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, this.props.products);
-				return this.props.wastageData.salesAndProducts.salesItems;
-			}
-		}
-	}
-
-
-	getTotalLiters() {
-		if (this.props.wastageData.salesAndProducts.totalLiters && this.props.wastageData.salesAndProducts.totalLiters !== 'N/A') {
-			return this.props.wastageData.salesAndProducts.totalLiters.toFixed(2) + ' L';
-		} else {
-			return '-';
-		}
-
-	}
-
-	getItemTotalLiters(item) {
-		if (item.totalLiters && item.totalLiters !== 'N/A') {
-			return `${item.totalLiters.toFixed(2)} L`;
-		}
-		return 'N/A';
-	}
-
-	getItemLitersPerSku(item) {
-		if (item.litersPerSku && item.litersPerSku !== 'N/A') {
-			return `${item.litersPerSku} L`;
-		}
-		return 'N/A';
-	}
-
-	getRow = (item) => {
+	renderItem  = ({ item, index, separators }) => {
 		return (
 			<View style={styles.rowBackground}>
 				<View style={styles.flex1}>
@@ -269,6 +226,52 @@ class InventoryReport extends React.PureComponent {
 			</View>
 		);
 	};
+
+	getInventoryCurrentMeterForEdit() {
+		let value = null
+		if (this.props.wastageData.hasOwnProperty("inventory")) {
+			value = this.props.wastageData.inventory.currentMeter;
+		}
+		if (value == null) return "";
+		else return value.toFixed(2);
+	}
+
+	getInventoryData() {
+		if (this.props.dateFilter.hasOwnProperty("currentDate") && this.props.dateFilter.hasOwnProperty("previousDate")) {
+			if (isSameDay(this.props.dateFilter.currentDate, this.currentDate) && isSameDay(this.props.dateFilter.previousDate, this.previousDate)) {
+				return this.props.wastageData.salesAndProducts.salesItems;
+			} else {
+				this.currentDate = this.props.dateFilter.currentDate;
+				this.previousDate = this.props.dateFilter.previousDate;
+				this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, ProductsRealm.getProducts());
+				return this.props.wastageData.salesAndProducts.salesItems;
+			}
+		}
+	}
+
+
+	getTotalLiters() {
+		if (this.props.wastageData.salesAndProducts.totalLiters && this.props.wastageData.salesAndProducts.totalLiters !== 'N/A') {
+			return this.props.wastageData.salesAndProducts.totalLiters.toFixed(2) + ' L';
+		} else {
+			return '-';
+		}
+
+	}
+
+	getItemTotalLiters(item) {
+		if (item.totalLiters && item.totalLiters !== 'N/A') {
+			return `${item.totalLiters.toFixed(2)} L`;
+		}
+		return 'N/A';
+	}
+
+	getItemLitersPerSku(item) {
+		if (item.litersPerSku && item.litersPerSku !== 'N/A') {
+			return `${item.litersPerSku} L`;
+		}
+		return 'N/A';
+	}
 
 	getInventorySkuForEdit(currentPrev, item) {
 		let value = this.getInventorySkuForDisplay(currentPrev, item);
@@ -324,7 +327,7 @@ class InventoryReport extends React.PureComponent {
 				},
 					this.props.dateFilter.currentDate);
 			}
-			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, this.props.products);
+			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, ProductsRealm.getProducts());
 			this.setState({ refresh: true });
 		} else {
 			// TODO - Show alert
@@ -363,7 +366,7 @@ class InventoryReport extends React.PureComponent {
 				},
 					this.props.dateFilter.currentDate);
 			}
-			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, this.props.products);
+			this.props.wastageActions.GetInventoryReportData(this.currentDate, this.previousDate, ProductsRealm.getProducts());
 			this.setState({ refresh: true });
 		} else {
 			// TODO - Show alert
