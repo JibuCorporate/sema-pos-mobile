@@ -1043,10 +1043,6 @@ class CustomerDetails extends React.PureComponent {
 			<TouchableNativeFeedback onPress={() => this.setSelected(item)}>
 				<View key={index} style={{ padding: 10 }}>
 					<View style={styles.itemData}>
-						<Icon name={`md-barcode`} size={25} color="#808080" />
-						<Text style={styles.customername}>{item.type}</Text>
-					</View>
-					<View style={styles.itemData}>
 						<Text style={styles.customername}>{item.isReceipt ? item.customerAccount.name : item.customerAccount.name}</Text>
 					</View>
 					<Text style={styles.customername}>

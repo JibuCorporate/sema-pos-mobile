@@ -10,9 +10,7 @@ import {
 	Alert,
 	ToastAndroid,
 	ScrollView,
-	SectionList,
 	SafeAreaView,
-	RefreshControl,
 	Dimensions
 } from 'react-native';
 import ProductsRealm from '../../database/products/product.operations';
@@ -37,7 +35,6 @@ import PaymentTypeRealm from '../../database/payment_types/payment_types.operati
 import { format, parseISO, isBefore } from 'date-fns';
 import i18n from '../../app/i18n';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
-import { da } from 'date-fns/locale';
 
 class ReceiptLineItem extends React.Component {
 	constructor(props) {
@@ -553,7 +550,9 @@ class Transactions extends React.Component {
 			hasScrolled: false,
 			paymentTypeValue: '',
 			dataProvider: new DataProvider((r1, r2) => { return r1 !== r2; }),
-			selected: {}
+			// selected: {}
+			selected:
+			this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[1].item : {},
 		};
 
 		let { width } = Dimensions.get("window");
@@ -579,15 +578,18 @@ class Transactions extends React.Component {
 		this.rowRenderer = this.rowRenderer.bind(this);
 	}
 
+	componentWillReceiveProps(){
+		this.setState({
+			dataProvider: this.state.dataProvider.cloneWithRows(this.prepareSectionedData())
+		});
+	}
+
 	componentDidMount() {
-		this.prepareSectionedData();
+		this.setState({
+			dataProvider: this.state.dataProvider.cloneWithRows(this.prepareSectionedData())
+		});
 		this.props.navigation.setParams({ paymentTypeValue: 'all' });
 		this.props.navigation.setParams({ checkPaymentTypefilter: this.checkPaymentTypefilter });
-		// Events.on(
-		// 	'ScrollCustomerTo',
-		// 	'customerId1',
-		// 	this.onScrollCustomerTo.bind(this)
-		// );
 	}
 
 	comparePaymentTypeReceipts = () => {
@@ -665,7 +667,6 @@ class Transactions extends React.Component {
 				? 1
 				: -1;
 		});
-		// receipts = this.filterItems(receipts);
 
 		return [...receipts];
 	}
@@ -795,9 +796,7 @@ class Transactions extends React.Component {
 			}
 		}
 
-		this.setState({
-			dataProvider: this.state.dataProvider.cloneWithRows(transactionData)
-		});
+		return transactionData;
 	}
 
 	checkPaymentTypefilter = (searchText) => {

@@ -10,8 +10,8 @@ import * as SettingsActions from '../actions/SettingsActions';
 import i18n from '../app/i18n';
 
 class CustomSidebarMenu extends React.PureComponent {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       animating: false,
       language: '',

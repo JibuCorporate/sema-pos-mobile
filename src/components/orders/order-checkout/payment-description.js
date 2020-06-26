@@ -1,12 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-
-import * as OrderActions from "../../../actions/OrderActions";
-import * as CustomerActions from '../../../actions/CustomerActions';
-import * as PaymentTypesActions from "../../../actions/PaymentTypesActions";
 import SettingRealm from '../../../database/settings/settings.operations';
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
 
 class PaymentDescription extends React.PureComponent {
 	render() {
@@ -28,27 +22,7 @@ class PaymentDescription extends React.PureComponent {
 	};
 }
 
-function mapStateToProps(state, props) {
-	return {
-		products: state.orderReducer.products,
-		paymentTypes: state.paymentTypesReducer.paymentTypes,
-		selectedPaymentTypes: state.paymentTypesReducer.selectedPaymentTypes,
-		selectedDiscounts: state.orderReducer.discounts,
-		flow: state.orderReducer.flow,
-		channel: state.orderReducer.channel,
-		payment: state.orderReducer.payment,
-		selectedCustomer: state.customerReducer.selectedCustomer
-	};
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		orderActions: bindActionCreators(OrderActions, dispatch),
-		customerActions: bindActionCreators(CustomerActions, dispatch),
-		paymentTypesActions: bindActionCreators(PaymentTypesActions, dispatch)
-	};
-}
-export default connect(mapStateToProps, mapDispatchToProps)(PaymentDescription);
+export default PaymentDescription;
 
 const styles = StyleSheet.create({
 

@@ -62,7 +62,7 @@ class CustomerList extends React.Component {
             switch (type) {
                 case 'NORMAL':
                     dim.width = width;
-                    dim.height = 65;
+                    dim.height = 50;
                     break;
                 default:
                     dim.width = 0;
@@ -307,7 +307,6 @@ class CustomerList extends React.Component {
                         <View style={styles.balance}>
                             <TouchableWithoutFeedback onPress={() => {
                                 this.setState({ debtcustomers: !this.state.debtcustomers });
-                                // this.setState({ refresh: !this.state.refresh });
                                 this.prepareData();
                             }}>
                                 <Text style={styles.headerItem}>{i18n.t('balance')}
@@ -324,7 +323,6 @@ class CustomerList extends React.Component {
                         <View style={styles.flexOne}>
                             <TouchableWithoutFeedback onPress={() => {
                                 this.setState({ walletcustomers: !this.state.walletcustomers });
-                                // this.setState({ refresh: !this.state.refresh });
                                 this.prepareData();
                             }}>
                                 <Text style={[styles.headerItem]}>Wallet

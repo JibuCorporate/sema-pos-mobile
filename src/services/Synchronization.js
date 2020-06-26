@@ -129,17 +129,15 @@ class Synchronization {
 					syncResult.orders = promiseOrders;
 					syncResult.customerReminder = promiseReminder;
 
-					console.log("Start synching end 1 ...", syncResult);
+					console.log("Ending synching end  ...", syncResult);
 					return syncResult;
 				} catch (error) {
-					console.log("Mayday  " + JSON.stringify(error));
 					return error;
 				}
 			})
 			.catch(error => {
 				syncResult.error = error;
 				syncResult.status = 'failure';
-				console.log("Mayday error " + JSON.stringify(syncResult));
 				resolve(syncResult);
 			});
 

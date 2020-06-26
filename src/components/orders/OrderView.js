@@ -15,9 +15,6 @@ class OrderView extends React.PureComponent {
 	}
 	static contextType = AppContext;
 
-	componentDidMount() {
-		console.log('this.context.order', this.context);
-	}
 	render() {
 		return (
 			<View style={styles.orderView}>

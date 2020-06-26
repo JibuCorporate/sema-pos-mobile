@@ -48,8 +48,7 @@ class PaymentModal extends React.PureComponent {
 		return (
 				<ScrollView>
 					<TouchableOpacity>
-					<View
-					style={styles.paymodcont}>
+					<View style={styles.paymodcont}>
 						<View
 							style={styles.cancelbtn}>
 							{this.getCancelButton()}
@@ -73,12 +72,8 @@ class PaymentModal extends React.PureComponent {
 					</View>
 					<FlatList
 						data={PaymentTypeRealm.getPaymentTypes()}
-						renderItem={({ item, index, separators }) => (
-							this.paymentTypesRow(item, index, separators)
-						)}
-						// extraData={this.props.selectedDebtPaymentTypes}
+						renderItem={this.renderPaymentRow}
 						numColumns={3}
-						legacyImplementation={true}
 						contentContainerStyle={styles.container}
 					/>
 					<View style={styles.flexpad}>
@@ -135,9 +130,7 @@ class PaymentModal extends React.PureComponent {
 		this.setState({ paymentnote });
 	};
 
-	paymentTypesRow = (item, index, separators) => {
-		console.log('itemr', item)
-		console.log('this.props.selectedPaymentTypes', this.props.selectedPaymentTypes)
+	renderPaymentRow = ({item, index, separators}) => {
 		let isSelectedAvailable = false;
 		if (this.props.selectedPaymentTypes.length > 0) {
 			const itemIndex = this.props.selectedPaymentTypes.map(function (e) { return e.id }).indexOf(item.id);
@@ -167,7 +160,7 @@ class PaymentModal extends React.PureComponent {
 									/>}
 									checked={item.isSelected || isSelectedAvailable}
 									onPress={() => {
-										this.checkBoxType(item);
+										this.checkBoxType(item)
 									}}
 								/>
 							</View>

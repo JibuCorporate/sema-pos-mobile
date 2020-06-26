@@ -14,9 +14,28 @@ export default orderItemStyles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row'
 	},
+
+	flex12: { flex: 1.2 },
 	pad10: {
 		padding: 10
 	},
+
+	flexmargins: {
+		flex: 1,
+		marginTop: 0,
+		marginLeft: 20,
+		marginRight: 20
+	},
+
+	chkCont: { flex: 1, height: 45 },
+
+	bgpad: { backgroundColor: '#ABC1DE', padding: 5 },
+
+	flexpadmargin: { flex: 1, padding: 0, margin: 0 },
+
+	txtalign: { textAlign: 'center' },
+
+	tatxt: { textAlign: 'right', paddingRight: 5 },
 
 	flexPadLeft: {
 		flex: 1,
