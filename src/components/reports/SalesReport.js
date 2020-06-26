@@ -56,7 +56,7 @@ class SalesReport extends React.PureComponent {
 								</View>
 								<View style={styles.salestabs} >
 									<Text style={styles.totalLabel4}>DEBT COLLECTED</Text>
-									<Text style={styles.totalItem6}>{this.props.salesData.totalDebt}</Text>
+									<Text style={styles.totalItem6}>{this.getCurrency()} {this.props.salesData.totalDebt.toFixed(1)}</Text>
 								</View>
 								<View style={styles.salestabs} >
 									<Text style={styles.totalLabel4}>TOTAL EARNINGS</Text>

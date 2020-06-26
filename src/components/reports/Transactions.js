@@ -289,8 +289,7 @@ class TransactionDetail extends React.Component {
 				<View
 					style={styles.topupdebtcont}>
 					<View style={styles.flex1}>
-						<View
-							style={styles.flexAndDirection}>
+						<View style={styles.flexAndDirection}>
 							<View style={styles.itemData3}>
 								<Text style={styles.label, styles.tdlbl}>
 									{'Loan Cleared'}</Text>
@@ -580,7 +579,9 @@ class Transactions extends React.Component {
 
 	componentWillReceiveProps(){
 		this.setState({
-			dataProvider: this.state.dataProvider.cloneWithRows(this.prepareSectionedData())
+			dataProvider: this.state.dataProvider.cloneWithRows(this.prepareSectionedData()),
+			selected:
+			this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[1].item : {}
 		});
 	}
 
