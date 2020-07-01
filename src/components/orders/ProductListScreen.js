@@ -1,4 +1,10 @@
 import React from "react";
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import {
 	View,
 	Text,
@@ -40,6 +46,7 @@ class ProductListScreen extends React.PureComponent {
 			this.props.orderActions.AddProductToOrder(item, 1, unitPrice);
 		});
 	}
+	static whyDidYouRender = true;
 
 
 	getItemPrice = item => {

@@ -98,10 +98,10 @@ class DateFilter extends React.PureComponent {
 	}
 
 
-	onPreviousDay() {
+	onPreviousDay = () => {
 		this.setState({ currentDate: new Date(this.state.currentDate.getTime() - dayInMilliseconds) }, () => this.update());
 	}
-	onNextDay() {
+	onNextDay = () => {
 		this.setState({ currentDate: new Date(this.state.currentDate.getTime() + dayInMilliseconds) }, () => this.update());
 	}
 
@@ -134,16 +134,11 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		marginLeft: 10,
 		marginTop: 20,
-		flexDirection: 'row',
-		width: 500
+		flexDirection: 'row'
 	},
 	filterItemContainer: {
 		justifyContent: "center",
 		paddingLeft: 10
-	},
-	filterImage: {
-		width: 30,
-		height: 30
 	},
 
 	opacity4: {

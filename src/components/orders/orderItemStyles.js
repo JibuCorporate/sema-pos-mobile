@@ -15,6 +15,30 @@ export default orderItemStyles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 
+	qtyvalstyle: { flex: 1, height: 40, textAlign: 'center' },
+
+	qtyamticon: { flex: .2, height: 40 },
+
+	qtyamtval: { flex: .6, height: 40, textAlign: 'center' },
+
+	qtyamtvalcont: { flex: .5, alignSelf: 'center' },
+
+	qtyamticon2: { flex: .2, height: 40 },
+
+	qtyamtstyle: {
+		flex: 1,
+		width: "100%",
+		flexDirection: 'row',
+		alignItems: 'stretch',
+
+	},
+
+	emptiestxtinput: {
+		textAlign: 'center',
+		height: 50,
+		fontSize: 24
+	},
+
 	flex12: { flex: 1.2 },
 	pad10: {
 		padding: 10
@@ -26,6 +50,8 @@ export default orderItemStyles = StyleSheet.create({
 		marginLeft: 20,
 		marginRight: 20
 	},
+
+	margLeft: { marginLeft: 12 },
 
 	chkCont: { flex: 1, height: 45 },
 

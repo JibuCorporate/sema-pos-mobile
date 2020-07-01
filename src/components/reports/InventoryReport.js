@@ -1,5 +1,10 @@
 import React from 'react';
-
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import { Text, View, StyleSheet, TouchableHighlight, FlatList, Modal, TextInput } from 'react-native';
 import { bindActionCreators } from "redux";
 import * as WastageActions from "../../actions/WastageActions";
@@ -19,6 +24,7 @@ class InventoryEdit extends React.PureComponent {
 		this.quantityInput = React.createRef();
 		this.onChangeText = this.onChangeText.bind(this);
 	}
+	static whyDidYouRender = true;
 
 	render() {
 		return (
@@ -109,6 +115,7 @@ class InventoryReport extends React.PureComponent {
 		// this.onCancelCurrentMeter = this.onCancelCurrentMeter.bind(this);
 		// this.onOkCurrentMeter = this.onOkCurrentMeter.bind(this);
 	}
+	static whyDidYouRender = true;
 
 	addDays = (theDate, days) => {
 		return new Date(theDate.getTime() + days * 24 * 60 * 60 * 1000);

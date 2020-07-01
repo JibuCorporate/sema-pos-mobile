@@ -1,4 +1,10 @@
 import React from 'react';
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 
 import { Text, View, StyleSheet, FlatList, ScrollView, RefreshControl } from 'react-native';
 import { bindActionCreators } from "redux";
@@ -17,6 +23,8 @@ class SalesReport extends React.PureComponent {
 			refreshing: false,
 		};
 	}
+
+	static whyDidYouRender = true;
 
 	_onRefresh = () => {
 		this.updateReport();

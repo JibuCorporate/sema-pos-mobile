@@ -351,7 +351,6 @@ class CustomerList extends React.Component {
     render() {
         return (
             <View style={styles.custcontainer}>
-
                 <StickyContainer
                     stickyHeaderIndices={[0]}
                     overrideRowRenderer={this._overrideRowRenderer}>
@@ -377,7 +376,6 @@ class CustomerList extends React.Component {
                         );
 
                         this.context.setCustomerEditStatus(false);
-
                         this.props.navigation.navigate('EditCustomer');
                     }}
                 />
@@ -457,19 +455,17 @@ class CustomerList extends React.Component {
             data = this.filterItems(CustomerRealm.getAllCustomer(), customerSearch, customerTypeFilter);
         }
 
-        const customerData = [];
+		const customerData = [];
+		customerData.push({
+			type: 'NORMAL',
+			item: {}
+		})
 
         for (let i in data) {
             customerData.push({
                 type: 'NORMAL',
                 item: data[i],
             });
-		}
-		if(customerData.length <= 0){
-			customerData.push({
-				type: 'NORMAL',
-				item: {}
-			})
 		}
 
         this.setState({
@@ -556,11 +552,9 @@ class SearchWatcher extends React.PureComponent {
 
         setTimeout(() => {
             if (
-                that.props.parent.props.searchString !==
-                that.props.parent.state.searchString
+                that.props.parent.props.searchString !== that.props.parent.state.searchString
             ) {
-                that.props.parent.state.searchString =
-                    that.props.parent.props.searchString;
+                that.props.parent.state.searchString = that.props.parent.props.searchString;
                 that.props.parent.setState({
                     refresh: !that.props.parent.state.refresh
                 });
@@ -617,7 +611,8 @@ const styles = StyleSheet.create({
     list: { backgroundColor: '#fff', flex: 1 },
     modalPayment: {
         backgroundColor: 'white',
-    },
+	},
+
     modal3: {
         justifyContent: 'center',
         width: wp('70%'),

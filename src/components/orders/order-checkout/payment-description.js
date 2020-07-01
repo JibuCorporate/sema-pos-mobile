@@ -10,7 +10,8 @@ class PaymentDescription extends React.PureComponent {
 					<Text style={styles.totalTitle}>{this.props.title}</Text>
 				</View>
 				<View style={styles.flex2}>
-		<Text style={styles.totalValue}>{this.getCurrency().toUpperCase()} {this.props.total}</Text>
+					<Text style={styles.totalValue}>{this.getCurrency().toUpperCase()}
+					{this.props.total}</Text>
 				</View>
 			</View>
 		);
