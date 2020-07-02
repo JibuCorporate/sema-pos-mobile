@@ -1,18 +1,16 @@
 import React from 'react';
-
 import { Text, View, StyleSheet, TouchableHighlight, FlatList, Modal, TextInput } from 'react-native';
 import { bindActionCreators } from "redux";
 import * as WastageActions from "../../actions/WastageActions";
 import * as ProductActions from "../../actions/ProductActions";
 import * as InventoryActions from '../../actions/InventoryActions';
 import { connect } from "react-redux";
-import ProductsRealm from '../../database/products/product.operations';
 import DateFilter from "./DateFilter";
 import InventroyRealm from "../../database/inventory/inventory.operations";
 import ProductsRealm from "../../database/products/product.operations";
 import { isSameDay } from 'date-fns';
-
 import i18n from '../../app/i18n';
+
 class InventoryEdit extends React.PureComponent {
 	constructor(props) {
 		super(props);
