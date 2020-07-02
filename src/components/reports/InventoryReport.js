@@ -1,8 +1,4 @@
 import React from 'react';
-    whyDidYouRender(React, {
-        trackAllPureComponents: true,
-    });
-}
 import { Text, View, StyleSheet, TouchableHighlight, FlatList, Modal, TextInput } from 'react-native';
 import { bindActionCreators } from "redux";
 import * as ProductActions from "../../actions/ProductActions";

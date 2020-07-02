@@ -1,9 +1,9 @@
 import React from 'react';
 if (process.env.NODE_ENV === 'development') {
-    const whyDidYouRender = require('@welldone-software/why-did-you-render');
-    whyDidYouRender(React, {
-        trackAllPureComponents: true,
-    });
+  const whyDidYouRender = require('@welldone-software/why-did-you-render');
+  whyDidYouRender(React, {
+    trackAllPureComponents: true,
+  });
 }
 import { View, StyleSheet, Image, Text, Alert, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -14,7 +14,7 @@ import SettingRealm from '../database/settings/settings.operations';
 import Communications from '../services/Communications';
 import * as SettingsActions from '../actions/SettingsActions';
 import i18n from '../app/i18n';
-import {withNavigation} from 'react-navigation';
+import { withNavigation } from 'react-navigation';
 
 class CustomSidebarMenu extends React.Component {
   constructor(props) {
@@ -26,9 +26,15 @@ class CustomSidebarMenu extends React.Component {
       password: "",
       selectedLanguage: {},
       isLoading: false
-	};
+    };
 
-	this.headerImage= "";
+    this.headerImage = "";
+    this.imageLogo = require('../images/jibulogo.png');
+    this.resizeMode = 'stretch';
+    this.iconSize = 25;
+    this.activitySize = 60;
+    this.activityColor = "#ABC1DE";
+    this.iconColor = "#808080";
 
     this.items = [
       {
@@ -66,25 +72,25 @@ class CustomSidebarMenu extends React.Component {
         navOptionName: 'LogOut',
         screenToNavigate: 'LogOut',
       }
-	];
+    ];
 
   }
 
-  componentDidUpdate(prevProps, prevState){
-	  return false;
+  componentDidUpdate(prevProps, prevState) {
+    return false;
   }
 
   static whyDidYouRender = true;
 
-  handleOnPress(item, key){
+  handleOnPress(item, key) {
     requestAnimationFrame(() => {
 
-	global.currentScreenIndex = key;
+      global.currentScreenIndex = key;
       if (item.screenToNavigate === 'LogOut') {
         this.onLogout();
-	  }
+      }
 
-	  if (item.screenToNavigate === 'Sync') {
+      if (item.screenToNavigate === 'Sync') {
         this.onSynchronize();
       }
 
@@ -95,33 +101,37 @@ class CustomSidebarMenu extends React.Component {
     });
   }
 
+  customList() {
+    return this.items.map((item, key) => (
+      <View style={styles.viewFlex} key={key}>
+        <TouchableOpacity
+          style={drwrStyle(key, global.currentScreenIndex).drawerSty}
+          onPress={() => this.handleOnPress(item, key)}>
+          <View style={styles.viewMargins}>
+            <Icon name={item.navOptionThumb} size={25} color={"#808080"} />
+          </View>
+          <Text style={txtStyle(key, global.currentScreenIndex).txtCol}>
+            {item.navOptionName}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    ))
+  }
+
   render() {
     return (
       <View style={styles.sideMenuContainer}>
         <ScrollView style={styles.viewFlex}>
-          <Image source={require('../images/jibulogo.png')} resizeMode={'stretch'} style={styles.imageStyle} />
+          <Image source={this.imageLogo} resizeMode={this.resizeMode} style={styles.imageStyle} />
           {/*Divider between Top Image and Sidebar Option*/}
           <View style={styles.viewCont} />
           {/*Setting up Navigation Options from option array using loop*/}
           <View style={styles.viewFlex}>
-            {this.items.map((item, key) => (
-              <View style={styles.viewFlex} key={key}>
-                <TouchableOpacity
-                  style={drwrStyle(key, global.currentScreenIndex).drawerSty}
-                  onPress={() => this.handleOnPress(item, key)}>
-                  <View style={styles.viewMargins}>
-                    <Icon name={item.navOptionThumb} size={25} color={"#808080"} />
-                  </View>
-				  <Text style={txtStyle(key, global.currentScreenIndex).txtCol}>
-                    {item.navOptionName}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ))}
+            {this.customList()}
           </View>
           {
             this.state.isLoading && (
-              <ActivityIndicator size={60} color={"#ABC1DE"} />
+              <ActivityIndicator size={this.activitySize} color={this.activityColor} />
             )
           }
         </ScrollView>
@@ -164,8 +174,8 @@ class CustomSidebarMenu extends React.Component {
         );
       });
     } catch (error) {
-		console.log("Sidebarsynch" + error);
-	}
+      console.log("Sidebarsynch" + error);
+    }
   };
 
   _getSyncResults(syncResult) {
@@ -298,28 +308,28 @@ export default connect(
 )(withNavigation(CustomSidebarMenu));
 
 const txtStyle = (key, index) => StyleSheet.create({
-	txtCol: {
-		fontSize: 15,
-		color: index === key ? 'red' : 'black',
-	}
+  txtCol: {
+    fontSize: 15,
+    color: index === key ? 'red' : 'black',
+  }
 });
 
 const drwrStyle = (key, index) => StyleSheet.create({
-	drawerSty: {
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingTop: 10,
-		paddingBottom: 10,
-		backgroundColor: index === key ? '#e0dbdb' : '#ffffff'
-	}
+  drawerSty: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: index === key ? '#e0dbdb' : '#ffffff'
+  }
 })
 const styles = StyleSheet.create({
   viewMargins: {
-	marginRight: 10, marginLeft: 20
+    marginRight: 10, marginLeft: 20
   },
-  viewFlex:{
-	  flex: 1
+  viewFlex: {
+    flex: 1
   },
   imageStyle: {
     width: 100,
