@@ -1,4 +1,10 @@
 import React from 'react';
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import { View, StyleSheet, Image, Text, Alert, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
@@ -8,10 +14,11 @@ import SettingRealm from '../database/settings/settings.operations';
 import Communications from '../services/Communications';
 import * as SettingsActions from '../actions/SettingsActions';
 import i18n from '../app/i18n';
+import {withNavigation} from 'react-navigation';
 
-class CustomSidebarMenu extends React.PureComponent {
-  constructor() {
-    super();
+class CustomSidebarMenu extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
       animating: false,
       language: '',
@@ -60,13 +67,19 @@ class CustomSidebarMenu extends React.PureComponent {
         screenToNavigate: 'LogOut',
       }
 	];
-	// this.handleOnPress = this.handleOnPress.bind(this);
+
   }
 
-  handleOnPress = (item, key) => {
-    // requestAnimationFrame(() => {
-      global.currentScreenIndex = key;
+  componentDidUpdate(prevProps, prevState){
+	  return false;
+  }
 
+  static whyDidYouRender = true;
+
+  handleOnPress(item, key){
+    requestAnimationFrame(() => {
+
+	global.currentScreenIndex = key;
       if (item.screenToNavigate === 'LogOut') {
         this.onLogout();
 	  }
@@ -79,7 +92,7 @@ class CustomSidebarMenu extends React.PureComponent {
         this.props.navigation.navigate(item.screenToNavigate);
       }
 
-    // });
+    });
   }
 
   render() {
@@ -88,8 +101,7 @@ class CustomSidebarMenu extends React.PureComponent {
         <ScrollView style={styles.viewFlex}>
           <Image source={require('../images/jibulogo.png')} resizeMode={'stretch'} style={styles.imageStyle} />
           {/*Divider between Top Image and Sidebar Option*/}
-          <View
-            style={styles.viewCont} />
+          <View style={styles.viewCont} />
           {/*Setting up Navigation Options from option array using loop*/}
           <View style={styles.viewFlex}>
             {this.items.map((item, key) => (
@@ -100,7 +112,7 @@ class CustomSidebarMenu extends React.PureComponent {
                   <View style={styles.viewMargins}>
                     <Icon name={item.navOptionThumb} size={25} color={"#808080"} />
                   </View>
-                  <Text style={txtStyle(key, global.currentScreenIndex).txtCol}>
+				  <Text style={txtStyle(key, global.currentScreenIndex).txtCol}>
                     {item.navOptionName}
                   </Text>
                 </TouchableOpacity>
@@ -275,15 +287,6 @@ class CustomSidebarMenu extends React.PureComponent {
 
 }
 
-function mapStateToProps(state, props) {
-  return {
-    selectedCustomer: state.customerReducer.selectedCustomer,
-    customers: state.customerReducer.customers,
-    settings: state.settingsReducer.settings,
-    products: state.productReducer.products,
-  };
-}
-
 function mapDispatchToProps(dispatch) {
   return {
     settingsActions: bindActionCreators(SettingsActions, dispatch),
@@ -291,9 +294,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(
-  mapStateToProps,
   mapDispatchToProps
-)(CustomSidebarMenu);
+)(withNavigation(CustomSidebarMenu));
 
 const txtStyle = (key, index) => StyleSheet.create({
 	txtCol: {

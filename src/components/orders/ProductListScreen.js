@@ -1,4 +1,10 @@
 import React from "react";
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import {
 	View,
 	Text,
@@ -34,20 +40,13 @@ class ProductListScreen extends React.PureComponent {
 		// }
 	};
 
-
-
-	componentDidMount() {
-		// console.log('this.context.pres', this.context.selectedCustomer);
-	}
-
 	handleOnPress = (item) => {
 		requestAnimationFrame(() => {
-			// InteractionManager.runAfterInteractions(() => {
 			const unitPrice = this.getItemPrice(item);
 			this.props.orderActions.AddProductToOrder(item, 1, unitPrice);
 		});
-		// });
 	}
+	static whyDidYouRender = true;
 
 
 	getItemPrice = item => {
@@ -68,11 +67,7 @@ class ProductListScreen extends React.PureComponent {
 		return item.priceAmount; // Just use product price
 	};
 
-	_renderItem = ({ item, index, separators }) => (
-		this.productListItem(item, index, this.viewWidth, separators)
-	);
-
-	productListItem = (item, index, viewWidth, separators) => {
+	_renderItem = ({ item, index, separators }) => {
 		return (
 			<TouchableOpacity
 				onPress={() => this.handleOnPress(item)}
@@ -80,7 +75,7 @@ class ProductListScreen extends React.PureComponent {
 				onHideUnderlay={separators.unhighlight}>
 				<View
 					style={[
-						this.getItemBackground(index), newStyle(viewWidth).heights
+						this.getItemBackground(index), newStyle(this.viewWidth).heights
 					]}>
 					<Image
 						source={{ uri: this.getImage(item) }}
@@ -95,7 +90,8 @@ class ProductListScreen extends React.PureComponent {
 					</Text>
 				</View>
 			</TouchableOpacity>
-		)
+		);
+
 	}
 
 

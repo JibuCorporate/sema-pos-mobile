@@ -1,5 +1,10 @@
 import React from 'react';
-
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import {
 	View,
 	Text,
@@ -10,15 +15,13 @@ import {
 	Alert,
 	ToastAndroid,
 	ScrollView,
-	SectionList,
 	SafeAreaView,
-	RefreshControl,
-	Dimensions
+	Dimensions,
+	InteractionManager
 } from 'react-native';
-import ProductsRealm from '../../database/products/product.operations';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Events from 'react-native-simple-events';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -31,104 +34,80 @@ import * as paymentTypesActions from '../../actions/PaymentTypesActions';
 import * as TopUpActions from '../../actions/TopUpActions';
 import CreditRealm from '../../database/credit/credit.operations';
 import CustomerDebtRealm from '../../database/customer_debt/customer_debt.operations';
+import ProductsRealm from '../../database/products/product.operations';
 
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
 import PaymentTypeRealm from '../../database/payment_types/payment_types.operations';
 import { format, parseISO, isBefore } from 'date-fns';
 import i18n from '../../app/i18n';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
-import { da } from 'date-fns/locale';
 
-class ReceiptLineItem extends React.Component {
+class ReceiptLineItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
-	};
+	}
 
 	render() {
 		return (
-			<View
-				style={styles.receiptlinecont}>
+			<View style={styles.receiptlinecont}>
 				<Image
-					source={{ uri: this.getImage(this.props.item) }}
+					source={{ uri: this.getImage() }}
 					style={styles.productImage}
 				/>
 				<View style={styles.receipttext}>
 					<View style={styles.itemData}>
-						<Text style={styles.label, styles.font15}>{this.getDescription(this.props.item)}</Text>
+						<Text style={styles.label, styles.font15}>{this.getDescription()}</Text>
 					</View>
 					<View style={styles.itemData}>
-						<Text style={styles.label, styles.font16}>{this.props.item.quantity} </Text>
+						<Text style={styles.label, styles.font16}>{this.props.quantity} </Text>
 					</View>
 				</View>
 				<View style={styles.itemData, styles.rlidata}>
 					<Text style={[styles.label, styles.receiptitemamt]}>
-						{this.getCurrency().toUpperCase()} {this.props.item.totalAmount ? this.props.item.totalAmount : this.props.item.price_total}</Text>
+						{this.props.currency} {this.props.totalAmount}</Text>
 				</View>
 			</View>
 		);
 	}
 
-	getCurrency = () => {
-		let settings = SettingRealm.getAllSetting();
-		return settings.currency;
-	};
-
-
-	getImage = item => {
-		const productImage = ProductsRealm.getProducts().find(e => e.productId === item.product_id);
+	getImage = () => {
+		const productImage = ProductsRealm.getProducts().find(e => e.productId === this.props.productId);
 		return productImage.base64encodedImage;
 	};
 
-	getDescription = item => {
-		const productImage = ProductsRealm.getProducts().find(e => e.productId === item.product_id);
+	getDescription = () => {
+		const productImage = ProductsRealm.getProducts().find(e => e.productId === this.props.productId);
 		return productImage.description;
 	};
 
 }
 
-class PaymentTypeItem extends React.Component {
+class PaymentTypeItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
 	}
 
 	render() {
 		return (
-			<View
-				style={styles.receiptlinecont}>
-
+			<View style={styles.receiptlinecont}>
 				<View style={styles.itemData3}>
 					<Icon name={`md-cash`} size={25} color="#808080" />
 					<Text style={[styles.label, styles.payitemname]}>
-						{this.props.item.name == 'credit' ? 'Wallet' : this.props.item.name}</Text>
+						{this.props.name == 'credit' ? 'Wallet' : this.props.name}</Text>
 				</View>
 				<View style={styles.itemData1}>
-					<Text style={[styles.label, styles.payitemamt]}>{this.getCurrency().toUpperCase()} {this.props.item.amount} </Text>
+					<Text style={[styles.label, styles.payitemamt]}>{this.props.currency} {this.props.amount} </Text>
 				</View>
 
 			</View>
 		);
 	}
-
-	getCurrency = () => {
-		let settings = SettingRealm.getAllSetting();
-		return settings.currency;
-	};
 }
 
-class TransactionDetail extends React.Component {
+class TransactionDetail extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {
-			refresh: false
-		};
 	}
-
-	handleUpdate() {
-		this.setState({
-			refresh: !this.state.refresh
-		});
-	}
-
 
 	onDeleteReceipt(item) {
 		return () => {
@@ -152,7 +131,6 @@ class TransactionDetail extends React.Component {
 						text: i18n.t('yes'),
 						onPress: () => {
 							this.deleteReceipt(item);
-							this.setState({ refresh: !this.state.refresh });
 						}
 					}
 				],
@@ -185,7 +163,6 @@ class TransactionDetail extends React.Component {
 						text: i18n.t('yes'),
 						onPress: () => {
 							this.deleteReceipt(item);
-							this.setState({ refresh: !this.state.refresh });
 						}
 					}
 				],
@@ -249,12 +226,6 @@ class TransactionDetail extends React.Component {
 
 	}
 
-	getCurrency = () => {
-		let settings = SettingRealm.getAllSetting();
-		return settings.currency;
-	};
-
-
 	renderTopUp = (item) => {
 
 		if (item.isTopUp) {
@@ -265,12 +236,11 @@ class TransactionDetail extends React.Component {
 						<View
 							style={styles.flexAndDirection}>
 							<View style={styles.itemData3}>
-								<Text style={styles.label, styles.tdlbl}>
-									{'Top Up Amount'}</Text>
+								<Text style={styles.label, styles.tdlbl}>{'Top Up Amount'}</Text>
 
 							</View>
 							<View style={styles.itemData1}>
-								<Text style={styles.label, styles.tdlbamt}>{this.getCurrency().toUpperCase()} {item.topUp.topup} </Text>
+								<Text style={styles.label, styles.tdlbamt}>{this.props.currency} {item.topUp.topup} </Text>
 							</View>
 						</View>
 					</View>
@@ -292,8 +262,7 @@ class TransactionDetail extends React.Component {
 				<View
 					style={styles.topupdebtcont}>
 					<View style={styles.flex1}>
-						<View
-							style={styles.flexAndDirection}>
+						<View style={styles.flexAndDirection}>
 							<View style={styles.itemData3}>
 								<Text style={styles.label, styles.tdlbl}>
 									{'Loan Cleared'}</Text>
@@ -322,6 +291,9 @@ class TransactionDetail extends React.Component {
 		}
 		return true;
 	}
+	//Receipt Line Items
+
+
 
 	render() {
 		var receiptLineItems;
@@ -335,13 +307,11 @@ class TransactionDetail extends React.Component {
 					receiptLineItems = this.props.item.receiptLineItems.map((lineItem, idx) => {
 						return (
 							<ReceiptLineItem
-								receiptActions={this.props.receiptActions}
-								item={lineItem}
+								quantity={lineItem.quantity}
+								totalAmount={lineItem.totalAmount ? lineItem.totalAmount : lineItem.price_total}
+								productId={lineItem.product_id}
+								currency={this.props.currency}
 								key={lineItem.receiptId + idx}
-								lineItemIndex={idx}
-								products={ProductsRealm.getProducts()}
-								handleUpdate={this.handleUpdate.bind(this)}
-								receiptIndex={this.props.item.index}
 							/>
 						);
 					});
@@ -354,7 +324,9 @@ class TransactionDetail extends React.Component {
 						return (
 							<PaymentTypeItem
 								key={paymentItem.id + idx}
-								item={paymentItem}
+								amount={paymentItem.amount}
+								currency={this.props.currency}
+								name={paymentItem.name}
 								lineItemIndex={idx}
 							/>
 						);
@@ -419,7 +391,7 @@ class TransactionDetail extends React.Component {
 								<View style={styles.itemspurchcont}>
 									<Text style={styles.customername, styles.itemsplbl}>Items Purchased</Text>
 									<Text style={[styles.customername, styles.itemsPurchasedValue]}>
-										{this.getCurrency().toUpperCase()} {this.props.item.totalAmount ? this.props.item.totalAmount : this.props.item.price_total}
+										{this.props.currency} {this.props.item.totalAmount ? this.props.item.totalAmount : this.props.item.price_total}
 									</Text>
 								</View>
 
@@ -500,7 +472,7 @@ class TransactionDetail extends React.Component {
 
 									</View>
 									<View style={styles.itemData1}>
-										<Text style={styles.label, styles.tdlbamt}>{this.getCurrency().toUpperCase()} {this.props.item.totalAmount} </Text>
+										<Text style={styles.label, styles.tdlbamt}>{this.props.currency} {this.props.item.totalAmount} </Text>
 									</View>
 								</View>
 
@@ -513,7 +485,7 @@ class TransactionDetail extends React.Component {
 
 									</View>
 									<View style={styles.itemData1}>
-										<Text style={styles.label, styles.tdlbamt}>{this.getCurrency().toUpperCase()} {this.props.item.balance} </Text>
+										<Text style={styles.label, styles.tdlbamt}>{this.props.currency} {this.props.item.balance} </Text>
 									</View>
 								</View>
 
@@ -553,7 +525,9 @@ class Transactions extends React.Component {
 			hasScrolled: false,
 			paymentTypeValue: '',
 			dataProvider: new DataProvider((r1, r2) => { return r1 !== r2; }),
-			selected: {}
+			// selected: {}
+			selected:
+			this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[1].item : {},
 		};
 
 		let { width } = Dimensions.get("window");
@@ -564,7 +538,7 @@ class Transactions extends React.Component {
 			switch (type) {
 				case 'NORMAL':
 					dim.width = width / 4;
-					dim.height = 80;
+					dim.height = 85;
 					break;
 				case 'SECTION':
 					dim.width = width / 4;
@@ -579,15 +553,29 @@ class Transactions extends React.Component {
 		this.rowRenderer = this.rowRenderer.bind(this);
 	}
 
+	// UNSAFE_componentWillReceiveProps(){
+	// 	this.setState({
+	// 		dataProvider: this.state.dataProvider.cloneWithRows(this.prepareSectionedData()),
+	// 		selected:
+	// 		this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[1].item : {}
+	// 	});
+	// }
+
+	// componentDidUpdate(prevState) {
+	// 	// Typical usage (don't forget to compare props):
+	// 	return false;
+	//   }
+
 	componentDidMount() {
-		this.prepareSectionedData();
-		this.props.navigation.setParams({ paymentTypeValue: 'all' });
-		this.props.navigation.setParams({ checkPaymentTypefilter: this.checkPaymentTypefilter });
-		// Events.on(
-		// 	'ScrollCustomerTo',
-		// 	'customerId1',
-		// 	this.onScrollCustomerTo.bind(this)
-		// );
+		InteractionManager.runAfterInteractions(() => {
+			this.setState({
+				dataProvider: this.state.dataProvider.cloneWithRows(this.prepareSectionedData()),
+				selected:
+				this.prepareSectionedData().length > 0 ? this.prepareSectionedData()[1].item : {}
+			});
+			this.props.navigation.setParams({ paymentTypeValue: 'all' });
+			this.props.navigation.setParams({ checkPaymentTypefilter: this.checkPaymentTypefilter });
+		});
 	}
 
 	comparePaymentTypeReceipts = () => {
@@ -665,7 +653,6 @@ class Transactions extends React.Component {
 				? 1
 				: -1;
 		});
-		// receipts = this.filterItems(receipts);
 
 		return [...receipts];
 	}
@@ -795,9 +782,7 @@ class Transactions extends React.Component {
 			}
 		}
 
-		this.setState({
-			dataProvider: this.state.dataProvider.cloneWithRows(transactionData)
-		});
+		return transactionData;
 	}
 
 	checkPaymentTypefilter = (searchText) => {
@@ -805,16 +790,8 @@ class Transactions extends React.Component {
 		this.props.customerActions.SearchPaymentType(searchText);
 	};
 
-	componentWillUnmount() {
-		// Events.rm('ScrollCustomerTo', 'customerId1');
-	}
-
-	// onScrollCustomerTo(data) {
-
-	// }
-
 	setSelected(item) {
-		this.props.receiptActions.setIsUpate(true);
+		// this.props.receiptActions.setIsUpate(true);
 		this.setState({ selected: item });
 	}
 
@@ -823,6 +800,11 @@ class Transactions extends React.Component {
 		offset: 50 * index,
 		index
 	});
+
+	getCurrency = () => {
+		let settings = SettingRealm.getAllSetting();
+		return settings.currency;
+	};
 
 	getTransactionDetail() {
 
@@ -843,7 +825,7 @@ class Transactions extends React.Component {
 					<View style={styles.transdetcont}>
 						<TransactionDetail
 							item={this.state.selected}
-							products={ProductsRealm.getProducts()}
+							currency={this.getCurrency().toUpperCase()}
 							customerActions={this.props.customerActions}
 							paymentTypesActions={this.props.paymentTypesActions}
 							topUpActions={this.props.topUpActions}
@@ -912,20 +894,7 @@ class Transactions extends React.Component {
 		);
 	}
 
-	handleUpdate() {
-		this.setState({
-			refresh: !this.state.refresh
-		});
-	}
-
-	getCurrency = () => {
-		let settings = SettingRealm.getAllSetting();
-		return settings.currency;
-	};
-
 	rowRenderer = (type, data, index) => {
-		let isSelected = false;
-
 		switch (type) {
 				case 'NORMAL':
 					return (
@@ -993,7 +962,7 @@ class Transactions extends React.Component {
 
 }
 
-class SearchWatcher extends React.Component {
+class SearchWatcher extends React.PureComponent {
 	render() {
 		return this.searchEvent();
 	}
@@ -1159,7 +1128,9 @@ const styles = StyleSheet.create({
 	},
 
 	rcptPad: {
-		padding: 10
+		padding: 10,
+		borderBottomColor: "#CCC",
+		borderBottomWidth: 1
 	},
 	inputContainer: {
 		borderWidth: 2,

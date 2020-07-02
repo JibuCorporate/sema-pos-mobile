@@ -1,4 +1,10 @@
 import React from "react";
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import { View, StyleSheet } from 'react-native';
 import ProductListScreen from './ProductListScreen';
 import OrderSummaryScreen from "./OrderSummaryScreen";
@@ -14,10 +20,8 @@ class OrderView extends React.PureComponent {
 		super(props);
 	}
 	static contextType = AppContext;
+	static whyDidYouRender = true;
 
-	componentDidMount() {
-		console.log('this.context.order', this.context);
-	}
 	render() {
 		return (
 			<View style={styles.orderView}>

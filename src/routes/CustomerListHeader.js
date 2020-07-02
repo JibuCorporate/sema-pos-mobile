@@ -1,11 +1,8 @@
 import React from 'react';
 import { View, Picker, StyleSheet } from 'react-native';
-import * as CustomerActions from '../actions/CustomerActions';
 import { Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icons from 'react-native-vector-icons/FontAwesome';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import i18n from '../app/i18n';
 import { withNavigation } from 'react-navigation';
 import AppContext from '../context/app-context';
@@ -75,7 +72,7 @@ class CustomerListHeader extends React.PureComponent {
                             color="white"
                             style={styles.iconStyle}
                             onPress={() => {
-                              
+
                                 this.context.setCustomerProps(
                                     {
                                         isCustomerSelected: false,

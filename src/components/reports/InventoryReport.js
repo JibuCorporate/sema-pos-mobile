@@ -1,7 +1,10 @@
 import React from 'react';
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import { Text, View, StyleSheet, TouchableHighlight, FlatList, Modal, TextInput } from 'react-native';
 import { bindActionCreators } from "redux";
-import * as WastageActions from "../../actions/WastageActions";
 import * as ProductActions from "../../actions/ProductActions";
 import * as InventoryActions from '../../actions/InventoryActions';
 import { connect } from "react-redux";
@@ -18,6 +21,7 @@ class InventoryEdit extends React.PureComponent {
 		this.quantityInput = React.createRef();
 		this.onChangeText = this.onChangeText.bind(this);
 	}
+	static whyDidYouRender = true;
 
 	render() {
 		return (
@@ -108,6 +112,7 @@ class InventoryReport extends React.PureComponent {
 		// this.onCancelCurrentMeter = this.onCancelCurrentMeter.bind(this);
 		// this.onOkCurrentMeter = this.onOkCurrentMeter.bind(this);
 	}
+	static whyDidYouRender = true;
 
 	addDays = (theDate, days) => {
 		return new Date(theDate.getTime() + days * 24 * 60 * 60 * 1000);

@@ -1,11 +1,15 @@
 import { StyleSheet } from "react-native";
 const widthQuanityModal = '70%';
-const heightQuanityModal = 520; 
+const heightQuanityModal = 520;
 export default orderCheckOutStyles = StyleSheet.create({
 	onPayView: {
 		flex: 1,
 		justifyContent: 'center'
 	},
+
+	btldesc: { textAlign: 'left', fontSize: 20, paddingLeft: 10 },
+
+	btldesccont: { flex: 1, height: 45, flexDirection: 'row' },
 	onPayText: {
 		paddingTop: 10,
 		paddingBottom: 10,

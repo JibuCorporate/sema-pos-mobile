@@ -1,4 +1,10 @@
 import React from 'react';
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 
 import { Text, View, StyleSheet, FlatList, ScrollView, RefreshControl } from 'react-native';
 import { bindActionCreators } from "redux";
@@ -17,6 +23,8 @@ class SalesReport extends React.PureComponent {
 			refreshing: false,
 		};
 	}
+
+	static whyDidYouRender = true;
 
 	_onRefresh = () => {
 		this.updateReport();
@@ -56,7 +64,7 @@ class SalesReport extends React.PureComponent {
 								</View>
 								<View style={styles.salestabs} >
 									<Text style={styles.totalLabel4}>DEBT COLLECTED</Text>
-									<Text style={styles.totalItem6}>{this.props.salesData.totalDebt}</Text>
+									<Text style={styles.totalItem6}>{this.getCurrency()} {this.props.salesData.totalDebt.toFixed(1)}</Text>
 								</View>
 								<View style={styles.salestabs} >
 									<Text style={styles.totalLabel4}>TOTAL EARNINGS</Text>

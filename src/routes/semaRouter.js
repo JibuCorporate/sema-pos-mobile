@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Dimensions, Picker, StyleSheet } from 'react-native';
+import {  View, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -21,10 +21,32 @@ import SalesReport from '../components/reports/SalesReport';
 import CustomSidebarMenu from './CustomSidebarMenu';
 import CustomerListHeader from './CustomerListHeader';
 import CustomerTitle from './CustomerTitle';
-import NavigationDrawerStructure from './NavigationDrawerStructure';
+import Icon from 'react-native-vector-icons/Ionicons';
+// import NavigationDrawerStructure from './NavigationDrawerStructure';
 
 import { enableScreens } from 'react-native-screens';
 enableScreens();
+
+class NavigationDrawerStructure extends React.PureComponent {
+    toggleDrawer = () => {
+        this.props.navigationProps.toggleDrawer();
+    };
+
+    render() {
+        return (
+            <View style={styles.cont}>
+                <TouchableOpacity onPress={this.toggleDrawer.bind(this)}>
+                    <Icon
+                        name='md-menu'
+                        size={30}
+                        color="white"
+                        style={styles.drawerIcon}
+                    />
+                </TouchableOpacity>
+            </View>
+        );
+    }
+}
 
 const CreditHistoryStack = createStackNavigator({
     CreditHistory: {
@@ -81,9 +103,7 @@ const TabNavigator = createBottomTabNavigator({
 	});
 
 const CustomerListHeaderComponent = ({ navigation }) => {
-		// Don't pass all the props so we don't trigger re-render
-		// Only pass required props
-		return <CustomerListHeader navigation={navigation} />
+		return <CustomerListHeader navigation={navigation} />;
 }
 
 const ListCustomerStack = createStackNavigator({
@@ -150,27 +170,27 @@ const TransactionStack = createStackNavigator({
                 backgroundColor: '#00549C',
             },
             headerTintColor: '#fff',
-            headerRight: () => (
-                <View
-                    style={styles.rowdir}>
-                    <View
-                        style={styles.custpicker}>
-                        <Picker
-                            mode="dropdown"
-                            selectedValue={navigation.getParam('paymentTypeValue')}
-                            style={styles.smropicker}
-                            onValueChange={navigation.getParam('checkPaymentTypefilter')}>
-                            <Picker.Item label="All Payment Types" value="all" />
-                            <Picker.Item label="Cash" value="cash" />
-                            <Picker.Item label="Mobile" value="mobile" />
-                            <Picker.Item label="Loan" value="loan" />
-                            <Picker.Item label="Cheque" value="cheque" />
-                            <Picker.Item label="Bank" value="bank" />
-                            <Picker.Item label="Wallet" value="credit" />
-                        </Picker>
-                    </View>
-                </View>
-            ),
+            // headerRight: () => (
+            //     <View
+            //         style={styles.rowdir}>
+            //         <View
+            //             style={styles.custpicker}>
+            //             <Picker
+            //                 mode="dropdown"
+            //                 selectedValue={navigation.getParam('paymentTypeValue')}
+            //                 style={styles.smropicker}
+            //                 onValueChange={navigation.getParam('checkPaymentTypefilter')}>
+            //                 <Picker.Item label="All Payment Types" value="all" />
+            //                 <Picker.Item label="Cash" value="cash" />
+            //                 <Picker.Item label="Mobile" value="mobile" />
+            //                 <Picker.Item label="Loan" value="loan" />
+            //                 <Picker.Item label="Cheque" value="cheque" />
+            //                 <Picker.Item label="Bank" value="bank" />
+            //                 <Picker.Item label="Wallet" value="credit" />
+            //             </Picker>
+            //         </View>
+            //     </View>
+            // ),
         }),
     },
 });
@@ -229,10 +249,10 @@ const LoginStack = createStackNavigator({
         headerMode: 'none',
 	});
 
- const SidebarComponent = ({ navigation }) => {
+ const SidebarComponent = () => {
 		// Don't pass all the props so we don't trigger re-render
 		// Only pass required props
-		return <CustomSidebarMenu navigation={navigation} />
+		return <CustomSidebarMenu />
 }
 
 
@@ -309,6 +329,11 @@ const styles = StyleSheet.create({
 		width: 190,
 		color: 'white',
 		alignContent: 'flex-end'
+	}, cont: {
+		flexDirection: 'row'
+	},
+	drawerIcon: {
+		width: 50, height: 30, marginLeft: 10, paddingRight:20
 	}
 
 });

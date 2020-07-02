@@ -1,9 +1,14 @@
 import React from "react";
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import { View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight, StyleSheet, Alert } from "react-native";
 import orderItemStyles from "./orderItemStyles";
 import orderCheckOutStyles from "./orderCheckOutStyles";
 import { connect } from "react-redux";
-import SettingRealm from '../../database/settings/settings.operations';
 import i18n from "../../app/i18n";
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -25,18 +30,19 @@ import CreditRealm from '../../database/credit/credit.operations';
 import SalesChannelRealm from '../../database/sales-channels/sales-channels.operations';
 import ProductMRPRealm from '../../database/productmrp/productmrp.operations';
 import CustomerDebtRealm from '../../database/customer_debt/customer_debt.operations';
+import SettingRealm from '../../database/settings/settings.operations';
 import PaymentDescription from './order-checkout/payment-description';
 import PaymentTypeRealm from '../../database/payment_types/payment_types.operations';
 import CustomerRealm from '../../database/customers/customer.operations';
 import OrderRealm from '../../database/orders/orders.operations';
 import CustomerReminderRealm from '../../database/customer-reminder/customer-reminder.operations';
-
 import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciept_payment_types.operations';
+
 const uuidv1 = require('uuid/v1');
 import { withNavigation } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 class OrderSummaryScreen extends React.PureComponent {
-
+	static contextType = AppContext;
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -77,11 +83,8 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.handleCompleteSale = this.handleCompleteSale.bind(this);
 		this.orderItems = [...this.props.orderItems];
 	}
-	static contextType = AppContext;
+	static whyDidYouRender = true;
 
-	componentDidMount() {
-		console.log('this.context.sum', this.context.selectedCustomer);
-	}
 	orderSummaryElement = () => {
 		return (
 			<View style={styles.container}>
@@ -107,8 +110,8 @@ class OrderSummaryScreen extends React.PureComponent {
 	orderTotalElement = () => {
 		return (
 			<View style={styles.containerTotal}>
-				<Text style={[orderItemStyles.flexTwo, styles.totalText]}>{i18n.t('order-total')}</Text>
-				<Text style={[orderItemStyles.flexThree, styles.totalText]}>{this.getCurrency().toUpperCase()} {this.getAmount()}</Text>
+				<Text style={orderItemStyles.flexTwo, styles.totalText}>{i18n.t('order-total')}</Text>
+				<Text style={orderItemStyles.flexThree, styles.totalText}>{this.getCurrency().toUpperCase()} {this.getAmount()}</Text>
 			</View>
 		);
 	}
@@ -143,11 +146,13 @@ class OrderSummaryScreen extends React.PureComponent {
 	// Start Order Items //
 
 	handleOnPress(item) {
+		requestAnimationFrame(() => {
 		this.setState({ selectedItem: item });
 		this.setState({ accumulator: item.quantity });
 		this.setState({ firstKey: true });
 		this.setState({ isorderItemsModal: true });
 		this.refs.productModel.open();
+		});
 	}
 
 	_renderItem = ({ item, index, separators }) => (
@@ -155,7 +160,19 @@ class OrderSummaryScreen extends React.PureComponent {
 			onPress={() => this.handleOnPress(item)}
 			onShowUnderlay={separators.highlight}
 			onHideUnderlay={separators.unhighlight}>
-			{this.getRow(item, index, separators)}
+			<View style={orderItemStyles.emptiesView}>
+				<View style={orderItemStyles.flexTwo}>
+					<Text style={[orderItemStyles.baseItem, orderItemStyles.leftMargin]}>{item.product.description}</Text>
+				</View>
+				<View style={orderItemStyles.flex12}>
+					<Text style={[orderItemStyles.baseItem, orderItemStyles.txtalign]}>{item.quantity}</Text>
+				</View>
+				<View style={orderItemStyles.flexTwo}>
+					<Text numberOfLines={1} style={[orderItemStyles.baseItem, orderItemStyles.tatxt]}>
+						{this.getCurrency().toUpperCase()} {this.getDiscountPrice((item.quantity * item.unitPrice), item)}
+					</Text>
+				</View>
+			</View>
 		</TouchableHighlight>
 	)
 
@@ -310,7 +327,7 @@ class OrderSummaryScreen extends React.PureComponent {
 						<View style={orderItemStyles.flexOne}>
 							<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>AMOUNT</Text>
 						</View>
-						<View style={{ flex: 1, height: 40, textAlign: 'center' }} >
+						<View style={orderItemStyles.qtyvalstyle} >
 							{this.qtyValue()}
 						</View>
 					</View>
@@ -323,14 +340,8 @@ class OrderSummaryScreen extends React.PureComponent {
 								<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>QUANTITY</Text>
 							</View>
 						</View>
-						<View style={{
-							flex: 1,
-							width: "100%",
-							flexDirection: 'row',
-							alignItems: 'stretch',
-
-						}}>
-							<View style={{ flex: .2, height: 40 }}>
+						<View style={orderItemStyles.qtyamtstyle}>
+							<View style={orderItemStyles.qtyamticon}>
 								<TouchableHighlight style={orderItemStyles.flexOne}
 									onPress={this.counterChangedHandler.bind(this, 'dec')}>
 									<Icon
@@ -341,12 +352,12 @@ class OrderSummaryScreen extends React.PureComponent {
 									/>
 								</TouchableHighlight>
 							</View>
-							<View style={{ flex: .6, height: 40, textAlign: 'center' }} >
-								<View style={{ flex: .5, alignSelf: 'center' }}>
+							<View style={orderItemStyles.qtyamtval} >
+								<View style={orderItemStyles.qtyamtvalcont}>
 									{this.qtyValue()}
 								</View>
 							</View>
-							<View style={{ flex: .2, height: 40 }}>
+							<View style={orderItemStyles.qtyamticon2}>
 								<TouchableHighlight style={orderItemStyles.flexOne}
 									onPress={this.counterChangedHandler.bind(this, 'inc')}>
 									<Icon
@@ -410,26 +421,26 @@ class OrderSummaryScreen extends React.PureComponent {
 						<View
 							style={orderItemStyles.aseparator}
 						/>
-						<View style={[orderItemStyles.rowDirection]}>
-							<View style={[orderItemStyles.flexOne]}>
+						<View style={orderItemStyles.rowDirection}>
+							<View style={orderItemStyles.flexOne}>
 								<Text style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>Empties Returned</Text>
 							</View>
-							<View style={[orderItemStyles.flexOne]}>
+							<View style={orderItemStyles.flexOne}>
 								<Text style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>Damaged Bottles</Text>
 							</View>
-							<View style={[orderItemStyles.flexOne]}>
+							<View style={orderItemStyles.flexOne}>
 								<Text style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>Pending Bottles</Text>
 							</View>
 						</View>
 
 						<View style={orderItemStyles.emptiesView}>
-							<View style={[orderItemStyles.flexOne]}>
+							<View style={orderItemStyles.flexOne}>
 								{this.emptiesReturnedValue()}
 							</View>
-							<View style={[orderItemStyles.flexOne]}>
+							<View style={orderItemStyles.flexOne}>
 								{this.emptiesDamagedValue()}
 							</View>
-							<View style={[orderItemStyles.flexOne]}>
+							<View style={orderItemStyles.flexOne}>
 								{this.refillPendingValue()}
 							</View>
 						</View>
@@ -452,9 +463,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		return (
 			<TextInput
-				style={{
-					padding: 10
-				}}
+				style={orderItemStyles.pad10}
 				onChangeText={this.setNotes}
 				value={notes}
 				underlineColorAndroid="transparent"
@@ -480,11 +489,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		return (
 			<TextInput
-				style={{
-					textAlign: 'center',
-					height: 50,
-					fontSize: 24
-				}}
+				style={orderItemStyles.emptiestxtinput}
 				onChangeText={this.setEmptiesReturned}
 				value={emptiesReturned}
 				keyboardType="number-pad"
@@ -506,11 +511,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		return (
 			<TextInput
-				style={{
-					textAlign: 'center',
-					height: 50,
-					fontSize: 24
-				}}
+				style={orderItemStyles.emptiestxtinput}
 				onChangeText={this.setEmptiesDamaged}
 				value={emptiesDamaged}
 				keyboardType="number-pad"
@@ -545,7 +546,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	getProductDescripion() {
 		if (this.state.selectedItem.hasOwnProperty('product')) {
 			return (
-				<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>{this.state.selectedItem.product.description}</Text>
+				<Text style={orderItemStyles.textLeft, orderItemStyles.baseItem}>{this.state.selectedItem.product.description}</Text>
 			)
 		}
 	}
@@ -609,24 +610,6 @@ class OrderSummaryScreen extends React.PureComponent {
 	showQuantityChanger() {
 		this.props.toolbarActions.ShowScreen('quanityChanger');
 	}
-
-	getRow = (item) => {
-		return (
-			<View style={orderItemStyles.emptiesView}>
-				<View style={[orderItemStyles.flexTwo]}>
-					<Text style={[orderItemStyles.baseItem, orderItemStyles.leftMargin]}>{item.product.description}</Text>
-				</View>
-				<View style={[{ flex: 1.2 }]}>
-					<Text style={[orderItemStyles.baseItem, { textAlign: 'center' }]}>{item.quantity}</Text>
-				</View>
-				<View style={orderItemStyles.flexTwo}>
-					<Text numberOfLines={1} style={[orderItemStyles.baseItem, { textAlign: 'right', paddingRight: 5 }]}>
-						{this.getCurrency().toUpperCase()} {this.getDiscountPrice((item.quantity * item.unitPrice), item)}
-					</Text>
-				</View>
-			</View>
-		);
-	};
 
 	customDiscount = searchText => {
 		const productIndex = this.props.selectedDiscounts.map(function (e) { return e.product.productId }).indexOf(this.state.selectedItem.product.productId);
@@ -836,7 +819,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		return totalAmount;
 	}
 
-	renderDiscountRow = (item, index, separators) => {
+	renderDiscountRow = ({item}) => {
 		const productIndex = this.props.selectedDiscounts.map(function (e) { return e.product.productId }).indexOf(this.state.selectedItem.product.productId);
 
 		let isDiscountAvailable = false;
@@ -847,7 +830,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		return (
 			<View style={orderItemStyles.discountRow}>
 				<View style={orderItemStyles.flexHeigth}>
-					<Text style={[{ marginLeft: 12 }, orderItemStyles.baseItem]}>{item.applies_to}-{item.amount}</Text>
+					<Text style={[orderItemStyles.margLeft, orderItemStyles.baseItem]}>{item.applies_to}-{item.amount}</Text>
 				</View>
 				<View style={orderItemStyles.flexHeigth}>
 					<ToggleSwitch
@@ -887,7 +870,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	showOrderItemsHeader = () => {
 		return (
 			<View style={orderItemStyles.headerBackground}>
-				<View style={[orderItemStyles.flexTwo]}>
+				<View style={orderItemStyles.flexTwo}>
 					<Text style={[orderItemStyles.headerItem, orderItemStyles.headerLeftMargin]}>{i18n.t('item')}</Text>
 				</View>
 				<View style={[orderItemStyles.flexOne]}>
@@ -1035,84 +1018,11 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.props.paymentTypesActions.setDelivery('delivery');
 	}
 
-	bottleTrackerModal = () => {
-		if (this.state.isBottleTrackerModal) {
-			return (
-				<ScrollView>
-					<TouchableOpacity>
-						<View style={orderItemStyles.flexPadLeft}>
-							<View style={orderItemStyles.bottleTracker}>
-								<View style={orderItemStyles.rowDirection}>
-									<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Bottle Tracker.</Text>
-								</View>
-								<View
-									style={orderItemStyles.closeModalBtn}>
-									{this.closeModalBtn('modal7')}
-								</View>
-							</View>
-
-							<View
-								style={orderItemStyles.flexOne}>
-								<FlatList
-									data={this.props.orderItems}
-									ListHeaderComponent={this.showBottlesHeader}
-									renderItem={this.renderBottleRow}
-									keyExtractor={item => item.product.description}
-									initialNumToRender={10}
-								/>
-							</View>
-						</View>
-					</TouchableOpacity>
-				</ScrollView>)
-		} else {
-			return null;
-		}
-	}
-
-
-	additionalNotesModal = () => {
-		if (this.state.isAdditionalNotesModal) {
-			return (
-
-				<ScrollView>
-					<TouchableOpacity>
-						<View style={{ flex: 1, paddingLeft: 10 }}>
-							<View style={orderItemStyles.bottleTracker}>
-								<View style={orderItemStyles.rowDirection}>
-									<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Additional Notes.</Text>
-								</View>
-								<View
-									style={orderItemStyles.closeModalBtn}>
-									{this.closeModalBtn("notesModal")}
-								</View>
-							</View>
-
-							<View
-								style={orderItemStyles.flexOne}>
-								<TextInput
-									style={{
-										padding: 10
-									}}
-									onChangeText={this.setOrderNotes}
-									value={this.state.notes}
-									underlineColorAndroid="transparent"
-									placeholder="Add a Note"
-								/>
-							</View>
-						</View>
-					</TouchableOpacity>
-				</ScrollView>
-			)
-		} else {
-			return null;
-		}
-	}
-
 	paymentModalModal = (isRefill) => {
 		if (this.state.isPaymentModal) {
 			return (
 
-				<View style={{ flex: 1, padding: 0, margin: 0 }}>
+				<View style={orderItemStyles.flexpadmargin}>
 					<ScrollView>
 
 					<TouchableOpacity>
@@ -1120,17 +1030,17 @@ class OrderSummaryScreen extends React.PureComponent {
 							style={orderItemStyles.closeModalBtn}>
 							{this.closeModalBtn("modal6")}
 						</View>
-						<Card containerStyle={{ backgroundColor: '#ABC1DE', padding: 5 }}>
+						<Card containerStyle={orderItemStyles.bgpad}>
 
 							<View style={orderItemStyles.rowDirection}>
 								{/* {this.getSaleAmount()} */}
 								<PaymentDescription
-									styles={{ fontWeight: 'bold' }}
+									// styles={{ fontWeight: 'bold' }}
 									title={`${i18n.t('sale-amount-due')}: `}
 									total={this.calculateOrderDue()}
 								/>
 								<PaymentDescription
-									style={{ color: 'white' }}
+									// style={{ color: 'white' }}
 									title={`${i18n.t('customer-wallet')}:`}
 									total={this.currentCredit()}
 								/>
@@ -1150,13 +1060,7 @@ class OrderSummaryScreen extends React.PureComponent {
 						</Card>
 
 						<View
-							style={{
-								flex: 1,
-								marginTop: 0,
-								marginLeft: 20,
-								marginRight: 20
-							}}>
-
+							style={orderItemStyles.flexmargins}>
 
 							<View style={orderItemStyles.paymentMethod}>
 								<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.baseItem]}>Payment Method</Text>
@@ -1164,9 +1068,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 							<FlatList
 								data={PaymentTypeRealm.getPaymentTypes()}
-								renderItem={({ item, index, separators }) => (
-									this.paymentTypesRow(item, index, separators)
-								)}
+								renderItem={this.renderPaymentRow}
 								extraData={this.props.selectedPaymentTypes}
 								numColumns={3}
 								contentContainerStyle={orderCheckOutStyles.container}
@@ -1243,9 +1145,7 @@ class OrderSummaryScreen extends React.PureComponent {
 							<View style={orderItemStyles.bottleTracker}>
 								<Text style={[orderCheckOutStyles.baseItem, orderItemStyles.oldSale]}>Are you recording an old sale?</Text>
 								<View
-									style={{
-										padding: 10
-									}}>
+									style={orderItemStyles.pad10}>
 									<Button
 										style={orderItemStyles.flexOne}
 										title="Change Receipt Date"
@@ -1301,7 +1201,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 		return (
 			<View style={orderCheckOutStyles.container}>
-				<View style={[{ flexDirection: 'row' }, this.getOpacity()]}>
+				<View style={[this.getOpacity(), { flexDirection: 'row'}]}>
 					<View style={orderCheckOutStyles.onPayView}>
 						<TouchableHighlight underlayColor='#c0c0c0'
 							onPress={() => this.onPay()}>
@@ -1310,19 +1210,82 @@ class OrderSummaryScreen extends React.PureComponent {
 						</TouchableHighlight>
 					</View>
 				</View>
-
 				<Modal style={orderCheckOutStyles.modal2}
 					coverScreen={true}
 					position={"center"} ref={"modal7"}
-					isDisabled={this.state.isBottleTrackerModal}>
-					{this.bottleTrackerModal()}
-				</Modal>
+					isDisabled={this.state.isBottleTrackerModal}
+					onClosed={this.onClose}
+					onOpened={this.onOpen}
+					onClosingState={this.onClosingState}
+					>
+					<ScrollView>
+					<TouchableOpacity>
+						<View style={orderItemStyles.flexPadLeft}>
+							<View style={orderItemStyles.bottleTracker}>
+								<View style={orderItemStyles.rowDirection}>
+									<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Bottle Tracker.</Text>
+								</View>
+								<View style={orderItemStyles.closeModalBtn}>
+									<TouchableHighlight onPress={() => this.closeModal("modal7")}>
+										<Icon
+											size={40}
+											name="md-close-circle-outline"
+											color="black"
+										/>
+									</TouchableHighlight>
+								</View>
+							</View>
 
+							<View
+								style={orderItemStyles.flexOne}>
+								<FlatList
+									data={this.props.orderItems}
+									ListHeaderComponent={this.showBottlesHeader}
+									renderItem={this.renderBottleRow}
+									keyExtractor={item => item.product.description}
+									initialNumToRender={10}
+								/>
+							</View>
+						</View>
+					</TouchableOpacity>
+				</ScrollView>
+				</Modal>
 				<Modal style={orderCheckOutStyles.modal2}
 					coverScreen={true}
 					position={"center"} ref={"notesModal"}
-					isDisabled={this.state.isAdditionalNotesModal}>
-					{this.additionalNotesModal()}
+					isDisabled={this.state.isAdditionalNotesModal}
+					>
+					<ScrollView>
+					<TouchableOpacity>
+						<View style={orderItemStyles.flexPadLeft}>
+							<View style={orderItemStyles.bottleTracker}>
+								<View style={orderItemStyles.rowDirection}>
+									<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Additional Notes.</Text>
+								</View>
+								<View style={orderItemStyles.closeModalBtn}>
+									<TouchableHighlight onPress={() => this.closeModal('notesModal')}>
+										<Icon
+											size={40}
+											name="md-close-circle-outline"
+											color="black"
+										/>
+								</TouchableHighlight>
+								</View>
+							</View>
+
+							<View
+								style={orderItemStyles.flexOne}>
+								<TextInput
+									style={orderItemStyles.pad10}
+									onChangeText={this.setOrderNotes}
+									value={this.state.notes}
+									underlineColorAndroid="transparent"
+									placeholder="Add a Note"
+								/>
+							</View>
+						</View>
+						</TouchableOpacity>
+					</ScrollView>
 				</Modal>
 
 				<Modal
@@ -1339,21 +1302,20 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	showBottlesHeader = () => {
 		return (
-			<View style={[orderItemStyles.rowDirection]}>
+			<View style={orderItemStyles.rowDirection}>
 				<View style={orderItemStyles.flexOne}>
-					<Text style={[orderCheckOutStyles.headerBtlItem]}>Product</Text>
+					<Text style={orderCheckOutStyles.headerBtlItem}>Product</Text>
 				</View>
-				<View style={[orderItemStyles.flexOne]}>
-					<Text style={[orderCheckOutStyles.headerBtlItem]}>Empties Returned</Text>
+				<View style={orderItemStyles.flexOne}>
+					<Text style={orderCheckOutStyles.headerBtlItem}>Empties Returned</Text>
 				</View>
-				<View style={[orderItemStyles.flexOne]}>
-					<Text style={[orderCheckOutStyles.headerBtlItem]}>Damaged Bottles</Text>
+				<View style={orderItemStyles.flexOne}>
+					<Text style={orderCheckOutStyles.headerBtlItem}>Damaged Bottles</Text>
 				</View>
-				<View style={[orderItemStyles.flexOne]}>
-					<Text style={[orderCheckOutStyles.headerBtlItem]}>Pending Bottles</Text>
+				<View style={orderItemStyles.flexOne}>
+					<Text style={orderCheckOutStyles.headerBtlItem}>Pending Bottles</Text>
 				</View>
 			</View>
-
 		);
 	};
 
@@ -1361,20 +1323,16 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.setState({ notes });
 	}
 
-	renderBottleRow  = ({ item, index, separators }) => {
+	renderBottleRow  = ({ item }) => {
 		if (item.product.description.includes('refill')) {
 			return (
 				<View style={orderItemStyles.discountRow}>
-					<View style={{ flex: 1, height: 45, flexDirection: 'row' }}>
-						<Text style={[{ textAlign: 'left', fontSize: 20, paddingLeft: 10 }, orderCheckOutStyles.baseItem]}>{item.product.description}</Text>
+					<View style={orderCheckOutStyles.btldesccont}>
+						<Text style={[orderCheckOutStyles.btldesc, orderCheckOutStyles.baseItem]}>{item.product.description}</Text>
 					</View>
-					<View style={[orderItemStyles.flexOne]}>
+					<View style={orderItemStyles.flexOne}>
 						<TextInput
-							style={{
-								textAlign: 'center',
-								height: 45,
-								fontSize: 20
-							}}
+							style={orderItemStyles.emptiestxtinput}
 							keyboardType="number-pad"
 							onChangeText={(value) => this.setEmptiesReturnedCheckOut(value, item)}
 							underlineColorAndroid="transparent"
@@ -1382,7 +1340,7 @@ class OrderSummaryScreen extends React.PureComponent {
 							value={(item.emptiesReturned == '') ? item.quantity.toString() : item.emptiesReturned}
 						/>
 					</View>
-					<View style={[orderItemStyles.flexOne]}>
+					<View style={orderItemStyles.flexOne}>
 						<TextInput
 							style={orderItemStyles.bottleTextInput}
 							keyboardType="number-pad"
@@ -1392,13 +1350,9 @@ class OrderSummaryScreen extends React.PureComponent {
 							value={item.emptiesDamaged}
 						/>
 					</View>
-					<View style={[orderItemStyles.flexOne]}>
+					<View style={orderItemStyles.flexOne}>
 						<TextInput
-							style={{
-								textAlign: 'center',
-								height: 45,
-								fontSize: 20
-							}}
+							style={orderItemStyles.emptiestxtinput}
 							keyboardType="number-pad"
 							onChangeText={(value) => this.setRefillPendingCheckOut(value, item)}
 							underlineColorAndroid="transparent"
@@ -1508,7 +1462,7 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	};
 
-	paymentTypesRow = (item, index, separators) => {
+	renderPaymentRow = ({item}) => {
 
 		let isSelectedAvailable = false;
 		if (this.props.selectedPaymentTypes.length > 0) {
@@ -1536,9 +1490,9 @@ class OrderSummaryScreen extends React.PureComponent {
 
 			return (
 				<View style={orderItemStyles.discountRow}>
-					<View style={{ flex: 1, height: 45 }}>
+					<View style={orderItemStyles.chkCont}>
 						<View style={orderCheckOutStyles.checkBoxRow}>
-							<View style={[orderItemStyles.flexOne]}>
+							<View style={orderItemStyles.flexOne}>
 								<CheckBox
 									title={item.description}
 									checkedIcon={<Icon
@@ -1552,12 +1506,10 @@ class OrderSummaryScreen extends React.PureComponent {
 										color="black"
 									/>}
 									checked={item.isSelected || isSelectedAvailable}
-									onPress={() => {
-										this.checkBoxType(item);
-									}}
+									onPress={() => this.checkBoxType(item)}
 								/>
 							</View>
-							<View style={[orderItemStyles.flexOne]}>{this.showTextInput(item)}</View>
+							<View style={orderItemStyles.flexOne}>{this.showTextInput(item)}</View>
 						</View>
 					</View>
 				</View>
@@ -1645,7 +1597,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	getSaleAmount() {
 		return (
 			<PaymentDescription
-				styles={{ fontWeight: 'bold' }}
+				// styles={{ fontWeight: 'bold' }}
 				title={`${i18n.t('sale-amount-due')}: `}
 				total={this.calculateOrderDue()}
 			/>
@@ -1653,7 +1605,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 
-	closeModalBtn(modal) {
+	closeModalBtn = (modal) => {
 		return (
 			<TouchableHighlight onPress={() => this.closeModal(modal)}>
 				<Icon
@@ -2075,21 +2027,20 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 
-	closeModal = (modal) => {
+	closeModal = modal => {
 		switch (modal) {
-			case 'modal7':
-				this.refs.modal7.close();
+			case "modal7":
 				this.setState({ isBottleTrackerModal: false });
+				this.refs.modal7.close();
 				break;
-			case 'notesModal':
+			case "notesModal":
 				this.setState({ isAdditionalNotesModal: false });
-				this.refs.notesModal.close();
 				break;
-			case 'modal6':
+			case "modal6":
 				this.setState({ isPaymentModal: false });
-				this.refs.modal6.close();
 				break;
 		}
+		this.refs[modal].close();
 	};
 
 	currentCredit() {

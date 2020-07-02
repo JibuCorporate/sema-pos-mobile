@@ -31,7 +31,7 @@ class DateFilter extends React.PureComponent {
 					{this.getPreviousButton()}
 				</View>
 				<View style={styles.filterItemContainer}>
-					<Text style={{fontSize:20}}>{this.state.currentDate.toDateString()}</Text>
+					<Text style={styles.fontdate}>{this.state.currentDate.toDateString()}</Text>
 				</View>
 				<View style={styles.filterItemContainer}>
 					{this.getNextButton()}
@@ -111,7 +111,7 @@ function mapStateToProps(state, props) {
 }
 
 function mapDispatchToProps(dispatch) {
-	return {reportActions:bindActionCreators(reportActions, dispatch) };
+	return { reportActions:bindActionCreators(reportActions, dispatch) };
 }
 
 //Connect everything
@@ -119,22 +119,20 @@ export default connect(mapStateToProps, mapDispatchToProps)(DateFilter);
 
 
 const styles = StyleSheet.create({
+	fontdate: {
+		fontSize: 20
+	},
 
-	filterContainer:{
+	filterContainer: {
 		flex: .3,
 		backgroundColor: 'white',
 		marginLeft: 10,
 		marginTop: 20,
-		flexDirection:'row',
-		width:500
+		flexDirection: 'row'
 	},
-	filterItemContainer:{
-		justifyContent:"center",
-		paddingLeft:10
-	},
-	filterImage:{
-		width: 30,
-		height: 30
+	filterItemContainer: {
+		justifyContent: "center",
+		paddingLeft: 10
 	},
 
 	opacity4: {
