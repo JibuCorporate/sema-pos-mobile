@@ -13,28 +13,13 @@ import { Card, Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Synchronization from '../services/Synchronization';
-import * as WastageActions from "../actions/WastageActions";
-import CustomerReminderRealm from '../database/customer-reminder/customer-reminder.operations';
 import SettingRealm from '../database/settings/settings.operations';
 import CreditRealm from '../database/credit/credit.operations';
 import CustomerRealm from '../database/customers/customer.operations';
 import InventroyRealm from '../database/inventory/inventory.operations';
 import ProductsRealm from '../database/products/product.operations';
-import DiscountRealm from '../database/discount/discount.operations';
-import OrderRealm from '../database/orders/orders.operations';
-import * as CustomerReminderActions from '../actions/CustomerReminderActions';
 import * as SettingsActions from '../actions/SettingsActions';
 import * as CustomerActions from '../actions/CustomerActions';
-import * as NetworkActions from '../actions/NetworkActions';
-import * as AuthActions from '../actions/AuthActions';
-import * as ProductActions from '../actions/ProductActions';
-import * as receiptActions from '../actions/ReceiptActions';
-import * as InventoryActions from '../actions/InventoryActions';
-import * as discountActions from '../actions/DiscountActions';
-import * as paymentTypesActions from '../actions/PaymentTypesActions';
-import PaymentTypeRealm from '../database/payment_types/payment_types.operations';
-import ReceiptPaymentTypeRealm from '../database/reciept_payment_types/reciept_payment_types.operations';
-import CustomerDebtRealm from '../database/customer_debt/customer_debt.operations';
 import Events from 'react-native-simple-events';
 
 import Communications from '../services/Communications';
@@ -283,29 +268,6 @@ class Login extends React.PureComponent {
 		return new Date(theDate.getTime() - days * 24 * 60 * 60 * 1000);
 	};
 
-	loadSyncedData() {
-
-		return new Promise(resolve => {
-
-			try {
-				Synchronization.initialize(
-					CustomerRealm.getLastCustomerSync(),
-					ProductsRealm.getLastProductsync(),
-					'',
-					CreditRealm.getLastCreditSync(),
-					InventroyRealm.getLastInventorySync(),
-				);
-				Synchronization.setConnected(this.props.network.isNWConnected);
-				resolve(true)
-			} catch (error) {
-				resolve(false);
-			}
-
-		});
-
-
-	};
-
 
 	isSiteIdDifferent(newSiteID, oldSiteID) {
 		//Check is locally stored siteID is different from the remote returned siteID
@@ -351,26 +313,13 @@ class Login extends React.PureComponent {
 function mapStateToProps(state, props) {
 	return {
 		settings: state.settingsReducer.settings,
-		auth: state.authReducer,
-		network: state.networkReducer.network,
-		discounts: state.discountReducer.discounts,
-		products: state.productReducer.products,
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		networkActions: bindActionCreators(NetworkActions, dispatch),
 		settingsActions: bindActionCreators(SettingsActions, dispatch),
 		customerActions: bindActionCreators(CustomerActions, dispatch),
-		wastageActions: bindActionCreators(WastageActions, dispatch),
-		authActions: bindActionCreators(AuthActions, dispatch),
-		inventoryActions: bindActionCreators(InventoryActions, dispatch),
-		productActions: bindActionCreators(ProductActions, dispatch),
-		receiptActions: bindActionCreators(receiptActions, dispatch),
-		discountActions: bindActionCreators(discountActions, dispatch),
-		customerReminderActions: bindActionCreators(CustomerReminderActions, dispatch),
-		paymentTypesActions: bindActionCreators(paymentTypesActions, dispatch),
 	};
 }
 
