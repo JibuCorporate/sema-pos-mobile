@@ -23,6 +23,7 @@ import ProductsRealm from '../database/products/product.operations';
 import DiscountRealm from '../database/discount/discount.operations';
 import OrderRealm from '../database/orders/orders.operations';
 import * as CustomerReminderActions from '../actions/CustomerReminderActions';
+import * as TopUpActions from '../actions/TopUpActions';
 import * as SettingsActions from '../actions/SettingsActions';
 import * as CustomerActions from '../actions/CustomerActions';
 import * as NetworkActions from '../actions/NetworkActions';
@@ -288,6 +289,53 @@ class Login extends React.PureComponent {
 		return new Promise(resolve => {
 
 			try {
+
+				this.props.customerActions.setCustomers(
+					CustomerRealm.getAllCustomer()
+				);
+
+				this.props.productActions.setProducts(
+					ProductsRealm.getProducts()
+				);
+
+				//PaymentTypeRealm.truncate();
+				this.props.paymentTypesActions.setPaymentTypes(
+					PaymentTypeRealm.getPaymentTypes()
+				);
+
+				this.props.paymentTypesActions.setRecieptPaymentTypes(
+					ReceiptPaymentTypeRealm.getReceiptPaymentTypes()
+				);
+
+				this.props.topUpActions.setTopups(
+					CreditRealm.getAllCredit()
+				);
+
+				this.props.wastageActions.GetInventoryReportData(this.subtractDays(new Date(), 1), new Date(), ProductsRealm.getProducts());
+
+
+				this.props.inventoryActions.setInventory(
+					InventroyRealm.getAllInventory()
+				);
+
+
+				this.props.receiptActions.setReceipts(
+					OrderRealm.getAllOrder()
+				);
+
+
+				this.props.customerReminderActions.setCustomerReminders(
+					CustomerReminderRealm.getCustomerReminders()
+				);
+
+				this.props.paymentTypesActions.setCustomerPaidDebt(
+					CustomerDebtRealm.getCustomerDebts()
+				);
+
+				this.props.discountActions.setDiscounts(
+					DiscountRealm.getDiscounts()
+				);
+
 				Synchronization.initialize(
 					CustomerRealm.getLastCustomerSync(),
 					ProductsRealm.getLastProductsync(),
@@ -361,6 +409,7 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch) {
 	return {
 		networkActions: bindActionCreators(NetworkActions, dispatch),
+		topUpActions: bindActionCreators(TopUpActions, dispatch),
 		settingsActions: bindActionCreators(SettingsActions, dispatch),
 		customerActions: bindActionCreators(CustomerActions, dispatch),
 		wastageActions: bindActionCreators(WastageActions, dispatch),
