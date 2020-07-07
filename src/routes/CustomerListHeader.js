@@ -38,7 +38,7 @@ class CustomerListHeader extends React.PureComponent {
                     )}
                     {this.context.customerProps.isCustomerSelected && (
                         <Icon
-                            name='md-more'
+                            name='ellipsis-vertical-outline'
                             size={25}
                             color="white"
                             style={styles.iconStyle}

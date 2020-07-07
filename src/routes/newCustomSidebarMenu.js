@@ -1,23 +1,18 @@
 import React from 'react';
-if (process.env.NODE_ENV === 'development') {
-    const whyDidYouRender = require('@welldone-software/why-did-you-render');
-    whyDidYouRender(React, {
-        trackAllPureComponents: true,
-    });
-}
-import { View, StyleSheet, Image, Text, Alert, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, StyleSheet, Image, ActivityIndicator, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Synchronization from '../services/Synchronization';
 import SettingRealm from '../database/settings/settings.operations';
 import Communications from '../services/Communications';
+import * as CustomerActions from '../actions/CustomerActions';
 import * as SettingsActions from '../actions/SettingsActions';
 import i18n from '../app/i18n';
+import { DrawerItem,} from '@react-navigation/drawer';
 
-class CustomSidebarMenu extends React.Component {
-  constructor(props) {
-    super(props);
+class newCustomSidebarMenu extends React.PureComponent {
+  constructor() {
+    super();
     this.state = {
       animating: false,
       language: '',
@@ -27,72 +22,69 @@ class CustomSidebarMenu extends React.Component {
       isLoading: false
 	};
 
-	this.headerImage= "";
-
     this.items = [
       {
-        navOptionThumb: 'person',
+        navOptionThumb: 'md-contact',
         navOptionName: 'Customers',
-        screenToNavigate: 'ListCustomers',
+		screenToNavigate: 'ListCustomerStack',
       },
       {
-        navOptionThumb: 'pricetags',
+        navOptionThumb: 'md-pricetag',
         navOptionName: 'Transactions',
-        screenToNavigate: 'Transactions',
+        screenToNavigate: 'TransactionStack',
       },
       {
-        navOptionThumb: 'stats-chart',
+        navOptionThumb: 'ios-stats',
         navOptionName: 'Sales Report',
-        screenToNavigate: 'SalesReport',
+        screenToNavigate: 'SalesReportStack',
       },
       {
-        navOptionThumb: 'trash-bin',
+        navOptionThumb: 'md-list-box',
         navOptionName: 'Wastage Report',
-        screenToNavigate: 'Inventory',
+        screenToNavigate: 'InventoryStack',
       },
       {
-        navOptionThumb: 'alarm',
+        navOptionThumb: 'md-alarm',
         navOptionName: 'Reminders',
-        screenToNavigate: 'Reminders',
+        screenToNavigate: 'ReminderStack',
       },
       {
-        navOptionThumb: 'sync',
+        navOptionThumb: 'md-sync',
         navOptionName: 'Sync',
         screenToNavigate: 'Sync',
       },
       {
-        navOptionThumb: 'log-out',
+        navOptionThumb: 'md-log-out',
         navOptionName: 'LogOut',
         screenToNavigate: 'LogOut',
       }
-	];
+    ];
 
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return false;
+  componentDidMount() {
+
   }
 
-  static whyDidYouRender = true;
-
-  handleOnPress(item, key){
+  handleOnPress(item, key) {
     requestAnimationFrame(() => {
-
-	global.currentScreenIndex = key;
+      global.currentScreenIndex = key;
+      console.log('item-item', item);
+      // this.onSynchronize();
       if (item.screenToNavigate === 'LogOut') {
         this.onLogout();
-	  }
-
-	  if (item.screenToNavigate === 'Sync') {
-        this.onSynchronize();
       }
 
-      if (item.screenToNavigate != 'LogOut' || item.screenToNavigate != 'Sync') {
+      if (item.screenToNavigate !== 'LogOut' && item.screenToNavigate !== 'Sync') {
         this.props.navigation.navigate(item.screenToNavigate);
       }
 
+      if (item.screenToNavigate === 'Sync') {
+        this.onSynchronize();
+      }
     });
   }
+
 
   render() {
     return (
@@ -100,21 +92,29 @@ class CustomSidebarMenu extends React.Component {
         <ScrollView style={styles.viewFlex}>
           <Image source={require('../images/jibulogo.png')} resizeMode={'stretch'} style={styles.imageStyle} />
           {/*Divider between Top Image and Sidebar Option*/}
-          <View style={styles.viewCont} />
+          <View
+            style={styles.viewCont}
+          />
           {/*Setting up Navigation Options from option array using loop*/}
           <View style={styles.viewFlex}>
             {this.items.map((item, key) => (
               <View style={styles.viewFlex} key={key}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={drwrStyle(key, global.currentScreenIndex).drawerSty}
                   onPress={() => this.handleOnPress(item, key)}>
                   <View style={styles.viewMargins}>
                     <Icon name={item.navOptionThumb} size={25} color={"#808080"} />
                   </View>
-				  <Text style={txtStyle(key, global.currentScreenIndex).txtCol}>
+                  <Text style={txtStyle(key, global.currentScreenIndex).txtCol}>
                     {item.navOptionName}
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+				<DrawerItem
+					label={item.navOptionName}
+					onPress={(): void => {
+					navigation.navigate(item.screenToNavigate);
+					}}
+				/>
               </View>
             ))}
           </View>
@@ -150,25 +150,25 @@ class CustomSidebarMenu extends React.Component {
   };
 
 
+
+
   onSynchronize() {
     try {
       this.setState({ isLoading: true });
       Synchronization.synchronize().then(syncResult => {
-        this.setState({ isLoading: false });
-        Alert.alert(
-          i18n.t('sync-results'),
-          this._getSyncResults(syncResult),
-          [{ text: i18n.t('ok'), style: 'cancel' }],
-          { cancelable: true }
-        );
-      });
-    } catch (error) {
-		console.log("Sidebarsynch" + error);
-	}
+		console.log('syncResult', syncResult);
+		   this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
+		   this.setState({ isLoading: false });
+		   this.props.navigation.navigate('App');
+
+
+  	 });
+    } catch (error) { }
   };
 
   _getSyncResults(syncResult) {
     try {
+
       if (
         syncResult.customers.customers == 0 &&
         syncResult.products.products == 0 &&
@@ -288,45 +288,53 @@ class CustomSidebarMenu extends React.Component {
 
 
 function mapStateToProps(state, props) {
-	return {
-		settings: state.settingsReducer.settings,
-	};
+  return {
+    selectedCustomer: state.customerReducer.selectedCustomer,
+    customers: state.customerReducer.customers,
+    network: state.networkReducer.network,
+    settings: state.settingsReducer.settings,
+    receipts: state.receiptReducer.receipts,
+    remoteReceipts: state.receiptReducer.remoteReceipts,
+    products: state.productReducer.products,
+    auth: state.authReducer
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
+    customerActions: bindActionCreators(CustomerActions, dispatch),
     settingsActions: bindActionCreators(SettingsActions, dispatch),
   };
 }
 
 export default connect(
-	mapStateToProps,
+  mapStateToProps,
   mapDispatchToProps
 )(CustomSidebarMenu);
 
 const txtStyle = (key, index) => StyleSheet.create({
-	txtCol: {
-		fontSize: 15,
-		color: index === key ? 'red' : 'black',
-	}
+  txtCol: {
+    fontSize: 15,
+    color: index === key ? 'red' : 'black',
+  }
 });
 
 const drwrStyle = (key, index) => StyleSheet.create({
-	drawerSty: {
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingTop: 10,
-		paddingBottom: 10,
-		backgroundColor: index === key ? '#e0dbdb' : '#ffffff'
-	}
+  drawerSty: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: index === key ? '#e0dbdb' : '#ffffff'
+  }
 })
 const styles = StyleSheet.create({
   viewMargins: {
-	marginRight: 10, marginLeft: 20
+    marginRight: 10, marginLeft: 20
   },
-  viewFlex:{
-	  flex: 1
+  viewFlex: {
+    flex: 1
   },
   imageStyle: {
     width: 100,

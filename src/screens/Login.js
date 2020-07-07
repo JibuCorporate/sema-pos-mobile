@@ -7,7 +7,8 @@ import {
 	Picker,
 	Alert,
 	ActivityIndicator,
-	ImageBackground
+	ImageBackground,
+	InteractionManager
 } from 'react-native';
 import { Card, Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -25,9 +26,6 @@ import Events from 'react-native-simple-events';
 import Communications from '../services/Communications';
 import i18n from '../app/i18n';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
-const { height, width } = Dimensions.get('window');
-const inputFontHeight = Math.round((24 * height) / 752);
 
 const supportedUILanguages = [
 	{ name: 'English', iso_code: 'en' },
@@ -56,7 +54,6 @@ class Login extends React.PureComponent {
 		let serviceItems = supportedUILanguages.map((s, i) => {
 			return <Picker.Item key={i} value={s.iso_code} label={s.name} />
 		});
-
 		return (
 			<ImageBackground style={styles.imgBackground}
 				resizeMode='cover'
@@ -396,7 +393,7 @@ const styles = StyleSheet.create({
 		paddingRight: 30
 	},
 	labelText: {
-		fontSize: inputFontHeight,
+		fontSize: 18,
 		alignSelf: 'flex-end',
 		marginRight: 20
 	},

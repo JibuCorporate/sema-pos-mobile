@@ -53,7 +53,7 @@ class DateFilter extends React.PureComponent {
 				<TouchableHighlight onPress={() => this.onPreviousDay()}>
 					{
 						<Icon
-							name='md-arrow-round-back'
+							name='arrow-back'
 							size={40}
 							color='black'
 						/>
@@ -63,7 +63,7 @@ class DateFilter extends React.PureComponent {
 		} else {
 			return (
 				<Icon
-					name='md-arrow-round-back'
+					name='arrow-back'
 					size={40}
 					color='black'
 					style={styles.opacity4}
@@ -79,7 +79,7 @@ class DateFilter extends React.PureComponent {
 			return (
 				<TouchableHighlight onPress={() => this.onNextDay()}>
 					<Icon
-						name='md-arrow-round-forward'
+						name='arrow-forward'
 						size={40}
 						color='black'
 					/>
@@ -88,7 +88,7 @@ class DateFilter extends React.PureComponent {
 		} else {
 			return (
 				<Icon
-					name='md-arrow-round-forward'
+					name='arrow-forward'
 					size={40}
 					color='black'
 					style={styles.opacity4}

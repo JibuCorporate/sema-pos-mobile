@@ -382,7 +382,7 @@ class CustomerList extends React.Component {
 
                 <View style={styles.modalPayment}>
                     <Modal
-                        style={[styles.modal, styles.modal3]}
+                        style={styles.modal3}
                         coverScreen={true}
                         position={"center"} ref={"modal6"}
                         onClosed={() => this.modalOnClose()}
@@ -614,7 +614,7 @@ const styles = StyleSheet.create({
 	},
 
     modal3: {
-        justifyContent: 'center',
+        // justifyContent: 'center',
         width: wp('70%'),
         height: 500,
     },

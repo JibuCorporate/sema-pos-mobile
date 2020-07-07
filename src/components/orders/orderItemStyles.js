@@ -207,9 +207,6 @@ export default orderItemStyles = StyleSheet.create({
 		flex: 1
 	},
 
-	modal: {
-		justifyContent: 'center'
-	},
 	center: { textAlign: 'center' },
 	flexAlign: { flex: 1, paddingRight: 20, paddingLeft: 20 },
 	rowDirection: { flex: 1, flexDirection: 'row' },

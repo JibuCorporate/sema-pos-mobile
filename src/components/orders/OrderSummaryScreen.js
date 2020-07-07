@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === 'development') {
         trackAllPureComponents: true,
     });
 }
-import { View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight, StyleSheet, Alert } from "react-native";
+import { View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight, StyleSheet, Alert , InteractionManager} from "react-native";
 import orderItemStyles from "./orderItemStyles";
 import orderCheckOutStyles from "./orderCheckOutStyles";
 import { connect } from "react-redux";
@@ -260,9 +260,10 @@ class OrderSummaryScreen extends React.PureComponent {
 					extraData={this.props.channel.salesChannel}
 					renderItem={this._renderItem}
 					keyExtractor={item => item.product.productId.toString()}
+
 				/>
 
-				<Modal style={[orderItemStyles.modal, orderItemStyles.modal3]}
+				<Modal style={orderItemStyles.modal3}
 					coverScreen={true}
 					position={"center"}
 					onClosed={() => this.modalOnClose()}
@@ -1004,9 +1005,11 @@ class OrderSummaryScreen extends React.PureComponent {
 	};
 
 	handleCompleteSale() {
+		InteractionManager.runAfterInteractions(() => {
 		requestAnimationFrame(() => {
-		this.onCompleteOrder();
+		   this.onCompleteOrder();
 		});
+	});
 	};
 
 	deliveryMode = () => {
@@ -1026,21 +1029,19 @@ class OrderSummaryScreen extends React.PureComponent {
 					<ScrollView>
 
 					<TouchableOpacity>
-						<View
-							style={orderItemStyles.closeModalBtn}>
+						<View style={orderItemStyles.closeModalBtn}>
 							{this.closeModalBtn("modal6")}
 						</View>
 						<Card containerStyle={orderItemStyles.bgpad}>
 
 							<View style={orderItemStyles.rowDirection}>
-								{/* {this.getSaleAmount()} */}
 								<PaymentDescription
-									// styles={{ fontWeight: 'bold' }}
+									currency={this.getCurrency().toUpperCase()}
 									title={`${i18n.t('sale-amount-due')}: `}
 									total={this.calculateOrderDue()}
 								/>
 								<PaymentDescription
-									// style={{ color: 'white' }}
+									currency={this.getCurrency().toUpperCase()}
 									title={`${i18n.t('customer-wallet')}:`}
 									total={this.currentCredit()}
 								/>
@@ -1049,10 +1050,12 @@ class OrderSummaryScreen extends React.PureComponent {
 
 							<View style={orderItemStyles.rowDirection}>
 								<PaymentDescription
+									currency={this.getCurrency().toUpperCase()}
 									title={`${i18n.t('previous-amount-due')}:`}
 									total={this.calculateLoanBalance()}
 								/>
 								<PaymentDescription
+									currency={this.getCurrency().toUpperCase()}
 									title={`${i18n.t('total-amount-due')}:`}
 									total={this.calculateTotalDue()}
 								/>
@@ -1071,7 +1074,8 @@ class OrderSummaryScreen extends React.PureComponent {
 								renderItem={this.renderPaymentRow}
 								extraData={this.props.selectedPaymentTypes}
 								numColumns={3}
-								contentContainerStyle={orderCheckOutStyles.container}
+								initialNumToRender={5}
+
 							/>
 
 							<View style={orderItemStyles.rowDirection}>
@@ -1206,7 +1210,7 @@ class OrderSummaryScreen extends React.PureComponent {
 						<TouchableHighlight underlayColor='#c0c0c0'
 							onPress={() => this.onPay()}>
 							<Text
-								style={orderCheckOutStyles.onPayText, orderCheckOutStyles.buttonText}>{i18n.t('pay')}</Text>
+								style={[orderCheckOutStyles.onPayText, orderCheckOutStyles.buttonText]}>{i18n.t('pay')}</Text>
 						</TouchableHighlight>
 					</View>
 				</View>
@@ -1216,8 +1220,7 @@ class OrderSummaryScreen extends React.PureComponent {
 					isDisabled={this.state.isBottleTrackerModal}
 					onClosed={this.onClose}
 					onOpened={this.onOpen}
-					onClosingState={this.onClosingState}
-					>
+					onClosingState={this.onClosingState}>
 					<ScrollView>
 					<TouchableOpacity>
 						<View style={orderItemStyles.flexPadLeft}>
@@ -1253,8 +1256,7 @@ class OrderSummaryScreen extends React.PureComponent {
 				<Modal style={orderCheckOutStyles.modal2}
 					coverScreen={true}
 					position={"center"} ref={"notesModal"}
-					isDisabled={this.state.isAdditionalNotesModal}
-					>
+					isDisabled={this.state.isAdditionalNotesModal}>
 					<ScrollView>
 					<TouchableOpacity>
 						<View style={orderItemStyles.flexPadLeft}>
@@ -1594,16 +1596,6 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.props.paymentTypesActions.setPaymentTypes(PaymentTypeRealm.getPaymentTypes());
 	};
 
-	getSaleAmount() {
-		return (
-			<PaymentDescription
-				// styles={{ fontWeight: 'bold' }}
-				title={`${i18n.t('sale-amount-due')}: `}
-				total={this.calculateOrderDue()}
-			/>
-		);
-	}
-
 
 	closeModalBtn = (modal) => {
 		return (
@@ -1654,8 +1646,10 @@ class OrderSummaryScreen extends React.PureComponent {
 	};
 
 	onPay = () => {
+		requestAnimationFrame(() => {
 		this.setState({ isPaymentModal: true });
 		this.refs.modal6.open();
+		});
 	};
 
 	onBottles = () => {

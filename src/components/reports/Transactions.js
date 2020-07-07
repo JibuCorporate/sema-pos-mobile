@@ -91,7 +91,7 @@ class PaymentTypeItem extends React.PureComponent {
 		return (
 			<View style={styles.receiptlinecont}>
 				<View style={styles.itemData3}>
-					<Icon name={`md-cash`} size={25} color="#808080" />
+					<Icon name={`cash`} size={25} color="#808080" />
 					<Text style={[styles.label, styles.payitemname]}>
 						{this.props.name == 'credit' ? 'Wallet' : this.props.name}</Text>
 				</View>

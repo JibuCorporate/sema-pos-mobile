@@ -249,10 +249,10 @@ const LoginStack = createStackNavigator({
         headerMode: 'none',
 	});
 
- const SidebarComponent = () => {
+ const SidebarComponent = ({navigation}) => {
 		// Don't pass all the props so we don't trigger re-render
 		// Only pass required props
-		return <CustomSidebarMenu />
+		return <CustomSidebarMenu navigation={navigation} />
 }
 
 

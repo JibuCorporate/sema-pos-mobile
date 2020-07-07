@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 import AppContext from './app-context';
 
-class GlobalState extends Component {
+class GlobalState extends PureComponent {
   state = {
+	isLoggedin:false,
     selectedCustomer: {},
     customerTypeFilter: "all",
     searchString: "",
@@ -19,41 +20,41 @@ class GlobalState extends Component {
 
 
   setSelectedCustomer = customer => {
-    console.log('Adding customer', customer);
     const updatedSelectedCustomer = { ...this.state.selectedCustomer };
     this.setState({ selectedCustomer: customer });
   };
 
   SearchCustomers = searchString => {
-    console.log('Adding searchString', searchString);
     const updatedSelectedCustomer = { ...this.state.searchString };
     this.setState({ searchString });
   };
 
 
   SearchCustomerTypes = customerTypeFilter => {
-    console.log('Adding customerTypeFilter', customerTypeFilter);
     const updatedSelectedCustomer = { ...this.state.customerTypeFilter };
     this.setState({ customerTypeFilter });
   };
 
 
   setCustomerProps = customerProps => {
-    console.log('Adding setCustomerProps', customerProps);
     const updatedSelectedCustomer = { ...this.state.customerProps };
     this.setState({ customerProps });
   };
 
   setCustomerEditStatus = isEdit => {
-    console.log('Adding isEdit', isEdit);
     const updatedSelectedCustomer = { ...this.state.isEdit };
     this.setState({ isEdit });
+  };
+
+  setLoginStatus = isLoggedin => {
+    this.setState({ isLoggedin });
   };
 
   render() {
     return (
       <AppContext.Provider
         value={{
+		  isLoggedin: this.state.isLoggedin,
           isEdit: this.state.isEdit,
           searchString: this.state.searchString,
           customerTypeFilter: this.state.customerTypeFilter,

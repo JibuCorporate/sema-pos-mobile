@@ -60,10 +60,6 @@ export default orderCheckOutStyles = StyleSheet.create({
 		paddingBottom: 4,
 
 	},
-	modal: {
-		justifyContent: 'center',
-		// alignItems: 'center'
-	},
 
 	modal2: {
 		justifyContent: 'center',
