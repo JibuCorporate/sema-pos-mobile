@@ -19,7 +19,7 @@ import * as CustomerActions from '../actions/CustomerActions';
 import * as TopUpActions from '../actions/TopUpActions';
 import * as receiptActions from '../actions/ReceiptActions';
 
-import PaymentModal from './paymentModal';
+//import PaymentModal from './paymentModal';
 import Modal from 'react-native-modalbox';
 
 class SelectedCustomerDetails extends React.PureComponent {
@@ -94,7 +94,7 @@ class SelectedCustomerDetails extends React.PureComponent {
 					</View>
 				</View>
 
-				<View style={styles.modalPayment}>
+				{/* <View style={styles.modalPayment}>
 					<Modal
 						style={styles.modal3}
 						coverScreen={true}
@@ -106,7 +106,7 @@ class SelectedCustomerDetails extends React.PureComponent {
 							closePaymentModal={this.closePaymentModal}
 						/>
 					</Modal>
-				</View>
+				</View> */}
 			</>
 		);
 	}

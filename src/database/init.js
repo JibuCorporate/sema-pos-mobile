@@ -1,4 +1,3 @@
-var Realm = require('realm');
 import { CustomerSchema, CustomerSyncDateSchema } from './customers/customer.model';
 import { CreditSchema, CreditSyncDateSchema } from './credit/credit.model';
 import { InventorySchema, InventorySyncDateSchema } from './inventory/inventory.model';
@@ -16,62 +15,62 @@ import { CustomerReminderSchema, CustomerReminderSyncDateSchema } from './custom
 import { PaymentTypeSchema, PaymentTypeSyncDateSchema } from './payment_types/payment_type.model';
 import { ReceiptPaymentTypeSchema, ReceiptPaymentTypeSyncDateSchema } from './reciept_payment_types/reciept_payment_types.model';
 
-
 import { DebtTopupPaymentTypeSchema, DebtTopupPaymentTypeSyncDateSchema } from './debtTopupPaymentTypes/debtTopupPaymentTypes.model';
 
+const Realm = require('realm');
 
 // Realm schema creation
 const SEMA_SCHEMA = {
-    name: 'SemaRealm',
-    primaryKey: 'id',
-    properties: {
-        id: 'string',
-        data: 'string'
-    }
+  name: 'SemaRealm',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    data: 'string',
+  },
 };
 
 export default realm = new Realm({
-    schema: [
-        SEMA_SCHEMA,
-        InventorySchema,
-        InventorySyncDateSchema,
-        CreditSchema,
-        CreditSyncDateSchema,
-        CustomerSchema,
-        CustomerSyncDateSchema,
-        ProductMRPSchema,
-        ProductMRPSyncDateSchema,
-        ProductSchema,
-        ProductSyncDateSchema,
-        CustomerTypesSchema,
-        CustomerTypesSyncDateSchema,
-        SalesChannelSchema,
-        SalesChannelSyncDateSchema,
-        SettingsSchema,
-        TokenExpirySchema,
-        OrderSchema,
-        OrderSyncDateSchema,
-        DiscountSchema,
-        DiscountSyncDateSchema,
-        PaymentTypeSchema,
-        PaymentTypeSyncDateSchema,
-        ReceiptPaymentTypeSchema,
-        ReceiptPaymentTypeSyncDateSchema,
-        CustomerDebtSchema,
-        CustomerReminderSchema,
-        CustomerReminderSyncDateSchema,
-        MeterReadingSchema,
-        MeterReadingSyncDateSchema,
-        CustomerDebtSyncDateSchema,
-        DebtTopupPaymentTypeSchema,
-        DebtTopupPaymentTypeSyncDateSchema
-    ],
-    schemaVersion: 96,
-    migration: (oldRealm, newRealm) => {
-        // only apply this change if upgrading to schemaVersion 1
-        if (oldRealm.schemaVersion < 1) {
-            const oldObjects = oldRealm.objects('InventoryInventorySynDate');
-            const newObjects = newRealm.objects('InventoryInventorySynDate');
-        }
+  schema: [
+    SEMA_SCHEMA,
+    InventorySchema,
+    InventorySyncDateSchema,
+    CreditSchema,
+    CreditSyncDateSchema,
+    CustomerSchema,
+    CustomerSyncDateSchema,
+    ProductMRPSchema,
+    ProductMRPSyncDateSchema,
+    ProductSchema,
+    ProductSyncDateSchema,
+    CustomerTypesSchema,
+    CustomerTypesSyncDateSchema,
+    SalesChannelSchema,
+    SalesChannelSyncDateSchema,
+    SettingsSchema,
+    TokenExpirySchema,
+    OrderSchema,
+    OrderSyncDateSchema,
+    DiscountSchema,
+    DiscountSyncDateSchema,
+    PaymentTypeSchema,
+    PaymentTypeSyncDateSchema,
+    ReceiptPaymentTypeSchema,
+    ReceiptPaymentTypeSyncDateSchema,
+    CustomerDebtSchema,
+    CustomerReminderSchema,
+    CustomerReminderSyncDateSchema,
+    MeterReadingSchema,
+    MeterReadingSyncDateSchema,
+    CustomerDebtSyncDateSchema,
+    DebtTopupPaymentTypeSchema,
+    DebtTopupPaymentTypeSyncDateSchema,
+  ],
+  schemaVersion: 96,
+  migration: (oldRealm, newRealm) => {
+    // only apply this change if upgrading to schemaVersion 1
+    if (oldRealm.schemaVersion < 1) {
+      const oldObjects = oldRealm.objects('InventoryInventorySynDate');
+      const newObjects = newRealm.objects('InventoryInventorySynDate');
     }
+  },
 });

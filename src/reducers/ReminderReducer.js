@@ -1,22 +1,20 @@
-import {ADD_REMINDER}  from "../actions/ReminderActions.js";
+import { ADD_REMINDER } from '../actions/ReminderActions.js';
 
-let initialState = {
-    localReminders : []
+const initialState = {
+  localReminders: [],
 
 };
 
 const reminderReducer = (state = initialState, action) => {
-    let newState;
-    switch(action.type){
+  let newState;
+  switch (action.type) {
     case ADD_REMINDER:
-	newState = {...state};
-	newState.localReminders.push(action.data);
-	return newState;
+      newState = { ...state };
+      newState.localReminders.push(action.data);
+      return newState;
 
-   default:
-	return state;
-
-    }
-
+    default:
+      return state;
+  }
 };
 export default reminderReducer;

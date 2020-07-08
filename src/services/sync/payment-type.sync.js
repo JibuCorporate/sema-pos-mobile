@@ -1,61 +1,47 @@
+import * as _ from 'lodash';
 import PaymentTypeRealm from '../../database/payment_types/payment_types.operations';
 import PaymentTypeApi from '../api/payment-types.api';
 import SyncUtils from './syncUtils';
-import * as _ from 'lodash';
 
 class PaymentTypeSync {
+  synchronizePaymentTypes() {
+    return new Promise((resolve) => {
+      PaymentTypeApi.getPaymentTypes(PaymentTypeRealm.getLastPaymentTypeSync())
+        .then(async (remotePaymentType) => {
+          const initlocalPaymentTypes = PaymentTypeRealm.getPaymentTypesByDate(PaymentTypeRealm.getLastPaymentTypeSync());
+          const localPaymentTypes = initlocalPaymentTypes.length > 0 ? [...initlocalPaymentTypes] : [];
+          const remotePaymentTypes = remotePaymentType.length > 0 ? [...remotePaymentType] : [];
 
-    synchronizePaymentTypes() {
-        return new Promise(resolve => {
+          const onlyInLocal = localPaymentTypes.filter(SyncUtils.compareRemoteAndLocal(remotePaymentTypes, 'id'));
+          const onlyInRemote = remotePaymentTypes.filter(SyncUtils.compareRemoteAndLocal(localPaymentTypes, 'id'));
 
-            PaymentTypeApi.getPaymentTypes(PaymentTypeRealm.getLastPaymentTypeSync())
-                .then(async remotePaymentType => {
-                    let initlocalPaymentTypes = PaymentTypeRealm.getPaymentTypesByDate(PaymentTypeRealm.getLastPaymentTypeSync());
-                    let localPaymentTypes = initlocalPaymentTypes.length > 0 ? [...initlocalPaymentTypes] : [];
-                    let remotePaymentTypes = remotePaymentType.length > 0 ? [...remotePaymentType] : [];
+          const syncResponseArray = [];
+          if (onlyInLocal.length > 0) {
+            for (const property in onlyInLocal) {
 
+            }
+          }
 
-                    let onlyInLocal = localPaymentTypes.filter(SyncUtils.compareRemoteAndLocal(remotePaymentTypes, 'id'));
-                    let onlyInRemote = remotePaymentTypes.filter(SyncUtils.compareRemoteAndLocal(localPaymentTypes, 'id'));
+          if (onlyInRemote.length > 0) {
+            const localResponse = await PaymentTypeRealm.createManyPaymentTypes(onlyInRemote);
+            syncResponseArray.push(...localResponse);
+            PaymentTypeRealm.setLastPaymentTypeSync();
+          }
 
-
-
-                    let syncResponseArray = [];
-                    if (onlyInLocal.length > 0) {
-                        for (const property in onlyInLocal) {
-
-                        }
-                    }
-
-                    if (onlyInRemote.length > 0) {
-                        let localResponse = await PaymentTypeRealm.createManyPaymentTypes(onlyInRemote);
-                        syncResponseArray.push(...localResponse);
-                        PaymentTypeRealm.setLastPaymentTypeSync();
-                    }
-
-
-
-                    resolve({
-                        success: syncResponseArray.length > 0 ? syncResponseArray[0].status : 'success',
-                        paymentTypes: onlyInLocal.concat(onlyInRemote).length,
-                        successError: syncResponseArray.length > 0 ? syncResponseArray[0].status : 'success',
-                        successMessage: syncResponseArray.length > 0 ? syncResponseArray[0] : 'success'
-                    });
-
-                })
-                .catch(error => {
-
-                    resolve({
-                        error: error,
-                        paymentTypes: 0
-                    });
-                });
-
-
-
+          resolve({
+            success: syncResponseArray.length > 0 ? syncResponseArray[0].status : 'success',
+            paymentTypes: onlyInLocal.concat(onlyInRemote).length,
+            successError: syncResponseArray.length > 0 ? syncResponseArray[0].status : 'success',
+            successMessage: syncResponseArray.length > 0 ? syncResponseArray[0] : 'success',
+          });
+        })
+        .catch((error) => {
+          resolve({
+            error,
+            paymentTypes: 0,
+          });
         });
-    }
-
-
+    });
+  }
 }
 export default new PaymentTypeSync();

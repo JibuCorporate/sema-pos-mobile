@@ -7,15 +7,11 @@ require('intl/locale-data/jsonp/sw-KE');	// Kenya
 require('intl/locale-data/jsonp/sw-TZ');	// Tanzania
 require('intl/locale-data/jsonp/en-ZW');	// Zimbabwe
 
-export const capitalizeWord = word => {
-	return `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
-};
+export const capitalizeWord = (word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
 
 export const isEmptyObj = (obj) => {
-	for (var key in obj) {
-		if (obj.hasOwnProperty(key))
-			return false;
-	}
-	return true;
-}
-
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) { return false; }
+  }
+  return true;
+};

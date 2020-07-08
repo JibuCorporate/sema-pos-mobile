@@ -9,8 +9,6 @@ if (__DEV__) {
 }
 
 // Connect our store to the reducers
-const configureStore = () => {
-  return createStore(RootReducer, composeEnhancers(applyMiddleware(thunk)));
-};
+const configureStore = () => createStore(RootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 export default configureStore;

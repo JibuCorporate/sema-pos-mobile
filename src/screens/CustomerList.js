@@ -30,7 +30,7 @@ import * as PaymentTypesActions from "../actions/PaymentTypesActions";
 
 import Icons from 'react-native-vector-icons/FontAwesome';
 
-import PaymentModal from './paymentModal';
+//import PaymentModal from './paymentModal';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 import StickyContainer from 'recyclerlistview/sticky';
 
@@ -380,7 +380,7 @@ class CustomerList extends React.Component {
                     }}
                 />
 
-                <View style={styles.modalPayment}>
+                {/* <View style={styles.modalPayment}>
                     <Modal
                         style={styles.modal3}
                         coverScreen={true}
@@ -391,7 +391,7 @@ class CustomerList extends React.Component {
                             modalOnClose={this.modalOnClose}
                             closePaymentModal={this.closePaymentModal} />
                     </Modal>
-                </View>
+                </View> */}
                 <SearchWatcher parent={this}>
                     {this.props.searchString}
                 </SearchWatcher>

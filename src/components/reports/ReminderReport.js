@@ -1,14 +1,16 @@
 import React from 'react';
-import { Text, View, StyleSheet, TouchableHighlight, Alert, FlatList } from 'react-native';
+import {
+  Text, View, StyleSheet, TouchableHighlight, Alert, FlatList,
+} from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import { format, parseISO, isSameDay } from 'date-fns';
 import * as customerActions from '../../actions/CustomerActions';
-import * as reminderActions from "../../actions/ReminderActions.js";
+import * as reminderActions from '../../actions/ReminderActions';
 import CustomerReminderRealm from '../../database/customer-reminder/customer-reminder.operations';
 import * as CustomerReminderActions from '../../actions/CustomerReminderActions';
 import DateFilter from './ReminderDateFilter';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import { format, parseISO, isSameDay } from 'date-fns';
 
 
 class RemindersReport extends React.PureComponent {

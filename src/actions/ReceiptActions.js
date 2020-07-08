@@ -13,71 +13,66 @@ export const SET_TRANSACTION = 'SET_TRANSACTION';
 export const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
 
 export function setRemoteReceipts(remoteReceipts) {
-    return (dispatch) => { dispatch({ type: SET_REMOTE_RECEIPTS, data: { remoteReceipts } }) };
+  return (dispatch) => { dispatch({ type: SET_REMOTE_RECEIPTS, data: { remoteReceipts } }); };
 }
-
 
 export function setReceipts(receipts) {
-    return (dispatch) => { dispatch({ type: SET_RECEIPTS, data: { receipts } }) };
+  return (dispatch) => { dispatch({ type: SET_RECEIPTS, data: { receipts } }); };
 }
 
-
 export function setTransaction(data) {
-    return (dispatch) => { dispatch({ type: SET_TRANSACTION, data }) };
+  return (dispatch) => { dispatch({ type: SET_TRANSACTION, data }); };
 }
 
 export function updateTransaction(data) {
-    return (dispatch) => { dispatch({ type: UPDATE_TRANSACTION, data }) };
+  return (dispatch) => { dispatch({ type: UPDATE_TRANSACTION, data }); };
 }
 
-
 export function addRemoteReceipt(receipt) {
-    return dispatch => { dispatch({ type: ADD_REMOTE_RECEIPT, data: { receipt } }) };
+  return (dispatch) => { dispatch({ type: ADD_REMOTE_RECEIPT, data: { receipt } }); };
 }
 
 export function clearLoggedReceipts(receipt) {
-    return dispatch => { dispatch({ type: CLEAR_LOGGED_RECEIPTS, data: {} }) };
+  return (dispatch) => { dispatch({ type: CLEAR_LOGGED_RECEIPTS, data: {} }); };
 }
 
 export function setLocalReceipts(localReceipts) {
-    return dispatch => { dispatch({ type: SET_LOCAL_RECEIPTS, data: { localReceipts } }) };
+  return (dispatch) => { dispatch({ type: SET_LOCAL_RECEIPTS, data: { localReceipts } }); };
 }
 
 export function removeLocalReceipt(receiptId) {
-    return dispatch => { dispatch({ type: REMOVE_LOCAL_RECEIPT, data: { receiptId } }) };
+  return (dispatch) => { dispatch({ type: REMOVE_LOCAL_RECEIPT, data: { receiptId } }); };
 }
 
 export function updateRemoteReceipt(receiptIndex, updatedFields) {
-    return dispatch => {
-        dispatch({
-            type: UPDATE_REMOTE_RECEIPT,
-            data: {
-                remoteReceiptIndex: receiptIndex,
-                updatedRemoteFields: updatedFields
-            }
-        })
-    };
+  return (dispatch) => {
+    dispatch({
+      type: UPDATE_REMOTE_RECEIPT,
+      data: {
+        remoteReceiptIndex: receiptIndex,
+        updatedRemoteFields: updatedFields,
+      },
+    });
+  };
 }
 
 export function SearchReceipts(searchString) {
-    return (dispatch) => { dispatch({ type: RECEIPT_SEARCH, data: searchString }) };
+  return (dispatch) => { dispatch({ type: RECEIPT_SEARCH, data: searchString }); };
 }
 
 export function updateReceiptLineItem(receiptIndex, lineItemIndex, updatedFields) {
-    return dispatch => {
-        dispatch({
-            type: UPDATE_RECEIPT_LINE_ITEM,
-            data: {
-                receiptIndex,
-                lineItemIndex,
-                updatedLineItemFields: updatedFields
-            }
-        })
-    };
+  return (dispatch) => {
+    dispatch({
+      type: UPDATE_RECEIPT_LINE_ITEM,
+      data: {
+        receiptIndex,
+        lineItemIndex,
+        updatedLineItemFields: updatedFields,
+      },
+    });
+  };
 }
 
 export function setIsUpate(status) {
-    return (dispatch) => { dispatch({ type: IS_UPDATE, data: status }) };
+  return (dispatch) => { dispatch({ type: IS_UPDATE, data: status }); };
 }
-
-
