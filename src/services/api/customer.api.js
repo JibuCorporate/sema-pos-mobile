@@ -35,7 +35,7 @@ class CustomerApi {
                 Authorization: 'Bearer ' + this._token
             }
         };
-
+        
         let url = `sema/site/customers/${this._siteId}/${updatedSince}`;
         return fetch(this._url + url, options)
             .then(response => response.json())
