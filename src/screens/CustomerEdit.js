@@ -1,13 +1,6 @@
 import React from 'react';
 
-import {
-	View,
-	Text,
-	StyleSheet,
-	Modal,
-	ScrollView,
-	Alert
-} from 'react-native';
+import { View, Text, StyleSheet, Modal, ScrollView, Alert } from 'react-native';
 import { Card, Button, Input } from 'react-native-elements';
 
 import { connect } from 'react-redux';
@@ -26,6 +19,7 @@ import i18n from '../app/i18n';
 
 class CustomerEdit extends React.PureComponent {
 	static contextType = AppContext;
+
 	constructor(props) {
 		super(props);
 
@@ -34,8 +28,7 @@ class CustomerEdit extends React.PureComponent {
 			isCreateInProgress: false,
 			isLoading: true,
 			salescid: 0,
-			language: "",
-
+			language: ''
 		};
 
 		this.saleschannelid = 0;
@@ -46,22 +39,21 @@ class CustomerEdit extends React.PureComponent {
 		this.customerType = React.createRef();
 
 		this.customerTypes = CustomerTypeRealm.getCustomerTypesForDisplay(this.saleschannelid);
-		this.customerTypeOptions = this.customerTypes.map(customerType => {
+		this.customerTypeOptions = this.customerTypes.map((customerType) => {
 			return customerType.displayName;
 		});
 
-		this.customerTypesOptions = this.customerTypes.map(customerType => {
-			var rObj = {};
+		this.customerTypesOptions = this.customerTypes.map((customerType) => {
+			const rObj = {};
 			rObj.label = customerType.displayName;
 			rObj.value = customerType.id;
 			rObj.key = customerType.salesChannelId;
 			return rObj;
 		});
 
-		this.customerTypesIndicies = this.customerTypes.map(customerType => {
+		this.customerTypesIndicies = this.customerTypes.map((customerType) => {
 			return customerType.id;
 		});
-
 	}
 
 	componentDidMount() {
@@ -70,20 +62,27 @@ class CustomerEdit extends React.PureComponent {
 			this.props.navigation.setParams({ isEdit: true });
 
 			this.setState({
-				name: this.context.selectedCustomer.name ? this.context.selectedCustomer.name : "",
-				phoneNumber: this.context.selectedCustomer.phoneNumber ? this.context.selectedCustomer.phoneNumber : "",
-				secondPhoneNumber: this.context.selectedCustomer.secondPhoneNumber ? this.context.selectedCustomer.secondPhoneNumber : "",
-				address: this.context.selectedCustomer.address ? this.context.selectedCustomer.address : "",
+				name: this.context.selectedCustomer.name ? this.context.selectedCustomer.name : '',
+				phoneNumber: this.context.selectedCustomer.phoneNumber
+					? this.context.selectedCustomer.phoneNumber
+					: '',
+				secondPhoneNumber: this.context.selectedCustomer.secondPhoneNumber
+					? this.context.selectedCustomer.secondPhoneNumber
+					: '',
+				address: this.context.selectedCustomer.address
+					? this.context.selectedCustomer.address
+					: '',
 				reference: '7',
-				customerType: this.context.selectedCustomer.customerTypeId ? this.context.selectedCustomer.customerTypeId : 0,
-				customerChannel: this.context.selectedCustomer.salesChannelId ? this.context.selectedCustomer.salesChannelId : 0
-			})
-
-
+				customerType: this.context.selectedCustomer.customerTypeId
+					? this.context.selectedCustomer.customerTypeId
+					: 0,
+				customerChannel: this.context.selectedCustomer.salesChannelId
+					? this.context.selectedCustomer.salesChannelId
+					: 0
+			});
 		} else {
 			this.props.navigation.setParams({ isEdit: false });
 		}
-
 	}
 
 	componentWillUnmount() {
@@ -94,11 +93,11 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	onEdit() {
-		console.log('this.context.isEdit',this.context.isEdit)
+		console.log('this.context.isEdit', this.context.isEdit);
 		this.props.customerActions.setIsLoading(true);
 		try {
-			let salesChannelId = this.state.customerChannel > 0 ? this.state.customerChannel : -1;
-			let customerTypeId = this.state.customerType > 0 ? this.state.customerType : -1;
+			const salesChannelId = this.state.customerChannel > 0 ? this.state.customerChannel : -1;
+			const customerTypeId = this.state.customerType > 0 ? this.state.customerType : -1;
 			if (this.context.isEdit) {
 				CustomerRealm.updateCustomer(
 					this.context.selectedCustomer,
@@ -109,34 +108,36 @@ class CustomerEdit extends React.PureComponent {
 					customerTypeId,
 					this.state.reference,
 					this.state.secondPhoneNumber
-				).then(e => {
+				).then((e) => {
 					this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());
 					this.props.customerActions.CustomerSelected({});
 					this.setState({ isEditInProgress: true });
 				});
 			} else {
-				if (this._textIsEmpty(this.state.phoneNumber) ||
+				if (
+					this._textIsEmpty(this.state.phoneNumber) ||
 					this._textIsEmpty(this.state.name) ||
-					this._textIsEmpty(this.state.address)) {
+					this._textIsEmpty(this.state.address)
+				) {
 					Alert.alert(
 						'Empty Fields',
 						'A customer cannot be created without name, phone number and address!',
 						[
 							{
 								text: 'Cancel',
-								onPress: () => { },
+								onPress: () => {},
 								style: 'cancel'
 							},
 							{
 								text: 'OK',
-								onPress: () => { }
+								onPress: () => {}
 							}
 						],
 						{ cancelable: false }
 					);
 					return;
 				}
- 
+
 				CustomerRealm.createCustomer(
 					this.state.phoneNumber,
 					this.state.name,
@@ -146,13 +147,13 @@ class CustomerEdit extends React.PureComponent {
 					customerTypeId,
 					this.state.reference,
 					this.state.secondPhoneNumber
-				); 
+				);
 				this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());
 				this.props.customerActions.CustomerSelected({});
 				this.setState({ isCreateInProgress: true });
 			}
 			this.props.navigation.goBack();
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	render() {
@@ -160,26 +161,16 @@ class CustomerEdit extends React.PureComponent {
 			<View style={styles.custeditcont}>
 				<ScrollView style={styles.flex1}>
 					<View style={styles.flexCenter}>
-
 						<Card containerStyle={styles.contCard}>
-
 							<Input
-								placeholder={i18n.t(
-									'account-name'
-								)}
+								placeholder={i18n.t('account-name')}
 								onChangeText={this.onChangeName}
 								// label={i18n.t('account-name')}
 								underlineColorAndroid="transparent"
 								keyboardType="default"
 								value={this.state.name}
 								inputContainerStyle={styles.inputText}
-								leftIcon={
-									<Ionicons
-										name='md-person'
-										size={24}
-										color='black'
-									/>
-								}
+								leftIcon={<Ionicons name="md-person" size={24} color="black" />}
 							/>
 							<View style={styles.flexanddirection}>
 								<Input
@@ -191,11 +182,7 @@ class CustomerEdit extends React.PureComponent {
 									inputContainerStyle={styles.inputText}
 									containerStyle={styles.flexpt5}
 									leftIcon={
-										<Ionicons
-											name='md-contact'
-											size={24}
-											color='black'
-										/>
+										<Ionicons name="md-contact" size={24} color="black" />
 									}
 								/>
 
@@ -208,32 +195,19 @@ class CustomerEdit extends React.PureComponent {
 									inputContainerStyle={styles.inputText}
 									containerStyle={styles.flexpt5}
 									leftIcon={
-										<Ionicons
-											name='md-contact'
-											size={24}
-											color='black'
-										/>
+										<Ionicons name="md-contact" size={24} color="black" />
 									}
 								/>
 							</View>
 							<Input
-								placeholder={i18n.t(
-									'address'
-								)}
+								placeholder={i18n.t('address')}
 								keyboardType="default"
 								value={this.state.address}
 								onChangeText={this.onChangeAddress.bind(this)}
 								// label={i18n.t('address')}
 								inputContainerStyle={styles.inputText}
-								leftIcon={
-									<Ionicons
-										name='md-map'
-										size={24}
-										color='black'
-									/>
-								}
+								leftIcon={<Ionicons name="md-map" size={24} color="black" />}
 							/>
-
 
 							<RNPickerSelect
 								placeholder={{
@@ -244,7 +218,9 @@ class CustomerEdit extends React.PureComponent {
 								items={this.customerTypesOptions}
 								onValueChange={(value, itemKey) => {
 									this.setState({ customerType: value });
-									this.setState({ customerChannel: this.customerTypesOptions[itemKey - 1].key });
+									this.setState({
+										customerChannel: this.customerTypesOptions[itemKey - 1].key
+									});
 								}}
 								value={this.state.customerType}
 								useNativeAndroidPickerStyle={false}
@@ -253,17 +229,16 @@ class CustomerEdit extends React.PureComponent {
 									iconContainer: {
 										top: 20,
 										left: 30,
-										color: "black",
+										color: 'black',
 										marginRight: 10
 									},
 
 									placeholder: {
 										color: '#333',
 										fontSize: 18,
-										fontWeight: 'bold',
-									},
+										fontWeight: 'bold'
+									}
 								}}
-
 								Icon={() => {
 									return <Ionicons name="md-ribbon" size={24} />;
 								}}
@@ -273,20 +248,21 @@ class CustomerEdit extends React.PureComponent {
 								onPress={this.onEdit.bind(this)}
 								buttonStyle={styles.subbtn}
 								containerStyle={styles.contBtnStyle}
-								title={this.getSubmitText()} />
+								title={this.getSubmitText()}
+							/>
 						</Card>
 
 						<Modal
 							visible={this.state.isEditInProgress}
-							backdropColor={'red'}
-							transparent={true}
+							backdropColor="red"
+							transparent
 							onRequestClose={this.closeHandler}>
 							{this.showEditInProgress()}
 						</Modal>
 						<Modal
 							visible={this.state.isCreateInProgress}
-							backdropColor={'red'}
-							transparent={true}
+							backdropColor="red"
+							transparent
 							onRequestClose={this.closeHandler}>
 							{this.showCreateInProgress()}
 						</Modal>
@@ -296,14 +272,13 @@ class CustomerEdit extends React.PureComponent {
 		);
 	}
 
-	onChangeName = text => {
+	onChangeName = (text) => {
 		this.setState({
 			name: text
 		});
 	};
 
 	checkEdit() {
-
 		if (this.context.isEdit) {
 			this.setState({ name: this.context.selectedCustomer.name });
 			this.setState({ phoneNumber: this.context.selectedCustomer.phoneNumber });
@@ -313,36 +288,34 @@ class CustomerEdit extends React.PureComponent {
 			this.setState({ customerType: this.context.selectedCustomer.customerTypeId });
 			this.setState({ customerChannel: this.context.selectedCustomer.salesChannelId });
 		}
-
 	}
 
 	getName(me) {
 		if (me.props.isEdit) {
 			return me.props.selectedCustomer.name;
-		} else {
-			return 'wee';
 		}
+		return 'wee';
 	}
 
-	onChangeTeleOne = text => {
+	onChangeTeleOne = (text) => {
 		this.setState({
 			phoneNumber: text
 		});
 	};
 
-	onChangeTeleTwo = text => {
+	onChangeTeleTwo = (text) => {
 		this.setState({
 			secondPhoneNumber: text
 		});
 	};
 
-	onChangeAddress = text => {
+	onChangeAddress = (text) => {
 		this.setState({
 			address: text
 		});
 	};
 
-	onChangeReference = text => {
+	onChangeReference = (text) => {
 		if (text) {
 			if (/^\d+$/.test(text)) {
 				this.setState({
@@ -361,37 +334,30 @@ class CustomerEdit extends React.PureComponent {
 	getTelephoneNumber(me) {
 		if (me.props.isEdit) {
 			return me.props.selectedCustomer.phoneNumber;
-		} else {
-			return '';
 		}
+		return '';
 	}
 
 	getSecondTelephoneNumber(me) {
 		try {
 			if (me.props.isEdit) {
 				return me.props.selectedCustomer.secondPhoneNumber;
-			} else {
-				return '';
 			}
-		} catch (error) { }
+			return '';
+		} catch (error) {}
 	}
-
 
 	getAddress(me) {
 		if (me.props.isEdit) {
 			return me.props.selectedCustomer.address;
-		} else {
-			return '';
 		}
+		return '';
 	}
 
 	getDefaultChannelValue() {
 		if (this.context.isEdit) {
 			for (let i = 0; i < this.salesChannels.length; i++) {
-				if (
-					this.salesChannels[i].id ==
-					this.context.selectedCustomer.salesChannelId
-				) {
+				if (this.salesChannels[i].id == this.context.selectedCustomer.salesChannelId) {
 					return this.salesChannels[i].displayName;
 				}
 			}
@@ -402,10 +368,7 @@ class CustomerEdit extends React.PureComponent {
 	getDefaultTypeValue() {
 		if (this.context.isEdit) {
 			for (let i = 0; i < this.customerTypes.length; i++) {
-				if (
-					this.customerTypes[i].id ==
-					this.context.selectedCustomer.customerTypeId
-				) {
+				if (this.customerTypes[i].id == this.context.selectedCustomer.customerTypeId) {
 					return this.customerTypes[i].displayName;
 				}
 			}
@@ -417,10 +380,7 @@ class CustomerEdit extends React.PureComponent {
 		if (this.context.isEdit) {
 			const salesChannels = SalesChannelRealm.getSalesChannels();
 			for (let i = 0; i < salesChannels.length; i++) {
-				if (
-					salesChannels[i].id ==
-					this.context.selectedCustomer.salesChannelId
-				) {
+				if (salesChannels[i].id == this.context.selectedCustomer.salesChannelId) {
 					return i;
 				}
 			}
@@ -431,10 +391,7 @@ class CustomerEdit extends React.PureComponent {
 	getDefaultTypeIndex() {
 		if (this.context.isEdit) {
 			for (let i = 0; i < this.customerTypesIndicies.length; i++) {
-				if (
-					this.customerTypesIndicies[i] ==
-					this.context.selectedCustomer.customerTypeId
-				) {
+				if (this.customerTypesIndicies[i] == this.context.selectedCustomer.customerTypeId) {
 					return i;
 				}
 			}
@@ -443,18 +400,16 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	getHeaderText() {
-		return this.context.isEdit
-			? i18n.t('edit-customer')
-			: i18n.t('new-customer');
+		return this.context.isEdit ? i18n.t('edit-customer') : i18n.t('new-customer');
 	}
+
 	getSubmitText() {
-		return this.context.isEdit
-			? i18n.t('update-customer')
-			: i18n.t('create-customer');
+		return this.context.isEdit ? i18n.t('update-customer') : i18n.t('create-customer');
 	}
+
 	onCancelEdit() {
 		this.props.navigation.navigate('ListCustomers');
-		var that = this;
+		const that = this;
 		setTimeout(() => {
 			Events.trigger('ScrollCustomerTo', {
 				customer: that.props.selectedCustomer
@@ -473,15 +428,12 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	isValidPhoneNumber(text) {
-		let test = /^\d{8,14}$/.test(text);
+		const test = /^\d{8,14}$/.test(text);
 		if (!test) {
-			alert(
-				'Phone number should be atleast 8 digits long. Example 0752XXXYYY'
-			);
+			alert('Phone number should be atleast 8 digits long. Example 0752XXXYYY');
 		}
 		return test;
 	}
-
 
 	_textIsEmpty(txt) {
 		if (txt === null || txt.length === 0) {
@@ -491,44 +443,36 @@ class CustomerEdit extends React.PureComponent {
 	}
 
 	showEditInProgress() {
-		let that = this;
+		const that = this;
 		if (this.state.isEditInProgress) {
 			setTimeout(() => {
 				that.closeHandler();
 			}, 1000);
 		}
 		return (
-			<View
-				style={styles.createLoader}>
+			<View style={styles.createLoader}>
 				<View style={styles.updating}>
-					<Text style={styles.loadertext}>
-						{i18n.t('updating')}
-					</Text>
+					<Text style={styles.loadertext}>{i18n.t('updating')}</Text>
 				</View>
 			</View>
 		);
 	}
 
-
 	showCreateInProgress() {
-		let that = this;
+		const that = this;
 		if (this.state.isCreateInProgress) {
 			setTimeout(() => {
 				that.closeHandler();
 			}, 1000);
 		}
 		return (
-			<View
-				style={styles.createLoader}>
+			<View style={styles.createLoader}>
 				<View style={styles.updating}>
-					<Text style={styles.loadertext}>
-						Creating
-					</Text>
+					<Text style={styles.loadertext}>Creating</Text>
 				</View>
 			</View>
 		);
 	}
-
 }
 
 function mapStateToProps(state, props) {
@@ -545,55 +489,50 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(CustomerEdit);
-
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerEdit);
 
 const pickerSelectStyles = StyleSheet.create({
 	inputAndroid: {
-		fontSize: 18,
-		borderWidth: 2,
-		borderRadius: 8,
-		borderColor: '#f1f1f1',
-		backgroundColor: '#f1f1f1',
-		color: 'black',
 		alignItems: 'center',
-		marginTop: 5,
+		backgroundColor: '#f1f1f1',
+		borderColor: '#f1f1f1',
+		borderRadius: 8,
+		borderWidth: 2,
+		color: 'black',
+		fontSize: 18,
 		marginBottom: 10,
 		marginLeft: 20,
 		marginRight: 20,
+		marginTop: 5,
 		paddingLeft: 30,
 		paddingRight: 30 // to ensure the text is never behind the icon
-	},
+	}
 });
 
 const styles = StyleSheet.create({
-	flex1: {
-		flex: 1
-	},
-
-	iconContainer: {
-		top: 20,
-		left: 30,
-		color: "black",
-		marginRight: 10
+	buttonText: {
+		color: 'white',
+		fontSize: 28,
+		fontWeight: 'bold',
+		textAlign: 'center',
+		width: 300
 	},
 
 	contBtnStyle: {
-		bottom: 0,
 		borderRadius: 0,
+		bottom: 0,
 		flex: 1,
+		marginBottom: 0,
 		marginLeft: 0,
 		marginRight: 0,
-		marginBottom: 0,
 		marginTop: 10
 	},
 
-	loadertext: {
-		fontSize: 24,
-		fontWeight: 'bold'
+	contCard: {
+		borderRadius: 8,
+		marginTop: 30,
+		padding: 0,
+		width: '56%'
 	},
 
 	createLoader: {
@@ -603,64 +542,58 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 
-	subbtn: {
-		padding: 20
+	custeditcont: {
+		backgroundColor: '#f1f1f1',
+		flex: 1,
+		justifyContent: 'center'
 	},
 
+	dropdownText: {
+		fontSize: 24
+	},
+
+	flex1: {
+		flex: 1
+	},
+	flexCenter: {
+		alignItems: 'center',
+		flex: 1
+	},
 	flexanddirection: {
 		flex: 1,
 		flexDirection: 'row'
 	},
-	flexCenter: {
-		flex: 1,
-		alignItems: 'center'
-	},
-	custeditcont: {
-		flex: 1,
-		backgroundColor: '#f1f1f1',
-		justifyContent: 'center'
-	},
+	flexpt5: { flex: 0.5 },
 	headerText: {
-		fontSize: 24,
 		color: 'black',
+		fontSize: 24,
 		marginLeft: 100
 	},
-	submit: {
-		backgroundColor: '#2858a7',
-		borderRadius: 20,
-		padding: 10,
-		marginTop: '1%'
+	iconContainer: {
+		color: 'black',
+		left: 30,
+		marginRight: 10,
+		top: 20
 	},
 	inputContainer: {
-		borderWidth: 2,
-		borderRadius: 10,
+		backgroundColor: '#CCC',
 		borderColor: '#CCC',
-		backgroundColor: '#CCC'
-	},
-	buttonText: {
-		fontWeight: 'bold',
-		fontSize: 28,
-		color: 'white',
-		textAlign: 'center',
-		width: 300
-	},
-
-	flexpt5: { flex: .5 },
-
-	contCard: {
-		width: '56%',
-		marginTop: 30,
-		padding: 0,
-		borderRadius: 8
+		borderRadius: 10,
+		borderWidth: 2
 	},
 
 	inputText: {
 		alignSelf: 'center',
-		borderWidth: 2,
-		borderRadius: 8,
-		borderColor: '#f1f1f1',
 		backgroundColor: '#f1f1f1',
+		borderColor: '#f1f1f1',
+		borderRadius: 8,
+		borderWidth: 2,
 		margin: 5
+	},
+
+	loadertext: {
+		fontSize: 24,
+		fontWeight: 'bold'
 	},
 
 	phoneInputText: {
@@ -669,18 +602,25 @@ const styles = StyleSheet.create({
 		paddingRight: 5
 	},
 
-	dropdownText: {
-		fontSize: 24
+	subbtn: {
+		padding: 20
+	},
+
+	submit: {
+		backgroundColor: '#2858a7',
+		borderRadius: 20,
+		marginTop: '1%',
+		padding: 10
 	},
 
 	updating: {
-		height: 100,
-		width: 500,
-		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: '#ABC1DE',
 		borderColor: '#2858a7',
+		borderRadius: 10,
 		borderWidth: 5,
-		borderRadius: 10
+		height: 100,
+		justifyContent: 'center',
+		width: 500
 	}
 });

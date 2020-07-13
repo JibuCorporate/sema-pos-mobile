@@ -1,26 +1,21 @@
 import React from 'react';
 
-import {
-	View,
-	Text,
-	StyleSheet,
-	TouchableHighlight,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Modal from 'react-native-modalbox';
 import PaymentTypeRealm from '../database/payment_types/payment_types.operations';
 import CustomerReminderRealm from '../database/customer-reminder/customer-reminder.operations';
 
-import * as PaymentTypesActions from "../actions/PaymentTypesActions";
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as PaymentTypesActions from '../actions/PaymentTypesActions';
 
 import * as CustomerActions from '../actions/CustomerActions';
 import * as TopUpActions from '../actions/TopUpActions';
 import * as receiptActions from '../actions/ReceiptActions';
 
-//import PaymentModal from './paymentModal';
-import Modal from 'react-native-modalbox';
+// import PaymentModal from './paymentModal';
 
 class SelectedCustomerDetails extends React.PureComponent {
 	constructor(props) {
@@ -34,7 +29,7 @@ class SelectedCustomerDetails extends React.PureComponent {
 			isDisabled: false,
 			swipeToClose: true,
 			sliderValue: 0.3,
-			paymentOptions: "",
+			paymentOptions: '',
 			selectedPaymentTypes: [],
 			selectedType: {},
 			checkedType: {},
@@ -43,7 +38,7 @@ class SelectedCustomerDetails extends React.PureComponent {
 			isDateTimePickerVisible: false,
 			receiptDate: new Date(),
 			canProceed: true,
-			selectedPaymentType: "Cash",
+			selectedPaymentType: 'Cash'
 		};
 	}
 
@@ -56,14 +51,15 @@ class SelectedCustomerDetails extends React.PureComponent {
 							{this.getName()} . {this.getPhone()}
 						</Text>
 						<Text style={styles.selectedCustomerText}>
-								<Ionicons
-										name='md-alarm'
-										size={24}
-										color='black'
-									/> :
-									  {CustomerReminderRealm.getCustomerReminderById(this.props.selectedCustomer.customerId) === 'N/A' ? ' No reminder yet.' : CustomerReminderRealm.getCustomerReminderById(this.props.selectedCustomer.customerId).reminder_date }
+							<Ionicons name="md-alarm" size={24} color="black" /> :
+							{CustomerReminderRealm.getCustomerReminderById(
+								this.props.selectedCustomer.customerId
+							) === 'N/A'
+								? ' No reminder yet.'
+								: CustomerReminderRealm.getCustomerReminderById(
+										this.props.selectedCustomer.customerId
+								  ).reminder_date}
 						</Text>
-
 					</View>
 					<View style={styles.subbalances}>
 						<Text style={styles.selectedCustomerTextpad}>
@@ -71,9 +67,8 @@ class SelectedCustomerDetails extends React.PureComponent {
 						</Text>
 
 						<Text style={styles.selectedCustomerTextpad}>
-							Loan Balance:  {this.props.selectedCustomer.dueAmount}
+							Loan Balance: {this.props.selectedCustomer.dueAmount}
 						</Text>
-
 					</View>
 
 					<View style={styles.subactions}>
@@ -83,12 +78,12 @@ class SelectedCustomerDetails extends React.PureComponent {
 								<Text style={styles.buttonText}>Make Sale</Text>
 							</TouchableHighlight>
 						</View>
-						<View style={[styles.completeOrder]}>
+						<View style={styles.completeOrder}>
 							<TouchableHighlight
 								onPress={() => {
 									this.refs.modal6.open();
 								}}>
-								<Text style={styles.buttonText}>{`Topup Wallet / Repay Loan`}</Text>
+								<Text style={styles.buttonText}>Topup Wallet / Repay Loan</Text>
 							</TouchableHighlight>
 						</View>
 					</View>
@@ -111,13 +106,10 @@ class SelectedCustomerDetails extends React.PureComponent {
 		);
 	}
 
-
-
 	modalOnClose() {
 		PaymentTypeRealm.resetSelected();
 		this.props.paymentTypesActions.resetSelectedDebt();
-		this.props.paymentTypesActions.setPaymentTypes(
-			PaymentTypeRealm.getPaymentTypes());
+		this.props.paymentTypesActions.setPaymentTypes(PaymentTypeRealm.getPaymentTypes());
 	}
 
 	closePaymentModal = () => {
@@ -127,35 +119,29 @@ class SelectedCustomerDetails extends React.PureComponent {
 	getReminder(id) {
 		if (CustomerReminderRealm.getCustomerReminderById(id).length > 0) {
 			return CustomerReminderRealm.getCustomerReminderById(id)[0].reminder_date;
-		} else {
-			return 'N/A';
 		}
+		return 'N/A';
 	}
-
 
 	getName() {
 		if (this.props.selectedCustomer.hasOwnProperty('name')) {
 			return this.props.selectedCustomer.name;
-		} else {
-			return '';
 		}
-
+		return '';
 	}
 
 	getPhone() {
 		if (this.props.selectedCustomer.hasOwnProperty('phoneNumber')) {
 			return this.props.selectedCustomer.phoneNumber;
-		} else {
-			return '';
 		}
+		return '';
 	}
 
 	getCustomerType() {
 		if (this.props.selectedCustomer.hasOwnProperty('customertype')) {
 			return this.props.selectedCustomer.customerType;
-		} else {
-			return '';
 		}
+		return '';
 	}
 }
 
@@ -169,7 +155,7 @@ function mapStateToProps(state, props) {
 		receiptsPaymentTypes: state.paymentTypesReducer.receiptsPaymentTypes,
 		paymentTypes: state.paymentTypesReducer.paymentTypes,
 		products: state.productReducer.products,
-		topups: state.topupReducer.topups,
+		topups: state.topupReducer.topups
 	};
 }
 
@@ -182,28 +168,18 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(SelectedCustomerDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(SelectedCustomerDetails);
 
 const styles = StyleSheet.create({
-
 	buttonText: {
 		backgroundColor: '#2858a7',
-		fontWeight: 'bold',
-		fontSize: 18,
 		color: 'white',
+		fontSize: 18,
+		fontWeight: 'bold'
 	},
 
-	commsubcont: { flexDirection: 'column', flex: 1.4, height: 100, paddingLeft: 10 },
-
-	subbalances: { flexDirection: 'column', flex: 1, height: 100 },
-
-	subactions: { flexDirection: 'column', flex: 1, height: 100, paddingLeft: 20 },
-
 	commandBarContainer: {
-		flex: .25,
+		flex: 0.25,
 		flexDirection: 'row',
 		backgroundColor: '#f1f1f1',
 		top: 10,
@@ -218,48 +194,52 @@ const styles = StyleSheet.create({
 		paddingBottom: 10
 	},
 
-	modalPayment: {
-		backgroundColor: 'white',
-	},
-
-	modal3: {
-		width: '70%',
-		height: 500,
-		justifyContent: 'center',
-	},
-
-	selectedCustomerText: {
-		marginLeft: 10,
-		alignSelf: 'flex-start',
-		flex: 0.5,
-		fontSize: 18,
-		color: 'black'
-	},
-
-	selectedCustomerTextpad: {
-		marginLeft: 10,
-		alignSelf: 'flex-start',
-		flex: 0.5,
-		fontSize: 18,
-		color: 'black',
-		padding: 5
-	},
-	selectedCustomerText: {
-		marginLeft: 10,
-		alignSelf: 'flex-start',
-		flex: 0.5,
-		fontSize: 18,
-		color: 'black',
-		fontSize: 18
-	},
+	commsubcont: { flexDirection: 'column', flex: 1.4, height: 100, paddingLeft: 10 },
 
 	completeOrder: {
 		backgroundColor: '#2858a7',
 		borderRadius: 5,
-		flex: .4,
+		flex: 0.4,
 		margin: '1%',
-		padding: 5,
+		padding: 5
+	},
 
-	}
+	modal3: {
+		height: 500,
+		justifyContent: 'center',
+		width: '70%'
+	},
 
+	modalPayment: {
+		backgroundColor: 'white'
+	},
+
+	selectedCustomerText: {
+		alignSelf: 'flex-start',
+		color: 'black',
+		flex: 0.5,
+		fontSize: 18,
+		marginLeft: 10
+	},
+
+	selectedCustomerText: {
+		alignSelf: 'flex-start',
+		color: 'black',
+		flex: 0.5,
+		fontSize: 18,
+		fontSize: 18,
+		marginLeft: 10
+	},
+
+	selectedCustomerTextpad: {
+		alignSelf: 'flex-start',
+		color: 'black',
+		flex: 0.5,
+		fontSize: 18,
+		marginLeft: 10,
+		padding: 5
+	},
+	subactions: { flexDirection: 'column', flex: 1, height: 100, paddingLeft: 20 },
+
+	subbalances: { flexDirection: 'column', flex: 1, height: 100 }
 });

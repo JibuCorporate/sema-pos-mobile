@@ -1,40 +1,37 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
 import AppContext from '../context/app-context';
+import { colors } from '../styles/sema_colors';
+
+const styles = StyleSheet.create({
+	container: {
+		color: colors.white,
+		flexDirection: 'row',
+		fontSize: 18
+	},
+	tooltitle: {
+		color: colors.white,
+		fontSize: 18
+	}
+});
 
 class CustomerTitle extends React.PureComponent {
-    static contextType = AppContext;
+	static contextType = AppContext;
 
-    render() {
-      return (
-        <View
-          style={styles.container}
-        >
-          {this.context.customerProps.isCustomerSelected && (
-            <Text style={styles.tooltitle}>{this.context.customerProps.customerName}</Text>
-          )}
-          {!this.context.customerProps.isCustomerSelected && (
-            <Text style={styles.tooltitle}>{this.props.title ? this.props.title : this.context.customerProps.title}</Text>
-          )}
-        </View>
-
-      );
-    }
+	render() {
+		const { customerProps } = this.context;
+		const { title } = this.props;
+		return (
+			<View style={styles.container}>
+				{customerProps.isCustomerSelected && (
+					<Text style={styles.tooltitle}>{customerProps.customerName}</Text>
+				)}
+				{!customerProps.isCustomerSelected && (
+					<Text style={styles.tooltitle}>{title || customerProps.title}</Text>
+				)}
+			</View>
+		);
+	}
 }
 
 export default CustomerTitle;
-
-const styles = StyleSheet.create({
-  tooltitle: {
-    color: 'white',
-    fontSize: 18,
-  },
-
-  container: {
-    flexDirection: 'row',
-    color: 'white',
-    fontSize: 18,
-  },
-
-});

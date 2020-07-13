@@ -1,7 +1,16 @@
 import React from 'react';
 import {
-	View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight,
-	StyleSheet, Alert, InteractionManager,
+	View,
+	Text,
+	Button,
+	TouchableOpacity,
+	ScrollView,
+	FlatList,
+	TextInput,
+	TouchableHighlight,
+	StyleSheet,
+	Alert,
+	InteractionManager
 } from 'react-native';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modalbox';
@@ -42,7 +51,7 @@ import { colors } from '../../styles/sema_colors';
 if (process.env.NODE_ENV === 'development') {
 	const whyDidYouRender = require('@welldone-software/why-did-you-render');
 	whyDidYouRender(React, {
-		trackAllPureComponents: true,
+		trackAllPureComponents: true
 	});
 }
 
@@ -59,22 +68,15 @@ class OrderSummaryScreen extends React.PureComponent {
 			selectedItem: {},
 			accumulator: 0,
 			selectedDiscounts: {},
-			firstKey: true,
-			switch1Value: false,
-			isOpen: false,
-			isDisabled: false,
-			swipeToClose: true,
-			sliderValue: 0.3,
-			isWalkIn: true,
 			// isDisabled: false,
 			buttonDisabled: false,
 			notes: '',
 			// swipeToClose: true,
 			loanPaid: 0,
 			topUpExpected: 0,
-			// sliderValue: 0.3,
-			selectedPaymentTypes: [],
 			selectedType: {},
+			checkedType: {},
+			textInputs: [],
 			checkedType: {},
 			textInputs: [],
 			isCompleteOrderVisible: false,
@@ -85,7 +87,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			isBottleTrackerModal: false,
 			isAdditionalNotesModal: false,
 			isPaymentModal: false,
-			isorderItemsModal: false,
+			isorderItemsModal: false
 		};
 
 		// this.selectedCustomer = {JSON.stringify(navigation.getParam('item', {}))};
@@ -94,24 +96,23 @@ class OrderSummaryScreen extends React.PureComponent {
 		this.orderItems = [...this.props.orderItems];
 	}
 
-	getTotalOrders = () => this.props.orderItems.reduce((total, item) => {
-		if (item.product.description != 'discount' && item.product.description != 'delivery') {
-			return (total + item.quantity);
-		}
-		return (total + 0);
-	}, 0);
+	getTotalOrders = () =>
+		this.props.orderItems.reduce((total, item) => {
+			if (item.product.description != 'discount' && item.product.description != 'delivery') {
+				return total + item.quantity;
+			}
+			return total + 0;
+		}, 0);
 
 	// Order Total //
 	orderTotalElement = () => (
 		<View style={styles.containerTotal}>
-			<Text style={orderItemStyles.flexTwo, styles.totalText}>{i18n.t('order-total')}</Text>
-			<Text style={orderItemStyles.flexThree, styles.totalText}>
-				{this.getCurrency().toUpperCase()}
-				{' '}
-				{this.getAmount()}
+			<Text style={(orderItemStyles.flexTwo, styles.totalText)}>{i18n.t('order-total')}</Text>
+			<Text style={(orderItemStyles.flexThree, styles.totalText)}>
+				{this.getCurrency().toUpperCase()} {this.getAmount()}
 			</Text>
 		</View>
-	)
+	);
 
 	getAmount = () => {
 		const propducts = this.props.orderItems;
@@ -144,7 +145,6 @@ class OrderSummaryScreen extends React.PureComponent {
 		requestAnimationFrame(() => {
 			this.setState({ selectedItem: item });
 			this.setState({ accumulator: item.quantity });
-			this.setState({ firstKey: true });
 			this.setState({ isorderItemsModal: true });
 			this.refs.productModel.open();
 		});
@@ -154,25 +154,29 @@ class OrderSummaryScreen extends React.PureComponent {
 		<TouchableHighlight
 			onPress={() => this.handleOnPress(item)}
 			onShowUnderlay={separators.highlight}
-			onHideUnderlay={separators.unhighlight}
-		>
+			onHideUnderlay={separators.unhighlight}>
 			<View style={orderItemStyles.emptiesView}>
 				<View style={orderItemStyles.flexTwo}>
-					<Text style={[orderItemStyles.baseItem, orderItemStyles.leftMargin]}>{item.product.description}</Text>
+					<Text style={[orderItemStyles.baseItem, orderItemStyles.leftMargin]}>
+						{item.product.description}
+					</Text>
 				</View>
 				<View style={orderItemStyles.flex12}>
-					<Text style={[orderItemStyles.baseItem, orderItemStyles.txtalign]}>{item.quantity}</Text>
+					<Text style={[orderItemStyles.baseItem, orderItemStyles.txtalign]}>
+						{item.quantity}
+					</Text>
 				</View>
 				<View style={orderItemStyles.flexTwo}>
-					<Text numberOfLines={1} style={[orderItemStyles.baseItem, orderItemStyles.tatxt]}>
-						{this.getCurrency().toUpperCase()}
-						{' '}
-						{this.getDiscountPrice((item.quantity * item.unitPrice), item)}
+					<Text
+						numberOfLines={1}
+						style={[orderItemStyles.baseItem, orderItemStyles.tatxt]}>
+						{this.getCurrency().toUpperCase()}{' '}
+						{this.getDiscountPrice(item.quantity * item.unitPrice, item)}
 					</Text>
 				</View>
 			</View>
 		</TouchableHighlight>
-	)
+	);
 
 	orderItemsModal = () => {
 		const { isorderItemsModal } = this.state;
@@ -181,80 +185,63 @@ class OrderSummaryScreen extends React.PureComponent {
 				<KeyboardAwareScrollView>
 					{/* <TouchableOpacity> */}
 					<View style={orderItemStyles.orderItemModal}>
-						<View style={orderItemStyles.third}>
-							{this.getProductDescripion()}
-						</View>
+						<View style={orderItemStyles.third}>{this.getProductDescripion()}</View>
 						<View style={orderItemStyles.sixth}>
 							<Text style={[orderItemStyles.center, orderItemStyles.baseItem]}>
-								{this.getCurrency(this.state.selectedItem)}
-								{' '}
-								{this.getDiscountPrice((this.state.selectedItem.quantity * this.state.selectedItem.unitPrice), this.state.selectedItem)}
+								{this.getCurrency(this.state.selectedItem)}{' '}
+								{this.getDiscountPrice(
+									this.state.selectedItem.quantity *
+										this.state.selectedItem.unitPrice,
+									this.state.selectedItem
+								)}
 							</Text>
 						</View>
-						<View
-							style={orderItemStyles.cancelstyle}
-						>
-							{this.getCancelButton()}
-						</View>
+						<View style={orderItemStyles.cancelstyle}>{this.getCancelButton()}</View>
 					</View>
-					<View
-						style={orderItemStyles.aseparator}
-					/>
+					<View style={orderItemStyles.aseparator} />
 					<View style={orderItemStyles.flexAlign}>
 						{this.qtyAmount()}
 
 						{this.bottlesReturned()}
 
-						<View
-							style={orderItemStyles.aseparator}
-						/>
+						<View style={orderItemStyles.aseparator} />
 
 						<View style={orderItemStyles.rowDirection}>
 							<View style={orderItemStyles.flexOne}>
-								<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>NOTES</Text>
+								<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>
+									NOTES
+								</Text>
 							</View>
 						</View>
 
 						<View style={orderItemStyles.rowDirection}>
-							<View style={orderItemStyles.flexHeigth}>
-								{this.notesValue()}
-							</View>
+							<View style={orderItemStyles.flexHeigth}>{this.notesValue()}</View>
 						</View>
 
-						<View
-							style={orderItemStyles.aseparator}
-						/>
+						<View style={orderItemStyles.aseparator} />
 
 						{this.discountCmpt()}
 
-						<View
-							style={orderItemStyles.btmDiv}
-						>
-
+						<View style={orderItemStyles.btmDiv}>
 							<TouchableOpacity
 								style={orderItemStyles.flexOne}
-								onPress={() => this.removeDiscount()}
-							>
+								onPress={() => this.removeDiscount()}>
 								<Text style={orderItemStyles.removebtn}>REMOVE</Text>
 							</TouchableOpacity>
 
 							<TouchableOpacity
 								style={orderItemStyles.flexOne}
-								onPress={() => this.onCancelOrder()}
-							>
+								onPress={() => this.onCancelOrder()}>
 								<Text style={orderItemStyles.savebtn}>SAVE</Text>
 							</TouchableOpacity>
-
 						</View>
-
 					</View>
 					{/* </TouchableOpacity> */}
 				</KeyboardAwareScrollView>
-
 			);
 		}
 		return null;
-	}
+	};
 
 	orderItemsElement = () => (
 		<View style={orderItemStyles.container}>
@@ -271,22 +258,20 @@ class OrderSummaryScreen extends React.PureComponent {
 				coverScreen
 				position="center"
 				onClosed={() => this.modalOnClose()}
-				ref="productModel"
-			>
+				ref="productModel">
 				{this.orderItemsModal()}
 			</Modal>
-
 		</View>
-
-	)
+	);
 
 	discountCmpt() {
 		const { selectedDiscounts, selectedItem } = this.state;
 		const { discounts } = this.props;
-		//let value = null;
+		// let value = null;
 		if (selectedItem.hasOwnProperty('product')) {
-			if (!selectedItem.product.description.includes('delivery')
-				&& !selectedItem.product.description.includes('discount')
+			if (
+				!selectedItem.product.description.includes('delivery') &&
+				!selectedItem.product.description.includes('discount')
 			) {
 				return (
 					<View>
@@ -306,20 +291,22 @@ class OrderSummaryScreen extends React.PureComponent {
 
 						<View style={orderItemStyles.discountView}>
 							<View style={orderItemStyles.flexHeigth}>
-								<Text style={[orderItemStyles.baseItem, {
-									marginLeft: 12, padding: 10,
-								}]}
-								>
+								<Text
+									style={[
+										orderItemStyles.baseItem,
+										{
+											marginLeft: 12,
+											padding: 10
+										}
+									]}>
 									Custom
-        </Text>
+								</Text>
 							</View>
 							<View style={orderItemStyles.flexHeigth}>
 								{this.customDiscountValue()}
 							</View>
 						</View>
-						<View
-							style={orderItemStyles.aseparator}
-						/>
+						<View style={orderItemStyles.aseparator} />
 					</View>
 				);
 			}
@@ -332,17 +319,18 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	qtyAmount() {
 		if (this.state.selectedItem.hasOwnProperty('product')) {
-			if (this.state.selectedItem.product.description.includes('delivery')
-				|| this.state.selectedItem.product.description.includes('discount')
+			if (
+				this.state.selectedItem.product.description.includes('delivery') ||
+				this.state.selectedItem.product.description.includes('discount')
 			) {
 				return (
 					<View style={orderItemStyles.flexOne}>
 						<View style={orderItemStyles.flexOne}>
-							<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>AMOUNT</Text>
+							<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>
+								AMOUNT
+							</Text>
 						</View>
-						<View style={orderItemStyles.qtyvalstyle}>
-							{this.qtyValue()}
-						</View>
+						<View style={orderItemStyles.qtyvalstyle}>{this.qtyValue()}</View>
 					</View>
 				);
 			}
@@ -350,15 +338,16 @@ class OrderSummaryScreen extends React.PureComponent {
 				<View>
 					<View style={orderItemStyles.rowDirection}>
 						<View style={orderItemStyles.flexOne}>
-							<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>QUANTITY</Text>
+							<Text style={[orderItemStyles.textLeft, orderItemStyles.baseItem]}>
+								QUANTITY
+							</Text>
 						</View>
 					</View>
 					<View style={orderItemStyles.qtyamtstyle}>
 						<View style={orderItemStyles.qtyamticon}>
 							<TouchableHighlight
 								style={orderItemStyles.flexOne}
-								onPress={this.counterChangedHandler.bind(this, 'dec')}
-							>
+								onPress={this.counterChangedHandler.bind(this, 'dec')}>
 								<Icon
 									size={40}
 									style={orderItemStyles.iconleftMargin}
@@ -368,15 +357,12 @@ class OrderSummaryScreen extends React.PureComponent {
 							</TouchableHighlight>
 						</View>
 						<View style={orderItemStyles.qtyamtval}>
-							<View style={orderItemStyles.qtyamtvalcont}>
-								{this.qtyValue()}
-							</View>
+							<View style={orderItemStyles.qtyamtvalcont}>{this.qtyValue()}</View>
 						</View>
 						<View style={orderItemStyles.qtyamticon2}>
 							<TouchableHighlight
 								style={orderItemStyles.flexOne}
-								onPress={this.counterChangedHandler.bind(this, 'inc')}
-							>
+								onPress={this.counterChangedHandler.bind(this, 'inc')}>
 								<Icon
 									size={40}
 									style={orderItemStyles.iconleftMargin}
@@ -394,11 +380,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	getCancelButton() {
 		return (
 			<TouchableHighlight onPress={() => this.onCancelOrder()}>
-				<Icon
-					size={40}
-					name="md-close-circle-outline"
-					color="black"
-				/>
+				<Icon size={40} name="md-close-circle-outline" color="black" />
 			</TouchableHighlight>
 		);
 	}
@@ -431,18 +413,25 @@ class OrderSummaryScreen extends React.PureComponent {
 			if (this.state.selectedItem.product.description.includes('refill')) {
 				return (
 					<View>
-						<View
-							style={orderItemStyles.aseparator}
-						/>
+						<View style={orderItemStyles.aseparator} />
 						<View style={orderItemStyles.rowDirection}>
 							<View style={orderItemStyles.flexOne}>
-								<Text style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>Empties Returned</Text>
+								<Text
+									style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>
+									Empties Returned
+								</Text>
 							</View>
 							<View style={orderItemStyles.flexOne}>
-								<Text style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>Damaged Bottles</Text>
+								<Text
+									style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>
+									Damaged Bottles
+								</Text>
 							</View>
 							<View style={orderItemStyles.flexOne}>
-								<Text style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>Pending Bottles</Text>
+								<Text
+									style={[orderItemStyles.headerItem, orderItemStyles.upperCase]}>
+									Pending Bottles
+								</Text>
 							</View>
 						</View>
 
@@ -453,9 +442,7 @@ class OrderSummaryScreen extends React.PureComponent {
 							<View style={orderItemStyles.flexOne}>
 								{this.emptiesDamagedValue()}
 							</View>
-							<View style={orderItemStyles.flexOne}>
-								{this.refillPendingValue()}
-							</View>
+							<View style={orderItemStyles.flexOne}>{this.refillPendingValue()}</View>
 						</View>
 					</View>
 				);
@@ -558,7 +545,9 @@ class OrderSummaryScreen extends React.PureComponent {
 	getProductDescripion() {
 		if (this.state.selectedItem.hasOwnProperty('product')) {
 			return (
-				<Text style={orderItemStyles.textLeft, orderItemStyles.baseItem}>{this.state.selectedItem.product.description}</Text>
+				<Text style={(orderItemStyles.textLeft, orderItemStyles.baseItem)}>
+					{this.state.selectedItem.product.description}
+				</Text>
 			);
 		}
 	}
@@ -566,24 +555,24 @@ class OrderSummaryScreen extends React.PureComponent {
 	orderSummaryElement = () => (
 		<View style={styles.container}>
 			<View style={orderItemStyles.rowDirection}>
-				<Text style={[styles.orderSummaryViewTextOne, styles.summaryText]}>{i18n.t('order-summary')}</Text>
+				<Text style={[styles.orderSummaryViewTextOne, styles.summaryText]}>
+					{i18n.t('order-summary')}
+				</Text>
 				<Text style={[orderItemStyles.flexOne, styles.summaryText]}>
-					{i18n.t('cart')}
-					{' '}
-        (
-        {this.getTotalOrders()}
-        )
-      </Text>
+					{i18n.t('cart')} ({this.getTotalOrders()})
+				</Text>
 			</View>
 		</View>
-	)
+	);
 
 	customDiscountValue() {
 		if (!this.state.selectedItem.hasOwnProperty('product')) {
 			return;
 		}
 
-		const productIndex = this.props.selectedDiscounts.map((e) => e.product.productId).indexOf(this.state.selectedItem.product.productId);
+		const productIndex = this.props.selectedDiscounts
+			.map((e) => e.product.productId)
+			.indexOf(this.state.selectedItem.product.productId);
 
 		let customValue = 0;
 		if (productIndex >= 0) {
@@ -593,7 +582,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			<TextInput
 				style={orderItemStyles.pad10}
 				onChangeText={this.customDiscount}
-				value={(customValue.toString())}
+				value={customValue.toString()}
 				keyboardType="number-pad"
 				underlineColorAndroid="transparent"
 				placeholder="Custom Discount"
@@ -604,17 +593,13 @@ class OrderSummaryScreen extends React.PureComponent {
 	modalOnClose() {
 		DiscountRealm.resetSelected();
 		this.setState((state) => ({
-			selectedDiscounts: {},
+			selectedDiscounts: {}
 		}));
-		this.props.discountActions.setDiscounts(
-			DiscountRealm.getDiscounts(),
-		);
+		this.props.discountActions.setDiscounts(DiscountRealm.getDiscounts());
 
 		PaymentTypeRealm.resetSelected();
 		this.props.paymentTypesActions.resetSelectedPayment();
-		this.props.paymentTypesActions.setPaymentTypes(
-			PaymentTypeRealm.getPaymentTypes(),
-		);
+		this.props.paymentTypesActions.setPaymentTypes(PaymentTypeRealm.getPaymentTypes());
 	}
 
 	onCancelOrder() {
@@ -634,30 +619,62 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	customDiscount = (searchText) => {
-		const productIndex = this.props.selectedDiscounts.map((e) => e.product.productId).indexOf(this.state.selectedItem.product.productId);
+		const productIndex = this.props.selectedDiscounts
+			.map((e) => e.product.productId)
+			.indexOf(this.state.selectedItem.product.productId);
 
-		if (Number(searchText) > (this.state.selectedItem.quantity * this.getItemPrice(this.state.selectedItem.product))) {
-			Alert.alert('Custom Discount',
+		if (
+			Number(searchText) >
+			this.state.selectedItem.quantity * this.getItemPrice(this.state.selectedItem.product)
+		) {
+			Alert.alert(
+				'Custom Discount',
 				'Discount cannot exceed order amount.',
-				[{
-					text: 'OK',
-					onPress: () => {
-					},
-				}],
-				{ cancelable: false });
+				[
+					{
+						text: 'OK',
+						onPress: () => {}
+					}
+				],
+				{ cancelable: false }
+			);
 			return;
 		}
 
 		if (productIndex >= 0) {
 			DiscountRealm.isSelected(this.state.selectedDiscounts, false);
 			this.props.discountActions.setDiscounts(DiscountRealm.getDiscounts());
-			if (this.props.selectedDiscounts[productIndex].discount.length > 0 && this.state.selectedDiscounts.length === 0) {
-				this.props.orderActions.SetOrderDiscounts('Custom', searchText, this.state.selectedItem.product, this.props.selectedDiscounts[productIndex].discount, (this.state.selectedItem.quantity * this.getItemPrice(this.state.selectedItem.product)));
+			if (
+				this.props.selectedDiscounts[productIndex].discount.length > 0 &&
+				this.state.selectedDiscounts.length === 0
+			) {
+				this.props.orderActions.SetOrderDiscounts(
+					'Custom',
+					searchText,
+					this.state.selectedItem.product,
+					this.props.selectedDiscounts[productIndex].discount,
+					this.state.selectedItem.quantity *
+						this.getItemPrice(this.state.selectedItem.product)
+				);
 			} else {
-				this.props.orderActions.SetOrderDiscounts('Custom', searchText, this.state.selectedItem.product, this.state.selectedDiscounts, (this.state.selectedItem.quantity * this.getItemPrice(this.state.selectedItem.product)));
+				this.props.orderActions.SetOrderDiscounts(
+					'Custom',
+					searchText,
+					this.state.selectedItem.product,
+					this.state.selectedDiscounts,
+					this.state.selectedItem.quantity *
+						this.getItemPrice(this.state.selectedItem.product)
+				);
 			}
 		} else {
-			this.props.orderActions.SetOrderDiscounts('Custom', searchText, this.state.selectedItem.product, this.state.selectedDiscounts, (this.state.selectedItem.quantity * this.getItemPrice(this.state.selectedItem.product)));
+			this.props.orderActions.SetOrderDiscounts(
+				'Custom',
+				searchText,
+				this.state.selectedItem.product,
+				this.state.selectedDiscounts,
+				this.state.selectedItem.quantity *
+					this.getItemPrice(this.state.selectedItem.product)
+			);
 		}
 	};
 
@@ -689,7 +706,13 @@ class OrderSummaryScreen extends React.PureComponent {
 			emptiesDamaged = this.state.selectedItem.emptiesDamaged;
 		}
 
-		this.props.orderActions.AddNotesToProduct(this.state.selectedItem.product, notes, emptiesReturned, refillPending, emptiesDamaged);
+		this.props.orderActions.AddNotesToProduct(
+			this.state.selectedItem.product,
+			notes,
+			emptiesReturned,
+			refillPending,
+			emptiesDamaged
+		);
 	};
 
 	setEmptiesDamaged = (emptiesDamaged) => {
@@ -720,7 +743,13 @@ class OrderSummaryScreen extends React.PureComponent {
 			notes = this.state.selectedItem.notes;
 		}
 
-		this.props.orderActions.AddNotesToProduct(this.state.selectedItem.product, notes, emptiesReturned, refillPending, emptiesDamaged);
+		this.props.orderActions.AddNotesToProduct(
+			this.state.selectedItem.product,
+			notes,
+			emptiesReturned,
+			refillPending,
+			emptiesDamaged
+		);
 	};
 
 	setEmptiesReturned = (emptiesReturned) => {
@@ -751,7 +780,13 @@ class OrderSummaryScreen extends React.PureComponent {
 			notes = this.state.selectedItem.notes;
 		}
 
-		this.props.orderActions.AddNotesToProduct(this.state.selectedItem.product, notes, emptiesReturned, refillPending, emptiesDamaged);
+		this.props.orderActions.AddNotesToProduct(
+			this.state.selectedItem.product,
+			notes,
+			emptiesReturned,
+			refillPending,
+			emptiesDamaged
+		);
 	};
 
 	setRefillPending = (refillPending) => {
@@ -782,7 +817,13 @@ class OrderSummaryScreen extends React.PureComponent {
 			notes = this.state.selectedItem.notes;
 		}
 
-		this.props.orderActions.AddNotesToProduct(this.state.selectedItem.product, notes, emptiesReturned, refillPending, emptiesDamaged);
+		this.props.orderActions.AddNotesToProduct(
+			this.state.selectedItem.product,
+			notes,
+			emptiesReturned,
+			refillPending,
+			emptiesDamaged
+		);
 	};
 
 	changeQuantity = (value) => {
@@ -790,28 +831,39 @@ class OrderSummaryScreen extends React.PureComponent {
 		if (Number(value) != 0) {
 			if (this.state.selectedItem.product.description.includes('discount')) {
 				if (Number(value) > this.calculateOrderDue()) {
-					Alert.alert('Discount',
+					Alert.alert(
+						'Discount',
 						'Discount cannot exceed Order amount.',
-						[{
-							text: 'OK',
-							onPress: () => {
-							},
-						}],
-						{ cancelable: false });
+						[
+							{
+								text: 'OK',
+								onPress: () => {}
+							}
+						],
+						{ cancelable: false }
+					);
 					return;
 				}
 			}
 
-			this.props.orderActions.SetProductQuantity(this.state.selectedItem.product, Number(value), unitPrice);
+			this.props.orderActions.SetProductQuantity(
+				this.state.selectedItem.product,
+				Number(value),
+				unitPrice
+			);
 			this.setState({
-				accumulator: Number(value),
+				accumulator: Number(value)
 			});
 		}
 
 		if (!value) {
-			this.props.orderActions.SetProductQuantity(this.state.selectedItem.product, '', unitPrice);
+			this.props.orderActions.SetProductQuantity(
+				this.state.selectedItem.product,
+				'',
+				unitPrice
+			);
 			this.setState({
-				accumulator: '',
+				accumulator: ''
 			});
 		}
 	};
@@ -831,20 +883,21 @@ class OrderSummaryScreen extends React.PureComponent {
 	}
 
 	renderDiscountRow = ({ item }) => {
-		const productIndex = this.props.selectedDiscounts.map((e) => e.product.productId).indexOf(this.state.selectedItem.product.productId);
+		const productIndex = this.props.selectedDiscounts
+			.map((e) => e.product.productId)
+			.indexOf(this.state.selectedItem.product.productId);
 
 		let isDiscountAvailable = false;
 		if (productIndex >= 0) {
-			isDiscountAvailable = this.props.selectedDiscounts[productIndex].discount.id === item.id;
+			isDiscountAvailable =
+				this.props.selectedDiscounts[productIndex].discount.id === item.id;
 		}
 
 		return (
 			<View style={orderItemStyles.discountRow}>
 				<View style={orderItemStyles.flexHeigth}>
 					<Text style={[orderItemStyles.margLeft, orderItemStyles.baseItem]}>
-						{item.applies_to}
-        -
-        {item.amount}
+						{item.applies_to}-{item.amount}
 					</Text>
 				</View>
 				<View style={orderItemStyles.flexHeigth}>
@@ -865,19 +918,26 @@ class OrderSummaryScreen extends React.PureComponent {
 
 							if (isOn) {
 								const selectedDiscounts = item;
-								this.props.orderActions.SetOrderDiscounts('Not Custom', 0, this.state.selectedItem.product, selectedDiscounts, (this.state.selectedItem.quantity * this.getItemPrice(this.state.selectedItem.product)));
+								this.props.orderActions.SetOrderDiscounts(
+									'Not Custom',
+									0,
+									this.state.selectedItem.product,
+									selectedDiscounts,
+									this.state.selectedItem.quantity *
+										this.getItemPrice(this.state.selectedItem.product)
+								);
 								this.setState({ selectedDiscounts });
 							}
 
 							if (!isOn) {
-								this.props.orderActions.RemoveProductDiscountsFromOrder(this.state.selectedItem.product);
+								this.props.orderActions.RemoveProductDiscountsFromOrder(
+									this.state.selectedItem.product
+								);
 								this.setState({ selectedDiscounts: {} });
 							}
 						}}
 					/>
-
 				</View>
-
 			</View>
 		);
 	};
@@ -885,13 +945,17 @@ class OrderSummaryScreen extends React.PureComponent {
 	showOrderItemsHeader = () => (
 		<View style={orderItemStyles.headerBackground}>
 			<View style={orderItemStyles.flexTwo}>
-				<Text style={[orderItemStyles.headerItem, orderItemStyles.headerLeftMargin]}>{i18n.t('item')}</Text>
+				<Text style={[orderItemStyles.headerItem, orderItemStyles.headerLeftMargin]}>
+					{i18n.t('item')}
+				</Text>
 			</View>
 			<View style={orderItemStyles.flexOne}>
 				<Text style={orderItemStyles.headerItem}>{i18n.t('quantity')}</Text>
 			</View>
 			<View style={orderItemStyles.flexTwo}>
-				<Text style={[orderItemStyles.headerItem, { textAlign: 'center' }]}>{i18n.t('charge')}</Text>
+				<Text style={[orderItemStyles.headerItem, { textAlign: 'center' }]}>
+					{i18n.t('charge')}
+				</Text>
 			</View>
 		</View>
 	);
@@ -903,12 +967,19 @@ class OrderSummaryScreen extends React.PureComponent {
 				if (this.state.accumulator <= 0) {
 					this.refs.productModel.close();
 					this.setState({ isorderItemsModal: false });
-					this.props.orderActions.RemoveProductFromOrder(this.state.selectedItem.product, unitPrice);
+					this.props.orderActions.RemoveProductFromOrder(
+						this.state.selectedItem.product,
+						unitPrice
+					);
 				} else {
 					this.setState((prevState) => {
-						this.props.orderActions.SetProductQuantity(this.state.selectedItem.product, prevState.accumulator + 1, unitPrice);
+						this.props.orderActions.SetProductQuantity(
+							this.state.selectedItem.product,
+							prevState.accumulator + 1,
+							unitPrice
+						);
 						return {
-							accumulator: prevState.accumulator + 1,
+							accumulator: prevState.accumulator + 1
 						};
 					});
 
@@ -919,10 +990,17 @@ class OrderSummaryScreen extends React.PureComponent {
 				if (this.state.accumulator <= 0) {
 					this.refs.productModel.close();
 					this.setState({ isorderItemsModal: false });
-					this.props.orderActions.RemoveProductFromOrder(this.state.selectedItem.product, unitPrice);
+					this.props.orderActions.RemoveProductFromOrder(
+						this.state.selectedItem.product,
+						unitPrice
+					);
 				} else {
 					this.setState((prevState) => {
-						this.props.orderActions.SetProductQuantity(this.state.selectedItem.product, prevState.accumulator - 1, unitPrice);
+						this.props.orderActions.SetProductQuantity(
+							this.state.selectedItem.product,
+							prevState.accumulator - 1,
+							unitPrice
+						);
 						return { accumulator: prevState.accumulator - 1 };
 					});
 
@@ -937,14 +1015,18 @@ class OrderSummaryScreen extends React.PureComponent {
 		if (!item) {
 			return 0;
 		}
-		const salesChannel = SalesChannelRealm.getSalesChannelFromName(this.props.channel.salesChannel);
+		const salesChannel = SalesChannelRealm.getSalesChannelFromName(
+			this.props.channel.salesChannel
+		);
 		if (salesChannel) {
-			const productMrp = ProductMRPRealm.getFilteredProductMRP()[ProductMRPRealm.getProductMrpKeyFromIds(item.productId, salesChannel.id)];
+			const productMrp = ProductMRPRealm.getFilteredProductMRP()[
+				ProductMRPRealm.getProductMrpKeyFromIds(item.productId, salesChannel.id)
+			];
 			if (productMrp) {
 				return productMrp.priceAmount;
 			}
 		}
-		return item.unitPrice;	// Just use product price
+		return item.unitPrice; // Just use product price
 	};
 
 	getCurrency = () => {
@@ -1031,21 +1113,18 @@ class OrderSummaryScreen extends React.PureComponent {
 			return;
 		}
 		this.props.paymentTypesActions.setDelivery('delivery');
-	}
+	};
 
 	paymentModalModal = (isRefill) => {
 		if (this.state.isPaymentModal) {
 			return (
-
 				<View style={orderItemStyles.flexpadmargin}>
 					<ScrollView>
-
 						<TouchableOpacity>
 							<View style={orderItemStyles.closeModalBtn}>
 								{this.closeModalBtn('modal6')}
 							</View>
 							<Card containerStyle={orderItemStyles.bgpad}>
-
 								<View style={orderItemStyles.rowDirection}>
 									<PaymentDescription
 										currency={this.getCurrency().toUpperCase()}
@@ -1073,12 +1152,15 @@ class OrderSummaryScreen extends React.PureComponent {
 								</View>
 							</Card>
 
-							<View
-								style={orderItemStyles.flexmargins}
-							>
-
+							<View style={orderItemStyles.flexmargins}>
 								<View style={orderItemStyles.paymentMethod}>
-									<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.baseItem]}>Payment Method</Text>
+									<Text
+										style={[
+											orderItemStyles.textLeft,
+											orderCheckOutStyles.baseItem
+										]}>
+										Payment Method
+									</Text>
 								</View>
 
 								<FlatList
@@ -1091,33 +1173,36 @@ class OrderSummaryScreen extends React.PureComponent {
 
 								<View style={orderItemStyles.rowDirection}>
 									<View style={orderItemStyles.flexOne}>
-										<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.baseItem]}>Delivery Mode</Text>
-
+										<Text
+											style={[
+												orderItemStyles.textLeft,
+												orderCheckOutStyles.baseItem
+											]}>
+											Delivery Mode
+										</Text>
 									</View>
 								</View>
 
 								<View style={orderItemStyles.deliveryMode}>
 									<CheckBox
 										title="Delivery"
-										checkedIcon={(
-											<Icon
-												name="md-checkbox"
-												size={20}
-												color="black"
-											/>
-										)}
-										uncheckedIcon={(
+										checkedIcon={
+											<Icon name="md-checkbox" size={20} color="black" />
+										}
+										uncheckedIcon={
 											<Icon
 												name="md-square-outline"
 												size={20}
 												color="black"
 											/>
-										)}
+										}
 										checked={this.props.delivery === 'delivery'}
 										onPress={() => {
 											this.setState({ isWalkIn: false });
 											if (this.props.delivery === 'delivery') {
-												this.props.paymentTypesActions.setDelivery('walkin');
+												this.props.paymentTypesActions.setDelivery(
+													'walkin'
+												);
 												return;
 											}
 											this.props.paymentTypesActions.setDelivery('delivery');
@@ -1125,25 +1210,23 @@ class OrderSummaryScreen extends React.PureComponent {
 									/>
 									<CheckBox
 										title="Walk In"
-										checkedIcon={(
-											<Icon
-												name="md-checkbox"
-												size={20}
-												color="black"
-											/>
-										)}
-										uncheckedIcon={(
+										checkedIcon={
+											<Icon name="md-checkbox" size={20} color="black" />
+										}
+										uncheckedIcon={
 											<Icon
 												name="md-square-outline"
 												size={20}
 												color="black"
 											/>
-										)}
+										}
 										checked={this.props.delivery === 'walkin'}
 										onPress={() => {
 											this.setState({ isWalkIn: false });
 											if (this.props.delivery === 'walkin') {
-												this.props.paymentTypesActions.setDelivery('delivery');
+												this.props.paymentTypesActions.setDelivery(
+													'delivery'
+												);
 												return;
 											}
 											this.props.paymentTypesActions.setDelivery('walkin');
@@ -1153,33 +1236,30 @@ class OrderSummaryScreen extends React.PureComponent {
 									{isRefill.length > 0 && (
 										<TouchableHighlight
 											underlayColor="#c0c0c0"
-											onPress={this.onBottles}
-										>
-											<Text
-												style={orderItemStyles.btnStyle}
-											>
+											onPress={this.onBottles}>
+											<Text style={orderItemStyles.btnStyle}>
 												Bottles returned
-              </Text>
+											</Text>
 										</TouchableHighlight>
 									)}
 
 									<TouchableHighlight
 										underlayColor="#c0c0c0"
-										onPress={this.onNotes}
-									>
-										<Text
-											style={orderItemStyles.btnStyle}
-										>
+										onPress={this.onNotes}>
+										<Text style={orderItemStyles.btnStyle}>
 											Additional Notes
-              </Text>
+										</Text>
 									</TouchableHighlight>
-
 								</View>
 								<View style={orderItemStyles.bottleTracker}>
-									<Text style={[orderCheckOutStyles.baseItem, orderItemStyles.oldSale]}>Are you recording an old sale?</Text>
-									<View
-										style={orderItemStyles.pad10}
-									>
+									<Text
+										style={[
+											orderCheckOutStyles.baseItem,
+											orderItemStyles.oldSale
+										]}>
+										Are you recording an old sale?
+									</Text>
+									<View style={orderItemStyles.pad10}>
 										<Button
 											style={orderItemStyles.flexOne}
 											title="Change Receipt Date"
@@ -1201,14 +1281,12 @@ class OrderSummaryScreen extends React.PureComponent {
 							<TouchableHighlight
 								underlayColor="#c0c0c0"
 								disabled={this.state.buttonDisabled}
-								onPress={this.handleCompleteSale}
-							>
+								onPress={this.handleCompleteSale}>
 								<Text
 									style={[
 										orderItemStyles.completeSale,
-										orderCheckOutStyles.buttonText,
-									]}
-								>
+										orderCheckOutStyles.buttonText
+									]}>
 									{i18n.t('complete-sale')}
 								</Text>
 							</TouchableHighlight>
@@ -1217,11 +1295,10 @@ class OrderSummaryScreen extends React.PureComponent {
 				</View>
 
 				// </Modal>
-
 			);
 		}
 		return null;
-	}
+	};
 
 	orderCheckOutElement = () => {
 		const filterProducts = this.props.orderItems;
@@ -1238,13 +1315,12 @@ class OrderSummaryScreen extends React.PureComponent {
 			<View style={orderCheckOutStyles.container}>
 				<View style={[this.getOpacity(), { flexDirection: 'row' }]}>
 					<View style={orderCheckOutStyles.onPayView}>
-						<TouchableHighlight
-							underlayColor="#c0c0c0"
-							onPress={() => this.onPay()}
-						>
+						<TouchableHighlight underlayColor="#c0c0c0" onPress={() => this.onPay()}>
 							<Text
-								style={[orderCheckOutStyles.onPayText, orderCheckOutStyles.buttonText]}
-							>
+								style={[
+									orderCheckOutStyles.onPayText,
+									orderCheckOutStyles.buttonText
+								]}>
 								{i18n.t('pay')}
 							</Text>
 						</TouchableHighlight>
@@ -1258,17 +1334,23 @@ class OrderSummaryScreen extends React.PureComponent {
 					isDisabled={this.state.isBottleTrackerModal}
 					onClosed={this.onClose}
 					onOpened={this.onOpen}
-					onClosingState={this.onClosingState}
-				>
+					onClosingState={this.onClosingState}>
 					<ScrollView>
 						<TouchableOpacity>
 							<View style={orderItemStyles.flexPadLeft}>
 								<View style={orderItemStyles.bottleTracker}>
 									<View style={orderItemStyles.rowDirection}>
-										<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Bottle Tracker.</Text>
+										<Text
+											style={[
+												orderItemStyles.textLeft,
+												orderCheckOutStyles.headerItem
+											]}>
+											Bottle Tracker.
+										</Text>
 									</View>
 									<View style={orderItemStyles.closeModalBtn}>
-										<TouchableHighlight onPress={() => this.closeModal('modal7')}>
+										<TouchableHighlight
+											onPress={() => this.closeModal('modal7')}>
 											<Icon
 												size={40}
 												name="md-close-circle-outline"
@@ -1278,9 +1360,7 @@ class OrderSummaryScreen extends React.PureComponent {
 									</View>
 								</View>
 
-								<View
-									style={orderItemStyles.flexOne}
-								>
+								<View style={orderItemStyles.flexOne}>
 									<FlatList
 										data={this.props.orderItems}
 										ListHeaderComponent={this.showBottlesHeader}
@@ -1298,17 +1378,23 @@ class OrderSummaryScreen extends React.PureComponent {
 					coverScreen
 					position="center"
 					ref="notesModal"
-					isDisabled={this.state.isAdditionalNotesModal}
-				>
+					isDisabled={this.state.isAdditionalNotesModal}>
 					<ScrollView>
 						<TouchableOpacity>
 							<View style={orderItemStyles.flexPadLeft}>
 								<View style={orderItemStyles.bottleTracker}>
 									<View style={orderItemStyles.rowDirection}>
-										<Text style={[orderItemStyles.textLeft, orderCheckOutStyles.headerItem]}>Additional Notes.</Text>
+										<Text
+											style={[
+												orderItemStyles.textLeft,
+												orderCheckOutStyles.headerItem
+											]}>
+											Additional Notes.
+										</Text>
 									</View>
 									<View style={orderItemStyles.closeModalBtn}>
-										<TouchableHighlight onPress={() => this.closeModal('notesModal')}>
+										<TouchableHighlight
+											onPress={() => this.closeModal('notesModal')}>
 											<Icon
 												size={40}
 												name="md-close-circle-outline"
@@ -1318,9 +1404,7 @@ class OrderSummaryScreen extends React.PureComponent {
 									</View>
 								</View>
 
-								<View
-									style={orderItemStyles.flexOne}
-								>
+								<View style={orderItemStyles.flexOne}>
 									<TextInput
 										style={orderItemStyles.pad10}
 										onChangeText={this.setOrderNotes}
@@ -1339,14 +1423,13 @@ class OrderSummaryScreen extends React.PureComponent {
 					coverScreen
 					position="center"
 					ref="modal6"
-					onClosed={() => this.modalOnClose()}
-				>
+					onClosed={() => this.modalOnClose()}>
 					{this.paymentModalModal(isRefill)}
 				</Modal>
-
+			
 			</View>
 		);
-	}
+	};
 
 	showBottlesHeader = () => (
 		<View style={orderItemStyles.rowDirection}>
@@ -1367,14 +1450,16 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	setOrderNotes = (notes) => {
 		this.setState({ notes });
-	}
+	};
 
 	renderBottleRow = ({ item }) => {
 		if (item.product.description.includes('refill')) {
 			return (
 				<View style={orderItemStyles.discountRow}>
 					<View style={orderCheckOutStyles.btldesccont}>
-						<Text style={[orderCheckOutStyles.btldesc, orderCheckOutStyles.baseItem]}>{item.product.description}</Text>
+						<Text style={[orderCheckOutStyles.btldesc, orderCheckOutStyles.baseItem]}>
+							{item.product.description}
+						</Text>
 					</View>
 					<View style={orderItemStyles.flexOne}>
 						<TextInput
@@ -1383,7 +1468,11 @@ class OrderSummaryScreen extends React.PureComponent {
 							onChangeText={(value) => this.setEmptiesReturnedCheckOut(value, item)}
 							underlineColorAndroid="transparent"
 							placeholder="0"
-							value={(item.emptiesReturned == '') ? item.quantity.toString() : item.emptiesReturned}
+							value={
+								item.emptiesReturned == ''
+									? item.quantity.toString()
+									: item.emptiesReturned
+							}
 						/>
 					</View>
 					<View style={orderItemStyles.flexOne}>
@@ -1409,7 +1498,7 @@ class OrderSummaryScreen extends React.PureComponent {
 				</View>
 			);
 		}
-		return (<View />);
+		return <View />;
 	};
 
 	setEmptiesReturnedCheckOut = (emptiesReturned, item) => {
@@ -1440,7 +1529,13 @@ class OrderSummaryScreen extends React.PureComponent {
 			notes = item.notes;
 		}
 
-		this.props.orderActions.AddNotesToProduct(item.product, notes, emptiesReturned, refillPending, emptiesDamaged);
+		this.props.orderActions.AddNotesToProduct(
+			item.product,
+			notes,
+			emptiesReturned,
+			refillPending,
+			emptiesDamaged
+		);
 	};
 
 	setEmptiesDamagedCheckOut = (emptiesDamaged, item) => {
@@ -1471,7 +1566,13 @@ class OrderSummaryScreen extends React.PureComponent {
 			notes = item.notes;
 		}
 
-		this.props.orderActions.AddNotesToProduct(item.product, notes, emptiesReturned, refillPending, emptiesDamaged);
+		this.props.orderActions.AddNotesToProduct(
+			item.product,
+			notes,
+			emptiesReturned,
+			refillPending,
+			emptiesDamaged
+		);
 	};
 
 	setRefillPendingCheckOut = (refillPending, item) => {
@@ -1502,7 +1603,13 @@ class OrderSummaryScreen extends React.PureComponent {
 			notes = item.notes;
 		}
 
-		this.props.orderActions.AddNotesToProduct(item.product, notes, emptiesReturned, refillPending, emptiesDamaged);
+		this.props.orderActions.AddNotesToProduct(
+			item.product,
+			notes,
+			emptiesReturned,
+			refillPending,
+			emptiesDamaged
+		);
 	};
 
 	renderPaymentRow = ({ item }) => {
@@ -1522,7 +1629,7 @@ class OrderSummaryScreen extends React.PureComponent {
 						...item,
 						created_at: new Date(),
 						isSelected: item.isSelected !== true,
-						amount: this.calculateOrderDue(),
+						amount: this.calculateOrderDue()
 					});
 					isSelectedAvailable = true;
 				}
@@ -1537,20 +1644,12 @@ class OrderSummaryScreen extends React.PureComponent {
 							<View style={orderItemStyles.flexOne}>
 								<CheckBox
 									title={item.description}
-									checkedIcon={(
-										<Icon
-											name="md-checkbox"
-											size={20}
-											color="black"
-										/>
-									)}
-									uncheckedIcon={(
-										<Icon
-											name="md-square-outline"
-											size={20}
-											color="black"
-										/>
-									)}
+									checkedIcon={
+										<Icon name="md-checkbox" size={20} color="black" />
+									}
+									uncheckedIcon={
+										<Icon name="md-square-outline" size={20} color="black" />
+									}
 									checked={item.isSelected || isSelectedAvailable}
 									onPress={() => this.checkBoxType(item)}
 								/>
@@ -1573,25 +1672,40 @@ class OrderSummaryScreen extends React.PureComponent {
 							underlineColorAndroid="transparent"
 							onChangeText={(textValue) => {
 								if (this.props.selectedPaymentTypes.length >= 0) {
-									const itemIndex2 = this.props.selectedPaymentTypes.map((e) => e.id).indexOf(this.state.selectedType.id);
+									const itemIndex2 = this.props.selectedPaymentTypes
+										.map((e) => e.id)
+										.indexOf(this.state.selectedType.id);
 									if (itemIndex2 >= 0) {
-										this.props.selectedPaymentTypes[itemIndex].amount = Number(textValue);
-										this.props.paymentTypesActions.updateSelectedPaymentType({ ...this.props.selectedPaymentTypes[itemIndex2], amount: Number(textValue) }, itemIndex2);
+										this.props.selectedPaymentTypes[itemIndex].amount = Number(
+											textValue
+										);
+										this.props.paymentTypesActions.updateSelectedPaymentType(
+											{
+												...this.props.selectedPaymentTypes[itemIndex2],
+												amount: Number(textValue)
+											},
+											itemIndex2
+										);
 										this.setState({
-											selectedType: { ...this.props.selectedPaymentTypes[itemIndex2], amount: Number(textValue) },
+											selectedType: {
+												...this.props.selectedPaymentTypes[itemIndex2],
+												amount: Number(textValue)
+											}
 										});
 									}
 								}
 
-								this.props.paymentTypesActions.setPaymentTypes(PaymentTypeRealm.getPaymentTypes());
+								this.props.paymentTypesActions.setPaymentTypes(
+									PaymentTypeRealm.getPaymentTypes()
+								);
 							}}
 							onFocus={(text) => {
 								this.setState({
-									selectedType: item,
+									selectedType: item
 								});
 							}}
 							keyboardType="numeric"
-							value={(this.props.selectedPaymentTypes[itemIndex].amount).toString()}
+							value={this.props.selectedPaymentTypes[itemIndex].amount.toString()}
 							style={orderCheckOutStyles.cashInput}
 						/>
 					);
@@ -1603,11 +1717,21 @@ class OrderSummaryScreen extends React.PureComponent {
 	checkBoxType = (item) => {
 		const itemIndex = this.props.selectedPaymentTypes.map((e) => e.id).indexOf(item.id);
 		if (itemIndex >= 0) {
-			const secondItemObj = this.props.selectedPaymentTypes.filter((obj) => obj.id != item.id).map((e) => e.id);
+			const secondItemObj = this.props.selectedPaymentTypes
+				.filter((obj) => obj.id != item.id)
+				.map((e) => e.id);
 
 			if (secondItemObj.length > 0) {
-				const seconditemIndex2 = this.props.selectedPaymentTypes.map((e) => e.id).indexOf(secondItemObj[0]);
-				this.props.paymentTypesActions.updateSelectedPaymentType({ ...this.props.selectedPaymentTypes[seconditemIndex2], amount: Number(this.calculateOrderDue()) }, seconditemIndex2);
+				const seconditemIndex2 = this.props.selectedPaymentTypes
+					.map((e) => e.id)
+					.indexOf(secondItemObj[0]);
+				this.props.paymentTypesActions.updateSelectedPaymentType(
+					{
+						...this.props.selectedPaymentTypes[seconditemIndex2],
+						amount: Number(this.calculateOrderDue())
+					},
+					seconditemIndex2
+				);
 
 				PaymentTypeRealm.isSelected(item, false);
 				this.props.paymentTypesActions.removeSelectedPaymentType(item, itemIndex);
@@ -1622,18 +1746,24 @@ class OrderSummaryScreen extends React.PureComponent {
 		}
 
 		this.setState({
-			checkedType: { ...item, isSelected: item.isSelected !== true },
+			checkedType: { ...item, isSelected: item.isSelected !== true }
 		});
 
 		if (this.props.selectedPaymentTypes.length === 0) {
 			PaymentTypeRealm.isSelected(item, item.isSelected !== true);
 			this.props.paymentTypesActions.setSelectedPaymentTypes({
-				...item, created_at: new Date(), isSelected: item.isSelected !== true, amount: this.calculateOrderDue(),
+				...item,
+				created_at: new Date(),
+				isSelected: item.isSelected !== true,
+				amount: this.calculateOrderDue()
 			});
 		} else {
 			PaymentTypeRealm.isSelected(item, item.isSelected !== true);
 			this.props.paymentTypesActions.setSelectedPaymentTypes({
-				...item, created_at: new Date(), isSelected: item.isSelected !== true, amount: 0,
+				...item,
+				created_at: new Date(),
+				isSelected: item.isSelected !== true,
+				amount: 0
 			});
 		}
 		this.props.paymentTypesActions.setPaymentTypes(PaymentTypeRealm.getPaymentTypes());
@@ -1641,22 +1771,16 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	closeModalBtn = (modal) => (
 		<TouchableHighlight onPress={() => this.closeModal(modal)}>
-			<Icon
-				size={40}
-				name="md-close-circle-outline"
-				color="black"
-			/>
+			<Icon size={40} name="md-close-circle-outline" color="black" />
 		</TouchableHighlight>
-	)
+	);
 
 	_roundToDecimal(value) {
 		return parseFloat(value.toFixed(2));
 	}
 
 	calculateTotalDue() {
-		return this._roundToDecimal(
-			this.calculateOrderDue() + this.calculateLoanBalance(),
-		);
+		return this._roundToDecimal(this.calculateOrderDue() + this.calculateLoanBalance());
 	}
 
 	getItemCogs = (item) => {
@@ -1669,14 +1793,11 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	_getItemMrp = (item) => {
 		const salesChannel = SalesChannelRealm.getSalesChannelFromName(
-			this.props.channel.salesChannel,
+			this.props.channel.salesChannel
 		);
 		if (salesChannel) {
 			const productMrp = ProductMRPRealm.getFilteredProductMRP()[
-				ProductMRPRealm.getProductMrpKeyFromIds(
-					item.productId,
-					salesChannel.id,
-				)
+				ProductMRPRealm.getProductMrpKeyFromIds(item.productId, salesChannel.id)
 			];
 			if (productMrp) {
 				return productMrp;
@@ -1708,72 +1829,81 @@ class OrderSummaryScreen extends React.PureComponent {
 
 	updateWallet = (amount) => {
 		// this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) + Number(amount);
-		CustomerRealm.updateCustomerWalletBalance(
-			this.context.selectedCustomer,
-			amount,
-		);
+		CustomerRealm.updateCustomerWalletBalance(this.context.selectedCustomer, amount);
 		this.props.customerActions.CustomerSelected(this.context.selectedCustomer);
-		this.props.customerActions.setCustomers(
-			CustomerRealm.getAllCustomer(),
-		);
-	}
+		this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());
+	};
 
 	topUpWallet = (amount, balance, recieptId) => {
 		CreditRealm.createCredit(
 			this.context.selectedCustomer.customerId,
 			Number(amount),
 			Number(balance),
-			recieptId,
+			recieptId
 		);
 		this.props.topUpActions.setTopups(CreditRealm.getAllCredit());
 		this.setState({
-			topUpExpected: amount,
+			topUpExpected: amount
 		});
-	}
+	};
 
 	logCredit = (amount, balance, recieptId) => {
-		CustomerDebtRealm.createCustomerDebt(amount, this.context.selectedCustomer.customerId, balance, recieptId);
-		this.props.paymentTypesActions.setCustomerPaidDebt(
-			CustomerDebtRealm.getCustomerDebts(),
+		CustomerDebtRealm.createCustomerDebt(
+			amount,
+			this.context.selectedCustomer.customerId,
+			balance,
+			recieptId
 		);
+		this.props.paymentTypesActions.setCustomerPaidDebt(CustomerDebtRealm.getCustomerDebts());
 		this.setState({
-			loanPaid: amount,
+			loanPaid: amount
 		});
-	}
+	};
 
 	updateLoanBalance = (amount) => {
-		CustomerRealm.updateCustomerDueAmount(
-			this.context.selectedCustomer,
-			amount,
-		);
+		CustomerRealm.updateCustomerDueAmount(this.context.selectedCustomer, amount);
 		this.props.customerActions.CustomerSelected(this.context.selectedCustomer);
-		this.props.customerActions.setCustomers(
-			CustomerRealm.getAllCustomer(),
-		);
-	}
+		this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());
+	};
 
 	onCompleteOrder = () => {
 		this.setState({
-			buttonDisabled: true,
+			buttonDisabled: true
 		});
 		const recieptId = uuidv1();
-		const totalAmountPaid = this.props.selectedPaymentTypes.reduce((total, item) => (total + item.amount), 0);
+		const totalAmountPaid = this.props.selectedPaymentTypes.reduce(
+			(total, item) => total + item.amount,
+			0
+		);
 
 		if (this.currentCredit() > this.calculateOrderDue()) {
 			if (totalAmountPaid > 0) {
-				this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) + Number(totalAmountPaid) - (this.calculateOrderDue());
+				this.context.selectedCustomer.walletBalance =
+					Number(this.context.selectedCustomer.walletBalance) +
+					Number(totalAmountPaid) -
+					this.calculateOrderDue();
 				this.updateWallet(this.context.selectedCustomer.walletBalance);
-				this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.context.selectedCustomer.walletBalance, recieptId);
+				this.topUpWallet(
+					Number(totalAmountPaid - this.calculateOrderDue()),
+					this.context.selectedCustomer.walletBalance,
+					recieptId
+				);
 			} else if (totalAmountPaid <= 0) {
-				this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) - this.calculateOrderDue();
+				this.context.selectedCustomer.walletBalance =
+					Number(this.context.selectedCustomer.walletBalance) - this.calculateOrderDue();
 				this.updateWallet(this.context.selectedCustomer.walletBalance);
 
 				// this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.context.selectedCustomer.walletBalance, recieptId);
 			}
-			const creditIndex = PaymentTypeRealm.getPaymentTypes().map((e) => e.name).indexOf('credit');
+			const creditIndex = PaymentTypeRealm.getPaymentTypes()
+				.map((e) => e.name)
+				.indexOf('credit');
 			if (creditIndex >= 0) {
 				this.props.paymentTypesActions.setSelectedPaymentTypes({
-					...this.props.paymentTypes[creditIndex], created_at: new Date(), isSelected: this.props.paymentTypes[creditIndex].isSelected !== true, amount: this.calculateOrderDue() - totalAmountPaid,
+					...this.props.paymentTypes[creditIndex],
+					created_at: new Date(),
+					isSelected: this.props.paymentTypes[creditIndex].isSelected !== true,
+					amount: this.calculateOrderDue() - totalAmountPaid
 				});
 			}
 		} else if (this.currentCredit() <= this.calculateOrderDue()) {
@@ -1781,24 +1911,40 @@ class OrderSummaryScreen extends React.PureComponent {
 				if (totalAmountPaid > 0) {
 					const totalAmountAvailable = Number(totalAmountPaid) + this.currentCredit();
 					if (totalAmountAvailable > this.calculateOrderDue()) {
-						this.context.selectedCustomer.walletBalance = Number(totalAmountAvailable) - this.calculateOrderDue();
+						this.context.selectedCustomer.walletBalance =
+							Number(totalAmountAvailable) - this.calculateOrderDue();
 						this.updateWallet(this.context.selectedCustomer.walletBalance);
 					} else if (totalAmountAvailable < this.calculateOrderDue()) {
-						this.context.selectedCustomer.dueAmount = this.calculateOrderDue() - totalAmountAvailable;
+						this.context.selectedCustomer.dueAmount =
+							this.calculateOrderDue() - totalAmountAvailable;
 
 						this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
-						const loanIndex = PaymentTypeRealm.getPaymentTypes().map((e) => e.name).indexOf('loan');
+						const loanIndex = PaymentTypeRealm.getPaymentTypes()
+							.map((e) => e.name)
+							.indexOf('loan');
 
 						if (loanIndex >= 0) {
 							this.props.paymentTypesActions.setSelectedPaymentTypes({
-								...this.props.paymentTypes[loanIndex], created_at: new Date(), isSelected: this.props.paymentTypes[loanIndex].isSelected !== true, amount: (this.calculateOrderDue() - totalAmountPaid) - this.currentCredit(),
+								...this.props.paymentTypes[loanIndex],
+								created_at: new Date(),
+								isSelected: this.props.paymentTypes[loanIndex].isSelected !== true,
+								amount:
+									this.calculateOrderDue() -
+									totalAmountPaid -
+									this.currentCredit()
 							});
 						}
 
-						const creditIndex = PaymentTypeRealm.getPaymentTypes().map((e) => e.name).indexOf('credit');
+						const creditIndex = PaymentTypeRealm.getPaymentTypes()
+							.map((e) => e.name)
+							.indexOf('credit');
 						if (creditIndex >= 0) {
 							this.props.paymentTypesActions.setSelectedPaymentTypes({
-								...this.props.paymentTypes[creditIndex], created_at: new Date(), isSelected: this.props.paymentTypes[creditIndex].isSelected !== true, amount: this.currentCredit(),
+								...this.props.paymentTypes[creditIndex],
+								created_at: new Date(),
+								isSelected:
+									this.props.paymentTypes[creditIndex].isSelected !== true,
+								amount: this.currentCredit()
 							});
 						}
 
@@ -1806,19 +1952,31 @@ class OrderSummaryScreen extends React.PureComponent {
 						this.updateWallet(this.context.selectedCustomer.walletBalance);
 					}
 				} else if (totalAmountPaid <= 0) {
-					this.context.selectedCustomer.dueAmount = Number(this.context.selectedCustomer.dueAmount) + (this.calculateOrderDue() - this.currentCredit());
+					this.context.selectedCustomer.dueAmount =
+						Number(this.context.selectedCustomer.dueAmount) +
+						(this.calculateOrderDue() - this.currentCredit());
 
 					this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
-					const loanIndex = PaymentTypeRealm.getPaymentTypes().map((e) => e.name).indexOf('loan');
+					const loanIndex = PaymentTypeRealm.getPaymentTypes()
+						.map((e) => e.name)
+						.indexOf('loan');
 					if (loanIndex >= 0) {
 						this.props.paymentTypesActions.setSelectedPaymentTypes({
-							...this.props.paymentTypes[loanIndex], created_at: new Date(), isSelected: this.props.paymentTypes[loanIndex].isSelected !== true, amount: this.calculateOrderDue() - this.currentCredit(),
+							...this.props.paymentTypes[loanIndex],
+							created_at: new Date(),
+							isSelected: this.props.paymentTypes[loanIndex].isSelected !== true,
+							amount: this.calculateOrderDue() - this.currentCredit()
 						});
 					}
-					const creditIndex = PaymentTypeRealm.getPaymentTypes().map((e) => e.name).indexOf('credit');
+					const creditIndex = PaymentTypeRealm.getPaymentTypes()
+						.map((e) => e.name)
+						.indexOf('credit');
 					if (creditIndex >= 0) {
 						this.props.paymentTypesActions.setSelectedPaymentTypes({
-							...this.props.paymentTypes[creditIndex], created_at: new Date(), isSelected: this.props.paymentTypes[creditIndex].isSelected !== true, amount: this.currentCredit(),
+							...this.props.paymentTypes[creditIndex],
+							created_at: new Date(),
+							isSelected: this.props.paymentTypes[creditIndex].isSelected !== true,
+							amount: this.currentCredit()
 						});
 					}
 
@@ -1829,43 +1987,81 @@ class OrderSummaryScreen extends React.PureComponent {
 				if (totalAmountPaid > 0) {
 					if (totalAmountPaid > this.calculateOrderDue()) {
 						if (this.calculateLoanBalance() === 0) {
-							this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) + Number(totalAmountPaid - this.calculateOrderDue());
+							this.context.selectedCustomer.walletBalance =
+								Number(this.context.selectedCustomer.walletBalance) +
+								Number(totalAmountPaid - this.calculateOrderDue());
 							this.updateWallet(this.context.selectedCustomer.walletBalance);
-							this.topUpWallet(Number(totalAmountPaid - this.calculateOrderDue()), this.context.selectedCustomer.walletBalance, recieptId);
+							this.topUpWallet(
+								Number(totalAmountPaid - this.calculateOrderDue()),
+								this.context.selectedCustomer.walletBalance,
+								recieptId
+							);
 						} else if (this.calculateLoanBalance() > 0) {
 							const postToLoan = Number(totalAmountPaid) - this.calculateOrderDue();
 							if (postToLoan > this.calculateLoanBalance()) {
-								const topUpExpected = Number(postToLoan) - this.calculateLoanBalance();
+								const topUpExpected =
+									Number(postToLoan) - this.calculateLoanBalance();
 								// this.context.selectedCustomer.dueAmount = 0;
 								this.updateLoanBalance(0);
-								this.logCredit(Number(this.context.selectedCustomer.dueAmount), 0, recieptId);
-								this.context.selectedCustomer.walletBalance = Number(this.context.selectedCustomer.walletBalance) + topUpExpected;
+								this.logCredit(
+									Number(this.context.selectedCustomer.dueAmount),
+									0,
+									recieptId
+								);
+								this.context.selectedCustomer.walletBalance =
+									Number(this.context.selectedCustomer.walletBalance) +
+									topUpExpected;
 								this.updateWallet(this.context.selectedCustomer.walletBalance);
-								this.topUpWallet(topUpExpected, this.context.selectedCustomer.walletBalance, recieptId);
+								this.topUpWallet(
+									topUpExpected,
+									this.context.selectedCustomer.walletBalance,
+									recieptId
+								);
 							} else if (postToLoan <= this.calculateLoanBalance()) {
-								this.context.selectedCustomer.dueAmount = Number(this.context.selectedCustomer.dueAmount) - postToLoan;
+								this.context.selectedCustomer.dueAmount =
+									Number(this.context.selectedCustomer.dueAmount) - postToLoan;
 								this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
-								this.logCredit(Number(postToLoan), this.context.selectedCustomer.dueAmount, recieptId);
+								this.logCredit(
+									Number(postToLoan),
+									this.context.selectedCustomer.dueAmount,
+									recieptId
+								);
 							}
 						}
 					} else if (totalAmountPaid < this.calculateOrderDue()) {
-						this.context.selectedCustomer.dueAmount = Number(this.calculateLoanBalance()) + this.calculateOrderDue() - totalAmountPaid;
+						this.context.selectedCustomer.dueAmount =
+							Number(this.calculateLoanBalance()) +
+							this.calculateOrderDue() -
+							totalAmountPaid;
 
 						this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
-						const loanIndex = PaymentTypeRealm.getPaymentTypes().map((e) => e.name).indexOf('loan');
+						const loanIndex = PaymentTypeRealm.getPaymentTypes()
+							.map((e) => e.name)
+							.indexOf('loan');
 						if (loanIndex >= 0) {
 							this.props.paymentTypesActions.setSelectedPaymentTypes({
-								...this.props.paymentTypes[loanIndex], created_at: new Date(), isSelected: this.props.paymentTypes[loanIndex].isSelected !== true, amount: this.calculateOrderDue() - totalAmountPaid,
+								...this.props.paymentTypes[loanIndex],
+								created_at: new Date(),
+								isSelected: this.props.paymentTypes[loanIndex].isSelected !== true,
+								amount: this.calculateOrderDue() - totalAmountPaid
 							});
 						}
 					}
 				} else if (totalAmountPaid <= 0) {
-					this.context.selectedCustomer.dueAmount = Number(this.calculateLoanBalance()) + this.calculateOrderDue() - totalAmountPaid;
+					this.context.selectedCustomer.dueAmount =
+						Number(this.calculateLoanBalance()) +
+						this.calculateOrderDue() -
+						totalAmountPaid;
 					this.updateLoanBalance(this.context.selectedCustomer.dueAmount);
-					const loanIndex = PaymentTypeRealm.getPaymentTypes().map((e) => e.name).indexOf('loan');
+					const loanIndex = PaymentTypeRealm.getPaymentTypes()
+						.map((e) => e.name)
+						.indexOf('loan');
 					if (loanIndex >= 0) {
 						this.props.paymentTypesActions.setSelectedPaymentTypes({
-							...this.props.paymentTypes[loanIndex], created_at: new Date(), isSelected: this.props.paymentTypes[loanIndex].isSelected !== true, amount: this.calculateOrderDue() - totalAmountPaid,
+							...this.props.paymentTypes[loanIndex],
+							created_at: new Date(),
+							isSelected: this.props.paymentTypes[loanIndex].isSelected !== true,
+							amount: this.calculateOrderDue() - totalAmountPaid
 						});
 					}
 				}
@@ -1880,7 +2076,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		const uuid = 'xxxx'.replace(/[xy]/g, (c) => {
 			const r = (d + Math.random() * 16) % 16 | 0;
 			d = Math.floor(d / 16);
-			return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+			return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
 		});
 		return uuid;
 	};
@@ -1890,9 +2086,7 @@ class OrderSummaryScreen extends React.PureComponent {
 		let price_total = 0;
 		let totalAmount = 0;
 		// Assumes that there is at least one product
-		const receiptDate = this.state.receiptDate
-			? this.state.receiptDate
-			: new Date(Date.now());
+		const receiptDate = this.state.receiptDate ? this.state.receiptDate : new Date(Date.now());
 
 		receipt = {
 			id: recieptId,
@@ -1916,7 +2110,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			sales_channel_id: this.context.selectedCustomer.salesChannelId,
 			customer_type_id: this.context.selectedCustomer.customerTypeId,
 			products: [],
-			active: 1,
+			active: 1
 		};
 
 		if (!receipt.siteId) {
@@ -1938,11 +2132,11 @@ class OrderSummaryScreen extends React.PureComponent {
 			receiptLineItem.emptiesDamaged = Number(product.emptiesDamaged);
 			receiptLineItem.product_id = product.product.productId;
 			receiptLineItem.product = product.product;
-			receiptLineItem.cogs_total = tempValue == 0 ? product.quantity : tempValue;
+			receiptLineItem.cogs_total = tempValue === 0 ? product.quantity : tempValue;
 			// The items below are used for reporting...
 			receiptLineItem.sku = product.product.sku;
 			receiptLineItem.description = product.product.description;
-			if (product.product.unitMeasure == 'liters') {
+			if (product.product.unitMeasure === 'liters') {
 				receiptLineItem.litersPerSku = product.product.unitPerProduct;
 			} else {
 				receiptLineItem.litersPerSku = 'N/A';
@@ -1958,44 +2152,54 @@ class OrderSummaryScreen extends React.PureComponent {
 		receipt.cogs = cogs_total;
 
 		if (receipt != null) {
-			const creditIndex = this.props.selectedPaymentTypes.map((e) => e.name).indexOf('credit');
+			const creditIndex = this.props.selectedPaymentTypes
+				.map((e) => e.name)
+				.indexOf('credit');
 
 			receipt.customer_account = this.context.selectedCustomer;
 			if (this.props.selectedPaymentTypes.length > 0) {
-				ReceiptPaymentTypeRealm.createManyReceiptPaymentType(this.props.selectedPaymentTypes, receipt.id, receiptDate);
+				ReceiptPaymentTypeRealm.createManyReceiptPaymentType(
+					this.props.selectedPaymentTypes,
+					receipt.id,
+					receiptDate
+				);
 				this.props.paymentTypesActions.setRecieptPaymentTypes(
-					ReceiptPaymentTypeRealm.getReceiptPaymentTypes(),
+					ReceiptPaymentTypeRealm.getReceiptPaymentTypes()
 				);
 			}
 
 			OrderRealm.createOrder(receipt);
-			this.props.receiptActions.setReceipts(
-				OrderRealm.getAllOrder(),
-			);
+			this.props.receiptActions.setReceipts(OrderRealm.getAllOrder());
 			this.props.receiptActions.setTransaction(receipt);
 
-			this.saveCustomerFrequency(OrderRealm.getAllOrder().filter((r) => r.customer_account_id === this.context.selectedCustomer.customerId));
+			this.saveCustomerFrequency(
+				OrderRealm.getAllOrder().filter(
+					(r) => r.customer_account_id === this.context.selectedCustomer.customerId
+				)
+			);
 			this.props.customerReminderActions.setCustomerReminders(
-				CustomerReminderRealm.getCustomerReminders(),
+				CustomerReminderRealm.getCustomerReminders()
 			);
 
 			Alert.alert(
 				'Payment Made',
-				`Loan Cleared: ${this.state.loanPaid
-				}\nCustomer Wallet Topup: ${this.state.topUpExpected
-				}\nCustomer's Loan Balance: ${this.context.selectedCustomer.dueAmount
+				`Loan Cleared: ${this.state.loanPaid}\nCustomer Wallet Topup: ${
+					this.state.topUpExpected
+				}\nCustomer's Loan Balance: ${
+					this.context.selectedCustomer.dueAmount
 				}\nCustomer Wallet Balance: ${this.currentCredit()}`,
-				[{
-					text: 'OK',
-					onPress: () => {
-						this.closeModal('modal6');
-						this.props.navigation.navigate('CustomerList');
-					},
-				}],
-				{ cancelable: false },
+				[
+					{
+						text: 'OK',
+						onPress: () => {
+							this.closeModal('modal6');
+							this.props.navigation.navigate('CustomerList');
+						}
+					}
+				],
+				{ cancelable: false }
 			);
 		} else {
-
 		}
 		return true;
 	};
@@ -2007,11 +2211,12 @@ class OrderSummaryScreen extends React.PureComponent {
 		return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 	};
 
-	groupBy = (key) => (array) => array.reduce((objectsByKeyValue, obj) => {
-		const value = obj[key];
-		objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-		return objectsByKeyValue;
-	}, {});
+	groupBy = (key) => (array) =>
+		array.reduce((objectsByKeyValue, obj) => {
+			const value = obj[key];
+			objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+			return objectsByKeyValue;
+		}, {});
 
 	pairwiseDifference = (arr, n) => {
 		let diff = 0;
@@ -2028,7 +2233,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			days = 10;
 		}
 		return new Date(theDate.getTime() + days * 24 * 60 * 60 * 1000);
-	}
+	};
 
 	getRemindersNew = (data) => {
 		const groupCustomers = this.groupBy('customer_account_id');
@@ -2042,20 +2247,38 @@ class OrderSummaryScreen extends React.PureComponent {
 			final.push({
 				customer_account_id: key,
 				name: groupCustomers(data)[key][0].customer_account.name,
-				phoneNumber: groupCustomers(data)[key][0].customer_account.hasOwnProperty('phone_number') ? groupCustomers(data)[key][0].customer_account.phone_number : 'N/A',
-				address: groupCustomers(data)[key][0].customer_account.hasOwnProperty('address') ? groupCustomers(data)[key][0].customer_account.address : groupCustomers(data)[key][0].customer_account.address_line1,
-				frequency: this.pairwiseDifference(dateArray, dateArray.length) > 10 ? 10 : this.pairwiseDifference(dateArray, dateArray.length),
-				avg: Math.ceil(arrAvg(this.pairwiseDifference(dateArray, dateArray.length))) >= 0 ? Math.ceil(arrAvg(this.pairwiseDifference(dateArray, dateArray.length))) : 0,
-				reminder: this.addDays(new Date(lastDay), Math.ceil(arrAvg(this.pairwiseDifference(dateArray, dateArray.length)))),
+				phoneNumber: groupCustomers(data)[key][0].customer_account.hasOwnProperty(
+					'phone_number'
+				)
+					? groupCustomers(data)[key][0].customer_account.phone_number
+					: 'N/A',
+				address: groupCustomers(data)[key][0].customer_account.hasOwnProperty('address')
+					? groupCustomers(data)[key][0].customer_account.address
+					: groupCustomers(data)[key][0].customer_account.address_line1,
+				frequency:
+					this.pairwiseDifference(dateArray, dateArray.length) > 10
+						? 10
+						: this.pairwiseDifference(dateArray, dateArray.length),
+				avg:
+					Math.ceil(arrAvg(this.pairwiseDifference(dateArray, dateArray.length))) >= 0
+						? Math.ceil(arrAvg(this.pairwiseDifference(dateArray, dateArray.length)))
+						: 0,
+				reminder: this.addDays(
+					new Date(lastDay),
+					Math.ceil(arrAvg(this.pairwiseDifference(dateArray, dateArray.length)))
+				),
 				dates: groupCustomers(data)[key].map((e) => e.created_at),
-				last_purchase_date: new Date(lastDay),
+				last_purchase_date: new Date(lastDay)
 			});
 		}
 		return final;
-	}
+	};
 
 	saveCustomerFrequency(receipts) {
-		CustomerReminderRealm.createCustomerReminder(this.getRemindersNew(receipts)[0], SettingRealm.getAllSetting().siteId);
+		CustomerReminderRealm.createCustomerReminder(
+			this.getRemindersNew(receipts)[0],
+			SettingRealm.getAllSetting().siteId
+		);
 	}
 
 	closeModal = (modal) => {
@@ -2083,7 +2306,7 @@ class OrderSummaryScreen extends React.PureComponent {
 			return { opacity: 0.2 };
 		}
 		return { opacity: 1 };
-	}
+	};
 
 	// End OrderCheckout //
 }
@@ -2102,7 +2325,7 @@ function mapStateToProps(state, props) {
 		payment: state.orderReducer.payment,
 		selectedCustomer: state.customerReducer.selectedCustomer,
 		topups: state.topupReducer.topups,
-		topupTotal: state.topupReducer.total,
+		topupTotal: state.topupReducer.total
 	};
 }
 
@@ -2114,7 +2337,7 @@ function mapDispatchToProps(dispatch) {
 		customerActions: bindActionCreators(CustomerActions, dispatch),
 		paymentTypesActions: bindActionCreators(PaymentTypesActions, dispatch),
 		topUpActions: bindActionCreators(TopUpActions, dispatch),
-		customerReminderActions: bindActionCreators(CustomerReminderActions, dispatch),
+		customerReminderActions: bindActionCreators(CustomerReminderActions, dispatch)
 	};
 }
 
@@ -2126,31 +2349,29 @@ const styles = StyleSheet.create({
 		borderColor: '#2858a7',
 		borderRightWidth: 5,
 		borderTopWidth: 5,
-		flex: 1,
-
+		flex: 1
 	},
 	containerTotal: {
 		backgroundColor: '#e0e0e0',
 		borderColor: '#2858a7',
 		borderRightWidth: 5,
 		borderTopWidth: 5,
-		flex: 2,
-
+		flex: 2
 	},
 
 	iconleftMargin: {
 		left: 10,
-		textAlign: 'center',
+		textAlign: 'center'
 	},
 	leftMargin: {
-		left: 10,
+		left: 10
 	},
 	orderSummaryViewTextOne: { flex: 3, marginLeft: 20 },
 	summaryText: {
 		alignSelf: 'center',
 		color: colors.black,
 		fontSize: 18,
-		fontWeight: 'bold',
+		fontWeight: 'bold'
 	},
 
 	totalText: {
@@ -2158,7 +2379,6 @@ const styles = StyleSheet.create({
 		color: colors.black,
 		fontSize: 18,
 		fontWeight: 'bold',
-		marginTop: 10,
-	},
-
+		marginTop: 10
+	}
 });

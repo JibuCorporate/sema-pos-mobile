@@ -3,7 +3,7 @@ import CustomerTypeApi from '../api/customer-types.api';
 import SyncUtils from './syncUtils';
 
 class CustomerTypeSync {
-  static synchronizeCustomerTypes() {
+  synchronizeCustomerTypes() {
     return new Promise((resolve) => {
       CustomerTypeApi.getCustomerTypes(CustomerTypeRealm.getLastCustomerTypesSync())
         .then(async (remoteCustomerType) => {

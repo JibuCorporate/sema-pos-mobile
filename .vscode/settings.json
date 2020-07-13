@@ -1,3 +1,8 @@
 {
-	"java.configuration.updateBuildConfiguration": "automatic"
+	"java.configuration.updateBuildConfiguration": "automatic",
+	"editor.formatOnSave": true,
+	"eslint.alwaysShowStatus": true,
+	"editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
 }
