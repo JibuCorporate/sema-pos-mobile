@@ -112,12 +112,9 @@ class Login extends React.PureComponent {
 		try {
 			this.setState({ isLoading: true });
 			Synchronization.synchronize().then(syncResult => {
-				 console.log('syncResult', syncResult);
 					this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 					this.setState({ isLoading: false });
 					this.props.navigation.navigate('App');
-
-
 			});
 
 		} catch (error) { }
@@ -126,7 +123,6 @@ class Login extends React.PureComponent {
 
 	_clearDataAndSync() {
 		try {
-
 			Events.trigger('ClearLoggedSales', {});
 			this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
 			this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());

@@ -1005,11 +1005,11 @@ class OrderSummaryScreen extends React.PureComponent {
 	};
 
 	handleCompleteSale() {
-		InteractionManager.runAfterInteractions(() => {
+		// InteractionManager.runAfterInteractions(() => {
 		requestAnimationFrame(() => {
 		   this.onCompleteOrder();
 		});
-	});
+	// });
 	};
 
 	deliveryMode = () => {
@@ -1020,6 +1020,12 @@ class OrderSummaryScreen extends React.PureComponent {
 		}
 		this.props.paymentTypesActions.setDelivery('delivery');
 	}
+
+	getItemLayout = (data, index) => ({
+        length: 50,
+        offset: 50 * index,
+        index
+    });
 
 	paymentModalModal = (isRefill) => {
 		if (this.state.isPaymentModal) {
@@ -1075,7 +1081,10 @@ class OrderSummaryScreen extends React.PureComponent {
 								extraData={this.props.selectedPaymentTypes}
 								numColumns={3}
 								initialNumToRender={5}
-
+								maxToRenderPerBatch={5}
+								legacyImplementation={true}
+								// getItemLayout={this.getItemLayout}
+								// keyExtractor={item => item.id}
 							/>
 
 							<View style={orderItemStyles.rowDirection}>
@@ -1246,7 +1255,7 @@ class OrderSummaryScreen extends React.PureComponent {
 									ListHeaderComponent={this.showBottlesHeader}
 									renderItem={this.renderBottleRow}
 									keyExtractor={item => item.product.description}
-									initialNumToRender={10}
+									initialNumToRender={5}
 								/>
 							</View>
 						</View>
@@ -1551,7 +1560,7 @@ class OrderSummaryScreen extends React.PureComponent {
 							}
 							}
 							keyboardType="numeric"
-							value={(this.props.selectedPaymentTypes[itemIndex].amount).toString()}
+							value={(this.props.selectedPaymentTypes[itemIndex].amount.toFixed(2)).toString()}
 							style={[orderCheckOutStyles.cashInput]}
 						/>
 					);
@@ -1842,6 +1851,7 @@ class OrderSummaryScreen extends React.PureComponent {
 	};
 
 	saveOrder = (status, recieptId) => {
+		console.log("You want to save Order");
 		let receipt = null;
 		let price_total = 0;
 		let totalAmount = 0;
