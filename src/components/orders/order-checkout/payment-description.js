@@ -13,7 +13,7 @@ class PaymentDescription extends React.PureComponent {
 					<Text style={styles.totalTitle}>{this.props.title}</Text>
 				</View>
 				<View style={styles.flex2}>
-					<Text style={styles.totalValue}>{this.props.currency} {this.props.total}</Text>
+					<Text style={styles.totalValue}>{this.props.currency} {this.props.total.toFixed(2)}</Text>
 				</View>
 			</View>
 		);

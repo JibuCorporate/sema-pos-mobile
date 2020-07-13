@@ -1,10 +1,10 @@
 import React from 'react';
-if (process.env.NODE_ENV === 'development') {
-    const whyDidYouRender = require('@welldone-software/why-did-you-render');
-    whyDidYouRender(React, {
-        trackAllPureComponents: true,
-    });
-}
+// if (process.env.NODE_ENV === 'development') {
+//     const whyDidYouRender = require('@welldone-software/why-did-you-render');
+//     whyDidYouRender(React, {
+//         trackAllPureComponents: true,
+//     });
+// }
 import {
     View,
     Text,
@@ -74,7 +74,7 @@ class CustomerList extends React.Component {
         this.rowRenderer = this.rowRenderer.bind(this);
     }
 
-    static whyDidYouRender = true;
+    // static whyDidYouRender = true;
 
 
     componentDidMount() {
