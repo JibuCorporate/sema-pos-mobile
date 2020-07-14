@@ -1116,7 +1116,8 @@ class OrderCheckOut extends React.PureComponent {
 					isDisabled={this.state.isBottleTrackerModal}
 					onClosed={this.onClose}
 					onOpened={this.onOpen}
-					onClosingState={this.onClosingState}>
+					onClosingState={this.onClosingState}
+					useNativeDriver={true}>
 					<ScrollView>
 					<TouchableOpacity>
 						<View style={orderItemStyles.flexPadLeft}>
@@ -1152,7 +1153,9 @@ class OrderCheckOut extends React.PureComponent {
 				<Modal style={orderCheckOutStyles.modal2}
 					coverScreen={true}
 					position={"center"} ref={"notesModal"}
-					isDisabled={this.state.isAdditionalNotesModal}>
+					isDisabled={this.state.isAdditionalNotesModal}
+					useNativeDriver={true}
+					>
 					<ScrollView>
 					<TouchableOpacity>
 						<View style={orderItemStyles.flexPadLeft}>
@@ -1190,7 +1193,9 @@ class OrderCheckOut extends React.PureComponent {
 					style={orderCheckOutStyles.modal3}
 					coverScreen={true}
 					position={"center"} ref={"modal6"}
-					onClosed={() => this.modalOnClose()}>
+					onClosed={() => this.modalOnClose()}
+					useNativeDriver={true}
+					>
 					{this.paymentModalModal(isRefill)}
 				</Modal>
 
