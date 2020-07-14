@@ -13,7 +13,6 @@ import i18n from "../../app/i18n";
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DiscountRealm from '../../database/discount/discount.operations';
-import ToggleSwitch from 'toggle-switch-react-native';
 import { bindActionCreators } from "redux";
 import * as OrderActions from "../../actions/OrderActions";
 import * as DiscountActions from '../../actions/DiscountActions';
@@ -39,7 +38,6 @@ import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciep
 import AppContext from '../../context/app-context';
 const uuidv1 = require('uuid/v1');
 import { withNavigation } from 'react-navigation';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 class OrderCheckOut extends React.PureComponent {
 	static contextType = AppContext;
     constructor(props) {
@@ -87,7 +85,7 @@ class OrderCheckOut extends React.PureComponent {
 		return settings.currency;
 	};
 
-    
+
 	showDateTimePicker = () => {
 		this.setState({ isDateTimePickerVisible: true });
 	};
@@ -307,7 +305,7 @@ class OrderCheckOut extends React.PureComponent {
 		}
 	}
 
-	
+
 
 	showBottlesHeader = () => {
 		return (
@@ -1088,7 +1086,7 @@ class OrderCheckOut extends React.PureComponent {
 			return { opacity: 1 };
 		}
 	}
-    
+
 
     render() {
         let filterProducts = this.props.orderItems

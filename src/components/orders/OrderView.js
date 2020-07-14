@@ -14,10 +14,6 @@ import * as CustomerActions from "../../actions/CustomerActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import AppContext from '../../context/app-context';
-import orderItemStyles from "./orderItemStyles";
-import OrderSummary from './orderSummary';
-import OrderItems from './orderItems';
-import OrderCheckOut from './orderCheckOut';
 class OrderView extends React.PureComponent {
 	constructor(props) {
 		super(props);
