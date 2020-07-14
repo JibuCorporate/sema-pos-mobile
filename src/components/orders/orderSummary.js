@@ -5,17 +5,14 @@ if (process.env.NODE_ENV === 'development') {
         trackAllPureComponents: true,
     });
 }
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert, InteractionManager } from "react-native";
 import orderItemStyles from "./orderItemStyles";
 import { connect } from "react-redux";
 import i18n from "../../app/i18n";
-import { bindActionCreators } from "redux";
-import * as OrderActions from "../../actions/OrderActions";
 import SettingRealm from '../../database/settings/settings.operations';
 class OrderSummary extends React.PureComponent {
     constructor(props) {
         super(props);
-
     }
 
     getCurrency = () => {
@@ -38,7 +35,6 @@ class OrderSummary extends React.PureComponent {
                 }
             }
             return totalAmount;
-
         }
         return 0;
     };
@@ -53,10 +49,8 @@ class OrderSummary extends React.PureComponent {
         }, 0);
     };
 
-
     render() {
         return (
-
             <View style={styles.container}>
                 <View style={orderItemStyles.rowDirection}>
                     <Text style={[styles.orderSummaryViewTextOne, styles.summaryText]}>{i18n.t('order-summary')}</Text>
@@ -70,25 +64,15 @@ class OrderSummary extends React.PureComponent {
 
         )
     }
-
 }
-
 
 function mapStateToProps(state, props) {
     return {
-        orderItems: state.orderReducer.products,
+        orderItems: state.orderReducer.products
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        orderActions: bindActionCreators(OrderActions, dispatch),
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(OrderSummary);
-
-
+export default connect(mapStateToProps)(OrderSummary);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
