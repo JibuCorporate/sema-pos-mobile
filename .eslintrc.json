@@ -1,0 +1,124 @@
+{
+    "env": {
+        "browser": true,
+        "es2020": true,
+        "node": true,
+        "react-native/react-native": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:react-perf/recommended",
+        "plugin:react-native/all",
+        "airbnb",
+        "prettier",
+        "prettier/react",
+        "plugin:prettier/recommended",
+        "eslint-config-prettier"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "react-native",
+        "react-perf",
+        "eslint-plugin-prettier",
+        "eslint-plugin-react"
+    ],
+    "rules": {
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+        "no-param-reassign": "off",
+        "max-classes-per-file": ["error", 2],
+        "global-require": "off",
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".js",
+                    ".jsx"
+                ]
+            }
+        ],
+        "react/no-did-mount-set-state": 2,
+        "react/no-direct-mutation-state": 2,
+        "no-undef": 2,
+        "semi": 2,
+        "react/prop-types": 0,
+        "react/jsx-no-bind": 2,
+        "react/jsx-no-duplicate-props": 2,
+        "max-len": [
+            "error",
+            {
+                "code": 130,
+                "tabWidth": 2
+            }
+        ],
+        "camelcase": 0,
+        "linebreak-style": 0,
+        "react-native/no-unused-styles": 0,
+        "react-native/split-platform-components": 2,
+        "react-native/no-inline-styles": 2,
+        "react-native/no-color-literals": 2,
+        "react-native/no-raw-text": 2,
+        "react-native/no-single-element-style-arrays": 2,
+        "react/static-property-placement": [
+            "warn",
+            "property assignment",
+            {
+                "childContextTypes": "static getter",
+                "contextTypes": "static public field",
+                "contextType": "static public field",
+                "displayName": "static public field"
+            }
+        ],
+        "prettier/prettier": [
+            "error",
+            {
+                "trailingComma": "none",
+                "singleQuote": true,
+                "jsxSingleQuote": false,
+                "printWidth": 100,
+                "semi": true,
+                "jsxBracketSameLine": true
+            }
+        ]
+    },
+    "settings": {
+        "react": {
+            "createClass": "createReactClass", // Regex for Component Factory to use,
+            // default to "createReactClass"
+            "pragma": "React", // Pragma to use, default to "React"
+            "version": "detect", // React version. "detect" automatically picks the version you have installed.
+            // You can also use `16.0`, `16.3`, etc, if you want to override the detected value.
+            // default to latest and warns if missing
+            // It will default to "detect" in the future
+            "flowVersion": "0.53" // Flow version
+        },
+        "propWrapperFunctions": [
+            // The names of any function used to wrap propTypes, e.g. `forbidExtraProps`. If this isn't set, any propTypes wrapped in a function will be skipped.
+            "forbidExtraProps",
+            {
+                "property": "freeze",
+                "object": "Object"
+            },
+            {
+                "property": "myFavoriteWrapper"
+            }
+        ],
+        "linkComponents": [
+            // Components used as alternatives to <a> for linking, eg. <Link to={ url } />
+            "Hyperlink",
+            {
+                "name": "Link",
+                "linkAttribute": "to"
+            }
+        ]
+    }
+}
