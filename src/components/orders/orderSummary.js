@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === 'development') {
         trackAllPureComponents: true,
     });
 }
-import { View, Text, StyleSheet, Alert, InteractionManager } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import orderItemStyles from "./orderItemStyles";
 import { connect } from "react-redux";
 import i18n from "../../app/i18n";
