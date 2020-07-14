@@ -22,7 +22,6 @@ import ProductsRealm from '../../database/products/product.operations';
 import SalesChannelRealm from '../../database/sales-channels/sales-channels.operations';
 import * as ProductActions from '../../actions/ProductActions';
 import * as OrderActions from '../../actions/OrderActions';
-import { withNavigation } from 'react-navigation';
 import AppContext from '../../context/app-context';
 class ProductListScreen extends React.PureComponent {
 	static contextType = AppContext;
@@ -150,7 +149,7 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(ProductListScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(ProductListScreen);
 
 
 const newStyle = (viewWidth) => StyleSheet.create({

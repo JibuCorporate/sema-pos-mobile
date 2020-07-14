@@ -15,13 +15,6 @@ export default orderItemStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  orderItemModal: {
-    backgroundColor: '#ABC1DE',
-    flex: 1,
-    flexDirection: 'row',
-    paddingLeft: 20,
-     margin: 0
-  },
   qtyvalstyle: { flex: 1, height: 40, textAlign: 'center' },
 
   qtyamticon: { flex: 0.2, height: 40 },
@@ -222,14 +215,6 @@ export default orderItemStyles = StyleSheet.create({
   upperCase: { textTransform: 'uppercase' },
   flexHeigth: { flex: 1, height: 50 },
   textLeft: { textAlign: 'left' },
-  discountTitle: { 
-    textAlign: 'left',
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: 'black',
-    paddingTop: 4,
-    paddingBottom: 4,
-   },
   justifyCenter: { justifyContent: 'center' },
   bottleTextInput: {
     textAlign: 'center',

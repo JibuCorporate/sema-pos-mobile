@@ -1,4 +1,10 @@
 import React from 'react';
+// if (process.env.NODE_ENV === 'development') {
+//     const whyDidYouRender = require('@welldone-software/why-did-you-render');
+//     whyDidYouRender(React, {
+//         trackAllPureComponents: true,
+//     });
+// }
 import {
 	View,
 	Text,
@@ -39,178 +45,201 @@ if (process.env.NODE_ENV === 'development') {
 }
 const { width } = Dimensions.get('window');
 class CustomerList extends React.Component {
-	static contextType = AppContext;
+    static contextType = AppContext;
+    constructor(props) {
+        super(props);
+        let { width } = Dimensions.get("window");
 
-	static whyDidYouRender = true;
+        this.state = {
+            refresh: false,
+            searchString: '',
+            debtcustomers: false,
+            walletcustomers: false,
+            customerTypeFilter: '',
+            customerTypeValue: '',
+            hasScrolled: false,
+            isPaymentModal: true,
+            dataProvider: new DataProvider((r1, r2) => {
+                return r1 !== r2;
+            }),
+        };
 
-	constructor(props) {
-		super(props);
+        this.layoutProvider = new LayoutProvider((i) => {
+            return this.state.dataProvider ? this.state.dataProvider.getDataForIndex(i).type : [];
+        }, (type, dim) => {
+            switch (type) {
+                case 'NORMAL':
+                    dim.width = width;
+                    dim.height = 50;
+                    break;
+                default:
+                    dim.width = 0;
+                    dim.height = 0;
+                    break;
+            };
+        });
 
-		this.state = {
-			debtcustomers: false,
-			walletcustomers: false,
-			dataProvider: new DataProvider((r1, r2) => {
-				return r1 !== r2;
-			})
-		};
+        this.rowRenderer = this.rowRenderer.bind(this);
+    }
 
-		this.layoutProvider = new LayoutProvider(
-			(i) => {
-				const { dataProvider } = this.state;
-				return dataProvider ? dataProvider.getDataForIndex(i).type : [];
-			},
-			(type, dim) => {
-				switch (type) {
-					case 'NORMAL':
-						dim.width = width;
-						dim.height = 50;
-						break;
-					default:
-						dim.width = 0;
-						dim.height = 0;
-						break;
-				}
-			}
-		);
+    // static whyDidYouRender = true;
 
-		this.rowRenderer = this.rowRenderer.bind(this);
-	}
 
-	componentDidMount() {
-		this.prepareData();
-		const { navigation } = this.props;
-		//	const { setSelectedCustomer, setCustomerEditStatus } = this.props;
-		navigation.setParams({
-			isCustomerSelected: false,
-			customerTypeValue: 'all',
-			customerName: '',
-			searchCustomer: this.searchCustomer,
-			checkCustomerTypefilter: this.checkCustomerTypefilter,
-			onDelete: this.onDelete,
-			clearLoan: this.clearLoan
-		});
-	}
+    componentDidMount() {
+        this.prepareData();
 
-	checkCustomerTypefilter = (searchText) => {
-		this.context.SearchCustomerTypes(searchText);
-		this.prepareData('', searchText);
-	};
+        this.props.navigation.setParams({
+            isCustomerSelected: false,
+            customerTypeValue: 'all',
+            customerName: '',
+            searchCustomer: this.searchCustomer,
+            checkCustomerTypefilter: this.checkCustomerTypefilter,
+            onDelete: this.onDelete,
+            clearLoan: this.clearLoan,
+        });
 
-	modalOnClose() {
-		PaymentTypeRealm.resetSelected();
-		this.props.paymentTypesActions.resetSelectedDebt();
-		this.props.paymentTypesActions.setPaymentTypes(PaymentTypeRealm.getPaymentTypes());
-		this.props.paymentTypesActions.resetSelectedPayment();
-		this.prepareData();
-	}
+        this.context.setSelectedCustomer({});
 
-	closePaymentModal = () => {
-		PaymentTypeRealm.resetSelected();
-		this.props.paymentTypesActions.resetSelectedDebt();
-		this.props.paymentTypesActions.resetSelectedPayment();
-		this.props.paymentTypesActions.setPaymentTypes(PaymentTypeRealm.getPaymentTypes());
-		this.prepareData();
-		this.refs.modal6.close();
-	};
+        this.context.setCustomerEditStatus(false);
 
-	clearLoan = () => {
-		this.refs.modal6.open();
-	};
+    }
 
-	onDelete = () => {
-		if (
-			this.context.selectedCustomer.hasOwnProperty('name')
-			// && !this._isAnonymousCustomer(this.context.selectedCustomer)
-		) {
-			const alertMessage = `Delete  customer ${this.context.selectedCustomer.name}`;
-			if (this.context.selectedCustomer.dueAmount === 0) {
-				Alert.alert(
-					alertMessage,
-					'Are you sure you want to delete this customer?',
-					[
-						{
-							text: 'Cancel',
-							onPress: () => {},
-							style: 'cancel'
-						},
-						{
-							text: 'OK',
-							onPress: () => {
-								CustomerRealm.softDeleteCustomer(this.context.selectedCustomer); // Delete from storage
+    searchCustomer = (searchText) => {
+        this.prepareData(searchText, '');
+    };
 
-								this.context.setSelectedCustomer({});
-								this.context.setCustomerProps({
-									isCustomerSelected: false,
-									isDueAmount: 0,
-									customerName: '',
-									title: ''
-								});
 
-								this.prepareData();
-							}
-						}
-					],
-					{ cancelable: false }
-				);
-			} else {
-				Alert.alert(
-					`Customer '${this.context.selectedCustomer.name}' has an outstanding credit and cannot be deleted`,
-					'',
-					[
-						{
-							text: 'OK',
-							onPress: () => {
-								this.context.setSelectedCustomer({});
-								this.context.setCustomerProps({
-									isCustomerSelected: false,
-									isDueAmount: 0,
-									customerName: '',
-									title: ''
-								});
-							}
-						}
-					],
-					{ cancelable: true }
-				);
-			}
-		}
-	};
+    checkCustomerTypefilter = (searchText) => {
+        this.context.SearchCustomerTypes(searchText);
+        this.prepareData('', searchText);
+    };
 
-	handleOnPress(item) {
-		const { setSelectedCustomer, setCustomerProps } = this.context;
-		const { navigation } = this.props;
-		setSelectedCustomer(item);
-		setCustomerProps({
-			isDueAmount: item.dueAmount,
-			isCustomerSelected: false,
-			customerName: '',
-			title: `${item.name}'s Order`
-		});
-		navigation.navigate('OrderView');
-	}
+    modalOnClose() {
+        PaymentTypeRealm.resetSelected();
+        this.props.paymentTypesActions.resetSelectedDebt();
+        this.props.paymentTypesActions.setPaymentTypes(
+            PaymentTypeRealm.getPaymentTypes());
+        this.props.paymentTypesActions.resetSelectedPayment();
+        this.prepareData();
+    }
 
-	onLongPressItem(item) {
-		const { setSelectedCustomer, setCustomerProps, setCustomerEditStatus } = this.context;
-		setSelectedCustomer(item);
-		setCustomerProps({
-			isCustomerSelected: true,
-			isDueAmount: item.dueAmount,
-			customerName: item.name,
-			title: item.name
-		});
+    closePaymentModal = () => {
+        PaymentTypeRealm.resetSelected();
+        this.props.paymentTypesActions.resetSelectedDebt();
+        this.props.paymentTypesActions.resetSelectedPayment();
+        this.props.paymentTypesActions.setPaymentTypes(
+            PaymentTypeRealm.getPaymentTypes());
+        this.prepareData();
+        this.refs.modal6.close();
+    };
 
-		setCustomerEditStatus(true);
-	}
+    clearLoan = () => {
+        this.refs.modal6.open();
+    }
 
-	searchCustomer = (searchText) => {
-		this.prepareData(searchText, '');
-	};
+    onDelete = () => {
+        if (
+            this.context.selectedCustomer.hasOwnProperty('name')
+            // && !this._isAnonymousCustomer(this.context.selectedCustomer)
+        ) {
+            let alertMessage =
+                'Delete  customer ' + this.context.selectedCustomer.name;
+            if (this.context.selectedCustomer.dueAmount === 0) {
+                Alert.alert(
+                    alertMessage,
+                    'Are you sure you want to delete this customer?',
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => { },
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => {
+                                CustomerRealm.softDeleteCustomer(
+                                    this.context.selectedCustomer
+                                ); // Delete from storage
 
-	rowRenderer = (type, data, index) => {
-		const { selectedCustomer } = this.context;
-		let isSelected = false;
-		if (selectedCustomer && selectedCustomer.customerId === data.item.customerId) {
-			isSelected = true;
+
+                                this.context.setSelectedCustomer({});
+                                this.context.setCustomerProps(
+                                    {
+                                        isCustomerSelected: false,
+                                        isDueAmount: 0,
+                                        customerName: '',
+                                        'title': '',
+                                    }
+                                );
+
+                                this.prepareData();
+
+
+                            }
+                        }
+                    ],
+                    { cancelable: false }
+                );
+            } else {
+                Alert.alert(
+                    "Customer '" +
+                    this.context.selectedCustomer.name +
+                    "' has an outstanding credit and cannot be deleted",
+                    '',
+                    [{
+                        text: 'OK', onPress: () => {
+
+
+                            this.context.setSelectedCustomer({});
+                            this.context.setCustomerProps(
+                                {
+                                    isCustomerSelected: false,
+                                    isDueAmount: 0,
+                                    customerName: '',
+                                    'title': '',
+                                }
+                            );
+
+                        }
+                    }],
+                    { cancelable: true }
+                );
+            }
+        }
+    };
+
+    handleOnPress(item) {
+        this.context.setSelectedCustomer(item);
+        this.context.setCustomerProps(
+            {
+                isDueAmount: item.dueAmount,
+                isCustomerSelected: false,
+                customerName: '',
+                'title': item.name + "'s Order"
+            }
+        );
+        this.props.navigation.navigate('OrderView');
+    };
+
+    onLongPressItem(item) {
+        this.context.setSelectedCustomer(item);
+        this.context.setCustomerProps(
+            {
+                isCustomerSelected: true,
+                isDueAmount: item.dueAmount,
+                customerName: item.name,
+                'title': item.name
+            }
+        );
+
+        this.context.setCustomerEditStatus(true);
+
+    };
+
+    rowRenderer = (type, data, index) => {
+        let isSelected = false;
+        if (this.context.selectedCustomer && this.context.selectedCustomer.customerId === data.item.customerId) {
+            isSelected = true;
 		}
 
 		if (type === 'NORMAL' && data.item.id != null) {

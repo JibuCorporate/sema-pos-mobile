@@ -52,14 +52,30 @@ class Login extends React.PureComponent {
 		const { settingsActions, navigation } = this.props;
 		try {
 			this.setState({ isLoading: true });
-			Synchronization.synchronize().then(() => {
-				settingsActions.setSettings(SettingRealm.getAllSetting());
-				this.setState({ isLoading: false });
-				navigation.navigate('App');
+			Synchronization.synchronize().then(syncResult => {
+					this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
+					this.setState({ isLoading: false });
+					this.props.navigation.navigate('App');
 			});
-		} catch (error) {
-			// empty
-		}
+
+		} catch (error) { }
+	};
+
+
+	_clearDataAndSync() {
+		try {
+			Events.trigger('ClearLoggedSales', {});
+			this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
+			this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());
+			const saveConnected = Synchronization.isConnected;
+			Synchronization.initialize(
+				CustomerRealm.getLastCustomerSync(),
+				ProductsRealm.getLastProductsync(),
+				CreditRealm.getLastCreditSync(),
+				InventroyRealm.getLastInventorySync(),
+			);
+			Synchronization.setConnected(saveConnected);
+		} catch (error) { }
 	}
 
 	onChangeEmail = (user) => {

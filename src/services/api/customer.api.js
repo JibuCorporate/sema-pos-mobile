@@ -28,22 +28,24 @@ class CustomerApi {
     this._siteId = siteId;
   }
 
-  getCustomers(updatedSince) {
-    const options = {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${this._token}`,
-      },
-    };
-
-    const url = `sema/site/customers/${this._siteId}/${updatedSince}`;
-    return fetch(this._url + url, options)
-      .then((response) => response.json())
-      .then((responseJson) => responseJson)
-      .catch((error) => {
-        throw error;
-      });
-  }
+    getCustomers(updatedSince) {
+        let options = {
+            method: 'GET',
+            headers: {
+                Authorization: 'Bearer ' + this._token
+            }
+        };
+        
+        let url = `sema/site/customers/${this._siteId}/${updatedSince}`;
+        return fetch(this._url + url, options)
+            .then(response => response.json())
+            .then(responseJson => {
+                return responseJson;
+            })
+            .catch(error => {
+                throw error;
+            });
+    }
 
   createCustomer(customer) {
     customer.customerType = 128; // FRAGILE
