@@ -59,7 +59,7 @@ class OrderSummary extends React.PureComponent {
                 <View style={styles.containerTotal}>
                     <Text style={orderItemStyles.flexTwo, styles.totalText}>{i18n.t('order-total')}</Text>
                     <Text style={orderItemStyles.flexThree, styles.totalText}>{this.getCurrency().toUpperCase()} {this.getAmount()}</Text>
-                </View> 
+                </View>
             </View>
 
         )

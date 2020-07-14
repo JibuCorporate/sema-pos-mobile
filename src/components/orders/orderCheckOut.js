@@ -13,7 +13,6 @@ import i18n from "../../app/i18n";
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DiscountRealm from '../../database/discount/discount.operations';
-import ToggleSwitch from 'toggle-switch-react-native';
 import { bindActionCreators } from "redux";
 import * as OrderActions from "../../actions/OrderActions";
 import * as DiscountActions from '../../actions/DiscountActions';
@@ -39,7 +38,6 @@ import ReceiptPaymentTypeRealm from '../../database/reciept_payment_types/reciep
 import AppContext from '../../context/app-context';
 const uuidv1 = require('uuid/v1');
 import { withNavigation } from 'react-navigation';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 class OrderCheckOut extends React.PureComponent {
 	static contextType = AppContext;
     constructor(props) {
@@ -87,7 +85,7 @@ class OrderCheckOut extends React.PureComponent {
 		return settings.currency;
 	};
 
-    
+
 	showDateTimePicker = () => {
 		this.setState({ isDateTimePickerVisible: true });
 	};
@@ -307,7 +305,7 @@ class OrderCheckOut extends React.PureComponent {
 		}
 	}
 
-	
+
 
 	showBottlesHeader = () => {
 		return (
@@ -1088,7 +1086,7 @@ class OrderCheckOut extends React.PureComponent {
 			return { opacity: 1 };
 		}
 	}
-    
+
 
     render() {
         let filterProducts = this.props.orderItems
@@ -1118,7 +1116,8 @@ class OrderCheckOut extends React.PureComponent {
 					isDisabled={this.state.isBottleTrackerModal}
 					onClosed={this.onClose}
 					onOpened={this.onOpen}
-					onClosingState={this.onClosingState}>
+					onClosingState={this.onClosingState}
+					useNativeDriver={true}>
 					<ScrollView>
 					<TouchableOpacity>
 						<View style={orderItemStyles.flexPadLeft}>
@@ -1154,7 +1153,9 @@ class OrderCheckOut extends React.PureComponent {
 				<Modal style={orderCheckOutStyles.modal2}
 					coverScreen={true}
 					position={"center"} ref={"notesModal"}
-					isDisabled={this.state.isAdditionalNotesModal}>
+					isDisabled={this.state.isAdditionalNotesModal}
+					useNativeDriver={true}
+					>
 					<ScrollView>
 					<TouchableOpacity>
 						<View style={orderItemStyles.flexPadLeft}>
@@ -1192,7 +1193,9 @@ class OrderCheckOut extends React.PureComponent {
 					style={orderCheckOutStyles.modal3}
 					coverScreen={true}
 					position={"center"} ref={"modal6"}
-					onClosed={() => this.modalOnClose()}>
+					onClosed={() => this.modalOnClose()}
+					useNativeDriver={true}
+					>
 					{this.paymentModalModal(isRefill)}
 				</Modal>
 
