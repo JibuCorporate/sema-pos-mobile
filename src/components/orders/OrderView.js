@@ -9,20 +9,12 @@ import { View, StyleSheet } from 'react-native';
 import ProductListScreen from './ProductListScreen';
 import OrderSummaryScreen from "./OrderSummaryScreen";
 import * as OrderActions from "../../actions/OrderActions";
-
-import * as CustomerActions from "../../actions/CustomerActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import AppContext from '../../context/app-context';
-import orderItemStyles from "./orderItemStyles";
-import OrderSummary from './orderSummary';
-import OrderItems from './orderItems';
-import OrderCheckOut from './orderCheckOut';
 class OrderView extends React.PureComponent {
 	constructor(props) {
 		super(props);
 	}
-	static contextType = AppContext;
 	static whyDidYouRender = true;
 
 	render() {
@@ -39,19 +31,14 @@ class OrderView extends React.PureComponent {
 	}
 
 }
-function mapStateToProps(state) {
-	return {
-		selectedCustomer: state.customerReducer.selectedCustomer
-	};
-}
+ 
 function mapDispatchToProps(dispatch) {
 	return {
 		orderActions: bindActionCreators(OrderActions, dispatch),
-		customerActions: bindActionCreators(CustomerActions, dispatch),
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrderView);
+export default connect(null, mapDispatchToProps)(OrderView);
 
 const styles = StyleSheet.create({
 	orderView: {
