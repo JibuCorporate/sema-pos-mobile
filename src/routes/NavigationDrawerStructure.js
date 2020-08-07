@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	drawerIcon: {
-		width: 50, height: 30, marginLeft: 10, paddingRight:20
+		width: 50,
+		height: 30,
+		marginLeft: 10,
+		paddingRight:20
 	}
 })

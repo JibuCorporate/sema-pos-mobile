@@ -75,7 +75,7 @@ class AuthLoadingScreen extends React.PureComponent {
         return (
             <View style={styles.container}>
                 <ActivityIndicator animating={animating} size={120} color="#ABC1DE" />
-                <StatusBar barStyle="default" />
+               		 <StatusBar barStyle="default" />
             </View>
         );
     }

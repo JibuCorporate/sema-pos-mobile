@@ -28,12 +28,32 @@ export default StyleSheet.create({
 		paddingTop: 4
 	},
 
-	bgpad: { backgroundColor: colors.darkBlue, padding: 5 },
+	bgpad: {
+		    backgroundColor: "#ABC1DE",
+	         padding: 5 },
 
 	bottleTextInput: {
 		fontSize: 20,
 		height: 45,
 		textAlign: 'center'
+	},
+
+	ordersumcont: {
+			flex: 1,
+			backgroundColor: "white",
+			borderColor: '#2858a7',
+			borderTopWidth: 5,
+			borderRightWidth: 5,
+
+	},
+
+	containerTotal: {
+		flex: 2,
+		backgroundColor: "#e0e0e0",
+		borderColor: '#2858a7',
+		borderTopWidth: 5,
+		borderRightWidth: 5,
+
 	},
 
 	bottleTracker: { flex: 1, flexDirection: 'row', height: 50 },

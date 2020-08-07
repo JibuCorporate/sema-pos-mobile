@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
 import AppContext from '../context/app-context';
 class CustomerTitle extends React.PureComponent {
     static contextType = AppContext;

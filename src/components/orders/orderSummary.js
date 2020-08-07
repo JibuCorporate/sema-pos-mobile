@@ -13,56 +13,6 @@ if (process.env.NODE_ENV === 'development') {
 	});
 }
 
-const styles = StyleSheet.create({
-	cartText: {
-		alignSelf: 'center',
-		color: colors.black,
-		flex: 1,
-		fontSize: 18,
-		fontWeight: 'bold'
-	},
-	container: {
-		flex: 1,
-		flexDirection: 'column',
-		backgroundColor: colors.white,
-		borderColor: colors.lightBlue,
-		borderTopWidth: 5,
-		borderRightWidth: 5
-	},
-
-	containerTotal: {
-		backgroundColor: colors.lightGray,
-		borderColor: colors.lightBlue,
-		borderRightWidth: 5,
-		borderTopWidth: 5,
-		flex: 2,
-		flexDirection: 'row'
-	},
-	iconleftMargin: {
-		left: 10,
-		textAlign: 'center'
-	},
-	leftMargin: {
-		left: 10
-	},
-	summaryText: {
-		alignSelf: 'center',
-		color: colors.black,
-		flex: 3,
-		fontSize: 18,
-		fontWeight: 'bold',
-		marginLeft: 20
-	},
-
-	totalText: {
-		alignSelf: 'center',
-		color: colors.black,
-		fontSize: 18,
-		fontWeight: 'bold',
-		marginTop: 10
-	}
-});
-
 class OrderSummary extends React.PureComponent {
 	getCurrency = () => {
 		const settings = SettingRealm.getAllSetting();
@@ -114,7 +64,7 @@ class OrderSummary extends React.PureComponent {
 
 	render() {
 		return (
-			<View style={styles.container}>
+			<View style={orderItemStyles.ordersumcont}>
 				<View style={orderItemStyles.rowDirection}>
 					<Text style={styles.summaryText}>{i18n.t('order-summary')}</Text>
 					<Text style={styles.cartText}>
@@ -141,3 +91,43 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(OrderSummary);
+
+const styles = StyleSheet.create({
+	orderSummaryViewTextOne: {
+		flex: 3,
+		marginLeft: 20
+	},
+
+	cartText: {
+		alignSelf: 'center',
+		color: colors.black,
+		flex: 1,
+		fontSize: 18,
+		fontWeight: 'bold'
+	},
+
+	iconleftMargin: {
+		left: 10,
+		textAlign: 'center'
+	},
+	leftMargin: {
+		left: 10
+	},
+	summaryText: {
+		alignSelf: 'center',
+		color: colors.black,
+		flex: 3,
+		fontSize: 18,
+		fontWeight: 'bold',
+		marginLeft: 20
+	},
+
+	totalText: {
+		alignSelf: 'center',
+		color: colors.black,
+		fontSize: 18,
+		fontWeight: 'bold',
+		marginTop: 10
+	}
+});
+

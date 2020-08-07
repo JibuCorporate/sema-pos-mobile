@@ -1012,6 +1012,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(OrderItems);
 
 const styles = StyleSheet.create({
+
 	container: {
 		backgroundColor: 'white',
 		borderColor: '#2858a7',

@@ -37,12 +37,6 @@ const styles = StyleSheet.create({
   flex3: {
     flex: 3,
   },
-
-  container: {
-    flex: 1,
-    backgroundColor: '#2858a7',
-
-  },
   totalText: {
     marginTop: 10,
     fontWeight: 'bold',

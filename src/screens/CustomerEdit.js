@@ -136,7 +136,7 @@ class CustomerEdit extends React.PureComponent {
 					);
 					return;
 				}
- 
+
 				CustomerRealm.createCustomer(
 					this.state.phoneNumber,
 					this.state.name,
@@ -146,7 +146,7 @@ class CustomerEdit extends React.PureComponent {
 					customerTypeId,
 					this.state.reference,
 					this.state.secondPhoneNumber
-				); 
+				);
 				this.props.customerActions.setCustomers(CustomerRealm.getAllCustomer());
 				this.props.customerActions.CustomerSelected({});
 				this.setState({ isCreateInProgress: true });
@@ -175,7 +175,7 @@ class CustomerEdit extends React.PureComponent {
 								inputContainerStyle={styles.inputText}
 								leftIcon={
 									<Ionicons
-										name='md-person'
+										name='person'
 										size={24}
 										color='black'
 									/>
@@ -192,7 +192,7 @@ class CustomerEdit extends React.PureComponent {
 									containerStyle={styles.flexpt5}
 									leftIcon={
 										<Ionicons
-											name='md-contact'
+											name='call'
 											size={24}
 											color='black'
 										/>
@@ -209,7 +209,7 @@ class CustomerEdit extends React.PureComponent {
 									containerStyle={styles.flexpt5}
 									leftIcon={
 										<Ionicons
-											name='md-contact'
+											name='call'
 											size={24}
 											color='black'
 										/>
@@ -227,7 +227,7 @@ class CustomerEdit extends React.PureComponent {
 								inputContainerStyle={styles.inputText}
 								leftIcon={
 									<Ionicons
-										name='md-map'
+										name='map'
 										size={24}
 										color='black'
 									/>
@@ -265,7 +265,7 @@ class CustomerEdit extends React.PureComponent {
 								}}
 
 								Icon={() => {
-									return <Ionicons name="md-ribbon" size={24} />;
+									return <Ionicons name="ribbon" size={24} />;
 								}}
 							/>
 
