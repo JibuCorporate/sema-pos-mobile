@@ -1,5 +1,5 @@
 import realm from '../init';
-const uuidv1 = require('uuid/v1');
+import { v1 as uuidv1 } from 'uuid';
 import { parseISO, format, sub, add, isValid, compareAsc } from 'date-fns';
 import CustomerRealm from '../customers/customer.operations';
 import SyncUtils from '../../services/sync/syncUtils';

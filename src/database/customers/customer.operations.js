@@ -1,8 +1,7 @@
 import realm from '../init';
-const uuidv1 = require('uuid/v1');
+import { v1 as uuidv1 } from 'uuid';
 import SyncUtils from '../../services/sync/syncUtils';
 import { parseISO, format, compareAsc } from 'date-fns';
-import { CustomerTypeRealm } from '../customer-types/customer-types.operations';
 
 class CustomerRealm {
     constructor() {
@@ -110,7 +109,7 @@ class CustomerRealm {
         customerTypeId,
         frequency,
         secondPhoneNumber) {
-       
+
         try {
             const now = new Date();
 

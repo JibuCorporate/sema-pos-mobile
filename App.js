@@ -10,7 +10,7 @@ class App extends React.PureComponent {
         return (
             <GlobalState>
 			   <JibuRouter />
-               </GlobalState>
+            </GlobalState>
         );
     }
 }

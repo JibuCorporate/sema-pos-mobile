@@ -44,16 +44,41 @@ export default StyleSheet.create({
 			borderColor: '#2858a7',
 			borderTopWidth: 5,
 			borderRightWidth: 5,
+			padding: 5
 
 	},
 
+	additional: {
+		marginLeft: 12,
+		padding: 10
+	},
+
+	togglestyle: { color: 'black', fontWeight: '900' },
+
 	containerTotal: {
-		flex: 2,
+		flex: 1,
 		backgroundColor: "#e0e0e0",
 		borderColor: '#2858a7',
 		borderTopWidth: 5,
 		borderRightWidth: 5,
 
+	},
+
+	summaryText: {
+		alignSelf: 'center',
+		color: colors.black,
+		flex: 3,
+		fontSize: 18,
+		fontWeight: 'bold',
+		marginLeft: 20
+	},
+
+	totalText: {
+		alignSelf: 'center',
+		color: colors.black,
+		fontSize: 18,
+		fontWeight: 'bold',
+		marginTop: 10
 	},
 
 	bottleTracker: { flex: 1, flexDirection: 'row', height: 50 },

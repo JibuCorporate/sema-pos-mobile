@@ -6,7 +6,6 @@ import {
 	FlatList,
 	TextInput,
 	TouchableHighlight,
-	StyleSheet,
 	Alert
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -20,11 +19,7 @@ import i18n from '../../app/i18n';
 import DiscountRealm from '../../database/discount/discount.operations';
 import * as OrderActions from '../../actions/OrderActions';
 import * as DiscountActions from '../../actions/DiscountActions';
-import * as CustomerReminderActions from '../../actions/CustomerReminderActions';
-import * as CustomerActions from '../../actions/CustomerActions';
 import * as PaymentTypesActions from '../../actions/PaymentTypesActions';
-import * as receiptActions from '../../actions/ReceiptActions';
-import * as TopUpActions from '../../actions/TopUpActions';
 import SalesChannelRealm from '../../database/sales-channels/sales-channels.operations';
 import ProductMRPRealm from '../../database/productmrp/productmrp.operations';
 import SettingRealm from '../../database/settings/settings.operations';
@@ -44,30 +39,8 @@ class OrderItems extends React.PureComponent {
 			accumulator: 0,
 			selectedDiscounts: {},
 			firstKey: true,
-			switch1Value: false,
-			isOpen: false,
-			isDisabled: false,
-			swipeToClose: true,
-			sliderValue: 0.3,
-			isWalkIn: true,
-			// isDisabled: false,
 			buttonDisabled: false,
 			notes: '',
-			// swipeToClose: true,
-			loanPaid: 0,
-			topUpExpected: 0,
-			// sliderValue: 0.3,
-			selectedPaymentTypes: [],
-			selectedType: {},
-			checkedType: {},
-			textInputs: [],
-			isCompleteOrderVisible: false,
-			isDateTimePickerVisible: false,
-			receiptDate: new Date(),
-			selectedPaymentType: 'Cash',
-
-			isBottleTrackerModal: false,
-			isAdditionalNotesModal: false,
 			isPaymentModal: false,
 			isorderItemsModal: false
 		};
@@ -202,13 +175,7 @@ class OrderItems extends React.PureComponent {
 						<View style={orderItemStyles.discountView}>
 							<View style={orderItemStyles.flexHeigth}>
 								<Text
-									style={[
-										orderItemStyles.baseItem,
-										{
-											marginLeft: 12,
-											padding: 10
-										}
-									]}>
+									style={[orderItemStyles.baseItem, orderItemStyles.additional]}>
 									Custom
 								</Text>
 							</View>
@@ -511,10 +478,6 @@ class OrderItems extends React.PureComponent {
 		this.props.orderActions.RemoveProductFromOrder(this.state.selectedItem.product, unitPrice);
 	}
 
-	showQuantityChanger() {
-		this.props.toolbarActions.ShowScreen('quanityChanger');
-	}
-
 	customDiscount = (searchText) => {
 		const productIndex = this.props.selectedDiscounts
 			.map(function (e) {
@@ -806,7 +769,7 @@ class OrderItems extends React.PureComponent {
 						isOn={item.isSelected || isDiscountAvailable}
 						onColor="green"
 						offColor="red"
-						labelStyle={{ color: 'black', fontWeight: '900' }}
+						labelStyle={orderItemStyles.togglestyle}
 						size="large"
 						onToggle={(isOn) => {
 							DiscountRealm.isSelected(item, isOn === true);
@@ -984,16 +947,9 @@ function mapStateToProps(state, props) {
 		orderItems: state.orderReducer.products,
 		discounts: state.discountReducer.discounts,
 		paymentTypes: state.paymentTypesReducer.paymentTypes,
-		delivery: state.paymentTypesReducer.delivery,
-		selectedPaymentTypes: state.paymentTypesReducer.selectedPaymentTypes,
 		selectedDiscounts: state.orderReducer.discounts,
 		channel: state.orderReducer.channel,
-		receiptsPaymentTypes: state.paymentTypesReducer.receiptsPaymentTypes,
-		receipts: state.receiptReducer.receipts,
 		payment: state.orderReducer.payment,
-		selectedCustomer: state.customerReducer.selectedCustomer,
-		topups: state.topupReducer.topups,
-		topupTotal: state.topupReducer.total
 	};
 }
 
@@ -1001,53 +957,8 @@ function mapDispatchToProps(dispatch) {
 	return {
 		orderActions: bindActionCreators(OrderActions, dispatch),
 		discountActions: bindActionCreators(DiscountActions, dispatch),
-		receiptActions: bindActionCreators(receiptActions, dispatch),
-		customerActions: bindActionCreators(CustomerActions, dispatch),
-		paymentTypesActions: bindActionCreators(PaymentTypesActions, dispatch),
-		topUpActions: bindActionCreators(TopUpActions, dispatch),
-		customerReminderActions: bindActionCreators(CustomerReminderActions, dispatch)
+		paymentTypesActions: bindActionCreators(PaymentTypesActions, dispatch)
 	};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderItems);
-
-const styles = StyleSheet.create({
-
-	container: {
-		backgroundColor: 'white',
-		borderColor: '#2858a7',
-		borderRightWidth: 5,
-		borderTopWidth: 5,
-		flex: 1
-	},
-	containerTotal: {
-		backgroundColor: '#e0e0e0',
-		borderColor: '#2858a7',
-		borderRightWidth: 5,
-		borderTopWidth: 5,
-		flex: 2
-	},
-
-	iconleftMargin: {
-		left: 10,
-		textAlign: 'center'
-	},
-	leftMargin: {
-		left: 10
-	},
-	orderSummaryViewTextOne: { flex: 3, marginLeft: 20 },
-	summaryText: {
-		alignSelf: 'center',
-		color: 'black',
-		fontSize: 18,
-		fontWeight: 'bold'
-	},
-
-	totalText: {
-		alignSelf: 'center',
-		color: 'black',
-		fontSize: 18,
-		fontWeight: 'bold',
-		marginTop: 10
-	}
-});

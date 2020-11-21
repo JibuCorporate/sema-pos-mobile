@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === 'development') {
 		trackAllPureComponents: true
     });
 }
-import { View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight, StyleSheet, Alert } from "react-native";
+import { View, Text, Button, TouchableOpacity, ScrollView, FlatList, TextInput, TouchableHighlight, StyleSheet, Alert, InteractionManager } from "react-native";
 import orderItemStyles from "./orderItemStyles";
 import orderCheckOutStyles from "./orderCheckOutStyles";
 import { connect } from "react-redux";
@@ -46,15 +46,19 @@ class OrderCheckOut extends React.Component {
 			accumulator: 0,
 			selectedDiscounts: {},
 			firstKey: true,
+			switch1Value: false,
 			isOpen: false,
 			isDisabled: false,
 			swipeToClose: true,
 			sliderValue: 0.3,
 			isWalkIn: true,
+			//isDisabled: false,
 			buttonDisabled: false,
 			notes: '',
+			//swipeToClose: true,
 			loanPaid: 0,
 			topUpExpected: 0,
+			//sliderValue: 0.3,
 			selectedPaymentTypes: [],
 			selectedType: {},
 			checkedType: {},
@@ -85,9 +89,13 @@ class OrderCheckOut extends React.Component {
 	};
 
 
-	showHideDateTimePicker = () => {
-		this.setState({ isDateTimePickerVisible: !this.state.isDateTimePickerVisible });
-	}
+	showDateTimePicker = () => {
+		this.setState({ isDateTimePickerVisible: true });
+	};
+
+	hideDateTimePicker = () => {
+		this.setState({ isDateTimePickerVisible: false });
+	};
 
 	handleDatePicked = date => {
 		var randomNumber = Math.floor(Math.random() * 59) + 1;
@@ -102,7 +110,7 @@ class OrderCheckOut extends React.Component {
 		var datestring = datestr.substring(0, 22) + randomnumstr + " " + aftergmt;
 
 		this.setState({ receiptDate: new Date(datestring) });
-		this.showHideDateTimePicker();
+		this.hideDateTimePicker();
 	};
 
 	getLimitDate = () => {
@@ -246,23 +254,23 @@ class OrderCheckOut extends React.Component {
 								</TouchableHighlight>
 
 							</View>
-							<View style={orderItemStyles.bottleTracker}>
+							{/* <View style={orderItemStyles.bottleTracker}>
 								<Text style={[orderCheckOutStyles.baseItem, orderItemStyles.oldSale]}>Are you recording an old sale?</Text>
 								<View
 									style={orderItemStyles.pad10}>
 									<Button
 										style={orderItemStyles.flexOne}
 										title="Change Receipt Date"
-										onPress={this.showHideDateTimePicker}
+										onPress={this.showDateTimePicker}
 									/>
 									<DateTimePicker
 										maximumDate={new Date()}
 										isVisible={this.state.isDateTimePickerVisible}
 										onConfirm={this.handleDatePicked}
-										onCancel={this.showHideDateTimePicker}
+										onCancel={this.hideDateTimePicker}
 									/>
 								</View>
-							</View>
+							</View> */}
 						</View>
 						</TouchableOpacity>
 					</ScrollView>

@@ -1,10 +1,10 @@
 import React from 'react';
-// if (process.env.NODE_ENV === 'development') {
-//     const whyDidYouRender = require('@welldone-software/why-did-you-render');
-//     whyDidYouRender(React, {
-//         trackAllPureComponents: true,
-//     });
-// }
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import {
     View,
     Text,
@@ -74,7 +74,7 @@ class CustomerList extends React.Component {
         this.rowRenderer = this.rowRenderer.bind(this);
     }
 
-    // static whyDidYouRender = true;
+    static whyDidYouRender = true;
 
 
     componentDidMount() {
@@ -411,14 +411,31 @@ class CustomerList extends React.Component {
             searchString: customerSearch ? customerSearch : "",
             customerType: customerTypeFilter ? customerTypeFilter === 'all' ? "" : customerTypeFilter : "",
         };
-        data = data.map(item => {
-            return {
-                ...item,
-                walletBalance: item.walletBalance ? item.walletBalance : 0,
-                searchString: item.name.toLowerCase() + ' ' + item.phoneNumber.toLowerCase() + ' ' + item.address.toLowerCase(),
-                customerType: item.customerType !== undefined ? item.customerType.toLowerCase() : "",
-            }
-        });
+        // data = data.map(item => {
+        //     return {
+        //         ...item,
+        //         walletBalance: item.walletBalance ? item.walletBalance : 0,
+        //         searchString: item.name.toLowerCase() + ' ' + item.phoneNumber.toLowerCase() + ' ' + item.address.toLowerCase(),
+        //         customerType: item.customerType !== undefined ? item.customerType.toLowerCase() : "",
+        //     }
+		// });
+
+		if(customerSearch !== "") {
+			data = data.map(item => {
+				return {
+					...item,
+					searchString: item.name.toLowerCase() + ' ' + item.phoneNumber.toLowerCase() + ' ' + item.address.toLowerCase(),
+				}
+			});
+		} else if (customerTypeFilter !== "") {
+			data = data.map(item => {
+				return {
+					...item,
+					customerType: item.customerType !== undefined ? item.customerType.toLowerCase() : "",
+				}
+			});
+		}
+
         data.sort((a, b) => {
             return a.name.toLowerCase() > b.name.toLowerCase();
         });
@@ -438,7 +455,7 @@ class CustomerList extends React.Component {
         let filteredItems = data.filter(function (item) {
             for (var key in filter) {
                 if (
-                    item[key].toString() === undefined ||
+                    item[key] === undefined ||
                     item[key].toString().toLowerCase().includes(filter[key].toString().toLowerCase()) !=
                     filter[key].toString().toLowerCase().includes(filter[key].toString().toLowerCase())
                 )

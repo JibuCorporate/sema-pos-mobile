@@ -24,7 +24,7 @@ import * as CustomerActions from '../actions/CustomerActions';
 import AppContext from '../context/app-context';
 import i18n from '../app/i18n';
 
-class CustomerEdit extends React.PureComponent {
+class CustomerEdit extends React.Component {
 	static contextType = AppContext;
 	constructor(props) {
 		super(props);
@@ -456,9 +456,10 @@ class CustomerEdit extends React.PureComponent {
 		this.props.navigation.navigate('ListCustomers');
 		var that = this;
 		setTimeout(() => {
-			Events.trigger('ScrollCustomerTo', {
-				customer: that.props.selectedCustomer
-			});
+			// Events.trigger('ScrollCustomerTo', {
+			// 	customer: that.props.selectedCustomer
+			// });
+			console.log("Customer updated ...");
 		}, 10);
 	}
 

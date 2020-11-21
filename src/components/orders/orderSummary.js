@@ -1,4 +1,10 @@
 import React from 'react';
+if (process.env.NODE_ENV === 'development') {
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React, {
+		trackAllPureComponents: true
+	});
+}
 import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import orderItemStyles from './orderItemStyles';
@@ -6,12 +12,7 @@ import i18n from '../../app/i18n';
 import SettingRealm from '../../database/settings/settings.operations';
 import { colors } from '../../styles/sema_colors';
 
-if (process.env.NODE_ENV === 'development') {
-	const whyDidYouRender = require('@welldone-software/why-did-you-render');
-	whyDidYouRender(React, {
-		trackAllPureComponents: true
-	});
-}
+
 
 class OrderSummary extends React.PureComponent {
 	getCurrency = () => {
@@ -34,16 +35,6 @@ class OrderSummary extends React.PureComponent {
 					totalAmount += i.finalAmount;
 				}
 			});
-
-			// for (const i of products) {
-			// 	if (i.product.description === 'discount') {
-			// 		totalAmount += i.finalAmount;
-			// 	} else if (i.product.description === 'delivery') {
-			// 		totalAmount += i.finalAmount;
-			// 	} else {
-			// 		totalAmount += i.finalAmount;
-			// 	}
-			// }
 			return totalAmount;
 		}
 		return 0;
@@ -71,7 +62,7 @@ class OrderSummary extends React.PureComponent {
 						{i18n.t('cart')} ({this.getTotalOrders()})
 					</Text>
 				</View>
-				<View style={styles.containerTotal}>
+				<View style={orderItemStyles.containerTotal}>
 					<Text style={(orderItemStyles.flexTwo, styles.totalText)}>
 						{i18n.t('order-total')}
 					</Text>

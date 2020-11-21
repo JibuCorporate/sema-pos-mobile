@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
     View,
     StyleSheet,
@@ -59,10 +58,11 @@ class AuthLoadingScreen extends React.PureComponent {
             }
         }
 
-        NetInfo.isConnected.fetch().then(isConnected => {
+        NetInfo.fetch().then(isConnected => {
             this.props.networkActions.NetworkConnection(isConnected);
             Synchronization.setConnected(isConnected);
 		});
+
 	});
     }
 

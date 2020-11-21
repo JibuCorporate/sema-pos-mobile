@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import Synchronization from '../services/Synchronization';
 import SettingRealm from '../database/settings/settings.operations';
 import Communications from '../services/Communications';
-import * as SettingsActions from '../actions/SettingsActions';
+// import * as SettingsActions from '../actions/SettingsActions';
 import i18n from '../app/i18n';
 
 class CustomSidebarMenu extends React.Component {
@@ -143,7 +143,7 @@ class CustomSidebarMenu extends React.Component {
       false,
       settings.currency
     );
-    this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
+    // this.props.settingsActions.setSettings(SettingRealm.getAllSetting());
     //As we are not going to the Login, the reason no reason to disable the token
     Communications.setToken('');
     this.props.navigation.navigate('Login');
@@ -152,8 +152,10 @@ class CustomSidebarMenu extends React.Component {
 
   onSynchronize() {
     try {
+		console.log("Sidebarsynchstarted " + this.state.isLoading);
       this.setState({ isLoading: true });
       Synchronization.synchronize().then(syncResult => {
+		console.log("Sidebarsynchended " + this.state.isLoading);
         this.setState({ isLoading: false });
         Alert.alert(
           i18n.t('sync-results'),
@@ -293,16 +295,12 @@ function mapStateToProps(state, props) {
 	};
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    settingsActions: bindActionCreators(SettingsActions, dispatch),
-  };
-}
 
 export default connect(
-	mapStateToProps,
-  mapDispatchToProps
+	mapStateToProps
 )(CustomSidebarMenu);
+
+// export default CustomSidebarMenu;
 
 const txtStyle = (key, index) => StyleSheet.create({
 	txtCol: {

@@ -3,12 +3,10 @@ import {
 	View,
 	ScrollView,
 	StyleSheet,
-	Dimensions,
 	Picker,
 	Alert,
 	ActivityIndicator,
-	ImageBackground,
-	InteractionManager
+	ImageBackground
 } from 'react-native';
 import { Card, Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
